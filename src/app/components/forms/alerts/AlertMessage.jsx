@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const AlertMessage = ({ className ,icon,title, content}) => {
+const AlertMessage = ({className , icon, title, content}) => {
   function createMarkup() {
     return { __html: content };
   }

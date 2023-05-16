@@ -2,15 +2,73 @@
 import { useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/app/assets/img/illustration.png'
+import { useRouter } from 'next/navigation';
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
+const requestResetEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset-request`;
 
-export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  return (
+// attempt sales-agent login using credentials
+function requestPasswordReset(resetRequest:any) {
+    return fetch(requestResetEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resetRequest)
+    })
+        .then(data => data.json())
+}
+
+
+export default function requestReset() {
+    const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
+    const  [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
+    const router = useRouter();
+
+
+    // Function to show the alert message
+    const showAlert = (type= '', title= '', message= '') => {
+        setAlertContent({ type: type, title: title, message: message });
+        setIsAlertVisible(true);
+        // Hide the alert after 3 seconds (adjust the delay as needed)
+        setTimeout(() => {
+            setAlertContent({type: '', title: '', message: ''});
+            setIsAlertVisible(false);
+        }, 3000);
+    };
+
+
+    const handleSubmit = (e:any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            setIsLoading(true);
+            requestPasswordReset({email})
+                .then( response => {
+                    if (response.success) {
+                        setIsLoading(false);
+                        setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
+                        localStorage.setItem('accessToken', response.data.access_token);
+                        router.push('/manage/events');  // redirect to (agent events)
+                    } else {
+                        setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
+                        setIsLoading(false);
+                        showAlert('error', responseData.title, responseData.message)
+                    }
+                });
+        } catch (error) {
+            setIsLoading(false);
+            showAlert('error', responseData.title, responseData.message)
+        }
+    }
+
+
+    return (
     <div className="signup-wrapper">
       <main className="main-section" role="main">
         <div className="container">

@@ -2,13 +2,14 @@
 import { useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/app/assets/img/illustration.png'
-// import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
+import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import Loader from '@/app/components/forms/loader';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const loginEndPont = "http://localhost:8100/api/v1/sales/auth/login";
+const loginEndPont = `${process.env.serverHost}/api/v1/sales/auth/login`;
 
 
 // attempt sales-agent login using credentials
@@ -29,8 +30,11 @@ export default function Login() {
     const [password, setPassword] = useState('')
     const [passwordType, setPasswordType] = useState(true)
     const [remember, setRemember] = useState(false)
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
+    const  [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
+    const router = useRouter();
 
 
     const handleShowPass = (e:any) => {
@@ -39,34 +43,61 @@ export default function Login() {
     }
 
 
+    // Function to show the alert message
+    const showAlert = (type= '', title= '', message= '') => {
+        setAlertContent({ type: type, title: title, message: message });
+        setIsAlertVisible(true);
+        // Hide the alert after 3 seconds (adjust the delay as needed)
+        setTimeout(() => {
+            setAlertContent({type: '', title: '', message: ''});
+            setIsAlertVisible(false);
+        }, 3000);
+    };
+
+
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
         try {
-            loginUser({
-                email,
-                password
-            })
+            setIsLoading(true);
+            loginUser({email, password, remember})
                 .then( response => {
                 if (response.success) {
+                    setIsLoading(false);
+                    setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
                     localStorage.setItem('accessToken', response.data.access_token);
-                    // Login successful, redirect to (agent events)
-                    router.push('/manage/events');
+                    router.push('/manage/events');  // redirect to (agent events)
                 } else {
-                    // Handle login error
-                    console.error(response.message);
+                    setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
+                    setIsLoading(false);
+                    showAlert('error', responseData.title, responseData.message)
                 }
             });
         } catch (error) {
-            console.error('An error occurred during login');
+            setIsLoading(false);
+            showAlert('error', responseData.title, responseData.message)
         }
     }
 
 
     return (
         <div className="signup-wrapper">
+            {/* loader */}
+            {isLoading && (
+                <Loader className='' fixed='' />
+            )}
+            {/* /. loader */}
+
             <main className="main-section" role="main">
                 <div className="container">
+                    {/* Alert */}
+                    {isAlertVisible && (
+                        <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
+                                      icon= {alertContent.type === 'success' ? "check" : "info"}
+                                      title= {alertContent.title}
+                                      content= {alertContent.message} />
+                    )}
+                    {/* /. Alert */}
                     <div className="wrapper-box">
                         <div className="container-box">
                             <div className="row">
@@ -122,12 +153,10 @@ export default function Login() {
                                                         <label className="title">Password</label>
                                                     </div>
                                                     <div className="login-others clearfix">
-                                                        {/*<label><i className={`material-icons`}>check_box_outline_blank</i>Remember me</label>*/}
-                                                        <label>
-                                                            <input className={`material-icons`} type="checkbox" checked={remember} id="remember" onChange={(e) => setRemember(!remember)} />
-                                                            Remember me
-                                                        </label>
-                                                        <a href="#!">Forgot Password?</a>
+                                                        {remember ? <label onClick={(e) => setRemember(!remember)}><i className={`material-icons`}>check_box_outline_filled</i>Remember me</label> :
+                                                            <label onClick={(e) => setRemember(!remember)}><i className={`material-icons`}>check_box_outline_blank</i>Remember me</label>
+                                                        }
+                                                        <Link href="/auth/password/request">Forgot Password?</Link>
                                                     </div>
                                                     <div className="form-row-box button-panel">
                                                         <button type="submit" className="btn btn-primary">Sign in</button>
