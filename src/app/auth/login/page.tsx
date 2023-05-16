@@ -50,7 +50,7 @@ export default function Login() {
                 .then( response => {
                 if (response.success) {
                     localStorage.setItem('accessToken', response.data.access_token);
-                    // Login successful, redirect to agent events
+                    // Login successful, redirect to (agent events)
                     router.push('/manage/events');
                 } else {
                     // Handle login error
