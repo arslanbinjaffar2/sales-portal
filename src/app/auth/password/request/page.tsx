@@ -2,8 +2,9 @@
 import { useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/app/assets/img/illustration.png'
+import AlertMessage from "@/app/components/forms/alerts/AlertMessage";
+import Loader from '@/app/components/forms/loader';
 import { useRouter } from 'next/navigation';
-
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 const requestResetEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset-request`;
@@ -54,7 +55,7 @@ export default function requestReset() {
                         setIsLoading(false);
                         setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
                         localStorage.setItem('accessToken', response.data.access_token);
-                        router.push('/manage/events');  // redirect to (agent events)
+                        router.push('/auth/password/verify');  // redirect to (agent events)
                     } else {
                         setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
                         setIsLoading(false);
@@ -70,8 +71,21 @@ export default function requestReset() {
 
     return (
     <div className="signup-wrapper">
+        {/* loader */}
+        {isLoading && (
+            <Loader className='' fixed='' />
+        )}
+        {/* /. loader */}
       <main className="main-section" role="main">
         <div className="container">
+            {/* Alert */}
+            {isAlertVisible && (
+                <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
+                              icon= {alertContent.type === 'success' ? "check" : "info"}
+                              title= {alertContent.title}
+                              content= {alertContent.message} />
+            )}
+            {/* /. Alert */}
           <div className="wrapper-box">
             <div className="container-box">
               <div className="row">
@@ -113,14 +127,14 @@ export default function requestReset() {
                     <div className="right-formarea">
                       <h2>Did you forget your password ?</h2>
                       <p>Enter your email address you’re using for your account below and we will send you a password reset link.</p>
-                      <form role="">
+                      <form role="" onSubmit={handleSubmit}>
                       <div className="form-area-signup">
                           <div className='form-row-box'>
                               <input className={email ? 'ieHack': ''} value={email} type="text" name="email" id="email" onChange={(e) => setEmail(e.target.value)}  />
                               <label className="title">Enter your email</label>
                           </div>
                           <div className="form-row-box button-panel">
-                              <button className="btn btn-primary">SEND</button>
+                              <button className="btn btn-primary" type='submit'>SEND</button>
                           </div>
                         </div>
                       </form>
