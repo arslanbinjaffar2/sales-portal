@@ -3,33 +3,36 @@ import { useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/app/assets/img/illustration.png'
 import { useRouter } from 'next/navigation';
+import Loader from '@/app/components/forms/loader';
+import AlertMessage from "@/app/components/forms/alerts/AlertMessage";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const requestResetPasswordEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset-request`;
+const resetPasswordEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset`;
 
 
 // attempt sales-agent login using credentials
-function resetPasswordAction(resetPasswordRequest:any) {
-    return fetch(requestResetPasswordEndpoint, {
+function resetPasswordAction(resetPasswordRequestData:any) {
+    return fetch(resetPasswordEndpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(resetPasswordRequest)
+        body: JSON.stringify(resetPasswordRequestData)
     })
         .then(data => data.json())
 }
 
 
 export default function requestReset() {
-    const [newPassword, setNewPassword] = useState('');
+    const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const resetCode = localStorage.getItem('resetCode');
+    const email = localStorage.getItem('email');
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const  [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
+    const [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
     const router = useRouter();
 
 
@@ -50,17 +53,17 @@ export default function requestReset() {
         e.stopPropagation();
         try {
             setIsLoading(true);
-            resetPasswordAction({reset_code: resetCode, password: newPassword, password_confirmation: passwordConfirmation})
+            resetPasswordAction({reset_code: resetCode, email: email, password: password, password_confirmation: passwordConfirmation})
                 .then( response => {
                     if (response.success) {
                         setIsLoading(false);
                         setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
                         localStorage.setItem('accessToken', response.data.access_token);
-                        router.push('/manage/events');  // redirect to (agent events)
+                        router.push('/auth/login');  // redirect to login page
                     } else {
                         setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
                         setIsLoading(false);
-                        showAlert('error', responseData.title, responseData.message)
+                        showAlert('error', response.title, response.message)
                     }
                 });
         } catch (error) {
@@ -72,8 +75,20 @@ export default function requestReset() {
 
     return (
         <div className="signup-wrapper">
+            {/* loader */}
+            {isLoading && (
+                <Loader className='' fixed='' />
+            )}
             <main className="main-section" role="main">
                 <div className="container">
+                    {/* Alert */}
+                    {isAlertVisible && (
+                        <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
+                                      icon= {alertContent.type === 'success' ? "check" : "info"}
+                                      title= {alertContent.title}
+                                      content= {alertContent.message} />
+                    )}
+                    {/* /. Alert */}
                     <div className="wrapper-box">
                         <div className="container-box">
                             <div className="row">
@@ -113,12 +128,12 @@ export default function requestReset() {
                                             </li>
                                         </ul>
                                         <div className="right-formarea">
-                                            <h2>Did you forget your password ?</h2>
-                                            <p>Enter your email address you’re using for your account below and we will send you a password reset link.</p>
+                                            <h2>Reset password</h2>
+                                            <p>Enter new password and confirm new password to reset password.</p>
                                             <form role="" onSubmit={handleSubmit}>
                                                 <div className="form-area-signup">
                                                     <div className='form-row-box'>
-                                                        <input className='' value={newPassword} type="password" name="password" id="password" onChange={(e) => setNewPassword(e.target.value)}  />
+                                                        <input className='' value={password} type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)}  />
                                                         <label className="title">Enter new password</label>
                                                     </div>
                                                     <div className='form-row-box'>
@@ -126,7 +141,7 @@ export default function requestReset() {
                                                         <label className="title">Confirm new password</label>
                                                     </div>
                                                     <div className="form-row-box button-panel">
-                                                        <button className="btn btn-primary" type='submit'>SEND</button>
+                                                        <button className="btn btn-primary" type='submit'>RESET PASSWORD</button>
                                                     </div>
                                                 </div>
                                             </form>

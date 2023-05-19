@@ -28,7 +28,7 @@ export default function requestReset() {
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const  [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
+    const  [responseData, setResponseData ] = useState({ success: false, title: '', message: '', data: {} });
     const router = useRouter();
 
 
@@ -53,13 +53,13 @@ export default function requestReset() {
                 .then( response => {
                     if (response.success) {
                         setIsLoading(false);
-                        setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
-                        localStorage.setItem('accessToken', response.data.access_token);
-                        router.push('/auth/password/verify');  // redirect to (agent events)
+                        setResponseData({ success: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
+                        localStorage.setItem('email', email);
+                        router.push('/auth/password/verify');  // redirect to "verify reset code" page
                     } else {
-                        setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
+                        setResponseData({ success: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
                         setIsLoading(false);
-                        showAlert('error', responseData.title, responseData.message)
+                        showAlert('error', response.title, response.message)
                     }
                 });
         } catch (error) {

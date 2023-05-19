@@ -26,10 +26,11 @@ function verifyResetCodeAction(resetRequest:any) {
 
 export default function verifyResetCode() {
     const [token, setToken] = useState('');
+    const email = localStorage.getItem('email');
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const  [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
+    const  [responseData, setResponseData ] = useState({ success: false, title: '', message: '', data: {} });
     const router = useRouter();
 
 
@@ -50,18 +51,19 @@ export default function verifyResetCode() {
         e.stopPropagation();
         try {
             setIsLoading(true);
-            verifyResetCodeAction({token})
+            verifyResetCodeAction({token, email})
                 .then( response => {
                     if (response.success) {
                         setIsLoading(false);
-                        setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
+                        // return console.log(response);
+                        setResponseData({ success: response.success, title: response.title, message: response.message, data: response.data }); // update responseData constant
                         localStorage.setItem('resetCode', response.data.resetCode);
                         localStorage.setItem('email', response.data.email);
-                        router.push('/auth/password/reset');  // redirect to (agent events)
+                        router.push('/auth/password/reset');  // redirect to reset password page
                     } else {
-                        setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
+                        setResponseData({ success: response.success, title: response.title, message: response.message, data: response.data }); // update responseData constant
                         setIsLoading(false);
-                        showAlert('error', responseData.title, responseData.message)
+                        showAlert('error', response.title, response.message)
                     }
                 });
         } catch (error) {
