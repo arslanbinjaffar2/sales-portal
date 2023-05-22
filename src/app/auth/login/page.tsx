@@ -63,9 +63,9 @@ export default function Login() {
             loginUser({email, password, remember})
                 .then( response => {
                 if (response.success) {
-                    setIsLoading(false);
                     setResponseData({ success: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
                     localStorage.setItem('accessToken', response.data.access_token);
+                    setIsLoading(false);
                     router.push('/manage/events');  // redirect to (agent events)
                 } else {
                     setResponseData({ success: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
@@ -153,9 +153,7 @@ export default function Login() {
                                                         <label className="title">Password</label>
                                                     </div>
                                                     <div className="login-others clearfix">
-                                                        {remember ? <label onClick={(e) => setRemember(!remember)}><i className={`material-icons`}>check_box_outline_filled</i>Remember me</label> :
-                                                            <label onClick={(e) => setRemember(!remember)}><i className={`material-icons`}>check_box_outline_blank</i>Remember me</label>
-                                                        }
+                                                        <label onClick={() => setRemember(!remember)}><i className="material-icons">{remember ? 'check_box' : 'check_box_outline_blank'}</i>Remember me</label>
                                                         <Link href="/auth/password/request">Forgot Password?</Link>
                                                     </div>
                                                     <div className="form-row-box button-panel">
