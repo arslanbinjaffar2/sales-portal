@@ -27,64 +27,85 @@ function fetchAgentEvents(requestData:any) {
 
 
 export default function Dashboard() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordType, setPasswordType] = useState(true)
-  const [remember, setRemember] = useState(false)
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
-  const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-  const [responseData, setResponseData] = useState({success: false, title: '', message: '', data: {}});
-  const router = useRouter();
-
-
-  const handleShowPass = (e: any) => {
-    e.stopPropagation();
-    setPasswordType(!passwordType)
-  }
+    const [isLoading, setIsLoading] = useState(false);
+    const [isAlertVisible, setIsAlertVisible] = useState(false);
+    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
+    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: '', sort_by: '', order_by: ''});
+    const [responseData, setEventResponseData] = useState({success: false, title: '', message: '', data: {}});
+    const router = useRouter();
 
 
   // Function to show the alert message
-  const showAlert = (type = '', title = '', message = '') => {
-    setAlertContent({type: type, title: title, message: message});
-    setIsAlertVisible(true);
-    // Hide the alert after 3 seconds (adjust the delay as needed)
-    setTimeout(() => {
-      setAlertContent({type: '', title: '', message: ''});
-      setIsAlertVisible(false);
-    }, 3000);
-  };
+    const showAlert = (type = '', title = '', message = '') => {
+        setAlertContent({type: type, title: title, message: message});
+        setIsAlertVisible(true);
+        // Hide the alert after 3 seconds (adjust the delay as needed)
+            setTimeout(() => {
+                setAlertContent({type: '', title: '', message: ''});
+                setIsAlertVisible(false);
+      }, 3000);
+    };
+
+
+    const handleSearchTextFilter = (event:any) => {
+        const {name, value} = event.target;
+        const eventsRequestDataUpdate = eventsRequestData;
+        eventsRequestDataUpdate.search_text = value;
+        // Update the requestData state with the modified array
+        setEventsRequestData(eventsRequestDataUpdate);
+        return console.log(eventsRequestData);
+    }
+
+
+    const handleSortByFilter = (event:any) => {
+        const { name, value } = event.target;
+        const eventsRequestDataUpdate = eventsRequestData;
+        eventsRequestDataUpdate['sort_by'] = value;
+        // Update the state with the modified array
+        setEventsRequestData(eventsRequestDataUpdate);
+        return console.log(eventsRequestData);
+    }
+
+
+    const handleFilterByFilter = (event:any) => {
+        const { name, value } = event.target;
+        const eventsRequestDataUpdate = eventsRequestData;
+        eventsRequestDataUpdate['sort_by'] = value;
+        // Update the state with the modified array
+        setEventsRequestData(eventsRequestDataUpdate);
+        return console.log(eventsRequestData);
+    }
 
 
   const handleSubmit = (e: any) => {
     // e.preventDefault();
     // e.stopPropagation();
     try {
-      return console.log(e);
+      return console.log(e.target.attributes.name.value);
       setIsLoading(true);
-      fetchAgentEvents({email, password, remember})
-          .then(response => {
-            if (response.success) {
-              setResponseData({
-                success: response.success,
-                title: 'Success',
-                message: response.message,
-                data: response.data
-              }); // update responseData constant
-              localStorage.setItem('accessToken', response.data.access_token);
-              setIsLoading(false);
-              router.push('/manage/events');  // redirect to (agent events)
-            } else {
-              setResponseData({
-                success: response.success,
-                title: 'Error',
-                message: response.message,
-                data: response.data
-              }); // update responseData constant
-              setIsLoading(false);
-              showAlert('error', response.title, response.message);
-            }
-          });
+      // fetchAgentEvents({email, password, remember})
+      //     .then(response => {
+      //       if (response.success) {
+      //         setResponseData({
+      //           success: response.success,
+      //           title: 'Success',
+      //           message: response.message,
+      //           data: response.data
+      //         }); // update responseData constant
+      //         localStorage.setItem('accessToken', response.data.access_token);
+      //         setIsLoading(false);
+      //         router.push('/manage/events');  // redirect to (agent events)
+      //       } else {
+      //         setResponseData({
+      //           success: response.success,
+      //           title: 'Error',
+      //           message: response.message,
+      //           data: response.data
+      //         }); // update responseData constant
+      //         setIsLoading(false);
+      //         showAlert('error', response.title, response.message);
+      //       }
+      //     });
     } catch (error) {
       setIsLoading(false);
       showAlert('error', responseData.title, responseData.message)
@@ -147,9 +168,8 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="col-8">
-                      <form name="agentEventsForm" role="" onSubmit={handleSubmit}>
                         <div className="right-top-header">
-                          <input className="search-field" name="query" type="text" placeholder="Search" value=""/>
+                          <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onChange={handleSearchTextFilter} />
                           <label className="label-select-alt">
                             <Dropdown
                                 label="Filter by"
@@ -163,19 +183,17 @@ export default function Dashboard() {
                             />
                           </label>
                           <label className="label-select-alt">
-                            <Dropdown onChange={(e:any) => handleSubmit(e)}
-                                label="Filter by"
+                            <Dropdown onChange={handleSortByFilter}
+                                label="Sort by"
                                 listitems={[
-                                  {id: 'active_future', name: "Active and future events"},
-                                  {id: 'active', name: "Active events"},
-                                  {id: 'future', name: "Future events"},
-                                  {id: 'expired', name: "Expired events"},
-                                  {id: 'name', name: "All events"}
+                                  {id: 'event_name', name: "Event name"},
+                                  {id: 'organizer_name', name: "Organizer name"},
+                                  {id: 'start_date', name: "Start date"},
+                                  {id: 'end_date', name: "End date"}
                                 ]}
                             />
                           </label>
                         </div>
-                      </form>
                     </div>
                   </div>
                 </div>
