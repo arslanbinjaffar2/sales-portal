@@ -1,41 +1,52 @@
 "use client"; // this is a client component
 import Dropdown from '@/app/components/DropDown';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from 'next/image';
-import Illustration from '@/app/assets/img/illustration.png'
 import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import Loader from '@/app/components/forms/loader';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+// const localStorage = window.localStorage;
 
 
-const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
+// const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 const agentEventEndpoint = `${process.env.serverHost}/api/v1/sales/agent/events`;
 
-
 // attempt sales-agent login using credentials
-function fetchAgentEvents(requestData:any) {
-  return fetch(agentEventEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(requestData)
-  })
+function fetchAgentEvents(requestData:any, token:any) {
+    return fetch(agentEventEndpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(requestData)
+    })
       .then(data => data.json())
 }
 
 
 export default function Dashboard() {
+    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: '', sort_by: '', order_by: ''});
+    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: ''});
     const [responseData, setEventResponseData] = useState({success: false, title: '', message: '', data: {}});
     const router = useRouter();
+    const [events, setEvents] = useState([]);
 
 
-  // Function to show the alert message
+    useEffect(() => {
+        setAccessToken(localStorage.getItem('accessToken'));
+        if (!accessToken || accessToken == 'undefined') {
+            return router.push('auth/login');
+        }
+        // fetch and populate page data
+        handleFetchEventData(eventsRequestData);
+    }, []);
+
+
+    // Function to show the alert message
     const showAlert = (type = '', title = '', message = '') => {
         setAlertContent({type: type, title: title, message: message});
         setIsAlertVisible(true);
@@ -48,68 +59,67 @@ export default function Dashboard() {
 
 
     const handleSearchTextFilter = (event:any) => {
-        const {name, value} = event.target;
+        const {value} = event.target;
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate.search_text = value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        return console.log(eventsRequestData);
-    }
-
-
-    const handleSortByFilter = (event:any) => {
-        const { name, value } = event.target;
-        const eventsRequestDataUpdate = eventsRequestData;
-        eventsRequestDataUpdate['sort_by'] = value;
-        // Update the state with the modified array
-        setEventsRequestData(eventsRequestDataUpdate);
-        return console.log(eventsRequestData);
+        handleFetchEventData(eventsRequestData);
     }
 
 
     const handleFilterByFilter = (event:any) => {
-        const { name, value } = event.target;
         const eventsRequestDataUpdate = eventsRequestData;
-        eventsRequestDataUpdate['sort_by'] = value;
-        // Update the state with the modified array
+        eventsRequestDataUpdate['event_action'] = event.value;
+        // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        return console.log(eventsRequestData);
+        handleFetchEventData(eventsRequestData);
     }
 
 
-  const handleSubmit = (e: any) => {
-    // e.preventDefault();
-    // e.stopPropagation();
-    try {
-      return console.log(e.target.attributes.name.value);
-      setIsLoading(true);
-      // fetchAgentEvents({email, password, remember})
-      //     .then(response => {
-      //       if (response.success) {
-      //         setResponseData({
-      //           success: response.success,
-      //           title: 'Success',
-      //           message: response.message,
-      //           data: response.data
-      //         }); // update responseData constant
-      //         localStorage.setItem('accessToken', response.data.access_token);
-      //         setIsLoading(false);
-      //         router.push('/manage/events');  // redirect to (agent events)
-      //       } else {
-      //         setResponseData({
-      //           success: response.success,
-      //           title: 'Error',
-      //           message: response.message,
-      //           data: response.data
-      //         }); // update responseData constant
-      //         setIsLoading(false);
-      //         showAlert('error', response.title, response.message);
-      //       }
-      //     });
-    } catch (error) {
-      setIsLoading(false);
-      showAlert('error', responseData.title, responseData.message)
+    const handleSortByFilter = (event:any) => {
+        const eventsRequestDataUpdate = eventsRequestData;
+        eventsRequestDataUpdate['sort_by'] = event.value;
+        // Update the requestData state with the modified array
+        setEventsRequestData(eventsRequestDataUpdate);
+        handleFetchEventData(eventsRequestData);
     }
+
+
+  const handleFetchEventData = (requestData:any) => {
+        try {
+            setIsLoading(true);
+            fetchAgentEvents(requestData, accessToken)
+            .then(response => {
+                if (response.message === 'Unauthenticated') { // handle unauthenticated response
+                    showAlert('error', 'Error', 'Unauthenticated');
+                    return router.push('auth/login');
+                }
+
+                if (response.success && response.data) { // success response
+                    setEventResponseData({
+                          success: response.success,
+                          title: 'Success',
+                          message: response.message,
+                          data: response.data
+                    }); // update responseData constant
+                    setIsLoading(false);
+                    setEvents(response.data.agent_events.events);
+                } else { // error response
+                    setEventResponseData({
+                        success: response.success,
+                        title: 'Error',
+                        message: response.message,
+                        data: response.data
+                    }); // update responseData constant
+                    setIsLoading(false);
+                    showAlert('error', response.title, response.message);
+                }
+            });
+        } catch (error) {
+            setIsLoading(false);
+            showAlert('error', 'Error', 'Something went wrong, please try again')
+        }
   }
 
 
@@ -171,7 +181,7 @@ export default function Dashboard() {
                         <div className="right-top-header">
                           <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onChange={handleSearchTextFilter} />
                           <label className="label-select-alt">
-                            <Dropdown
+                            <Dropdown selected={eventsRequestData.event_action} onChange={handleFilterByFilter}
                                 label="Filter by"
                                 listitems={[
                                   {id: 'active_future', name: "Active and future events"},
@@ -183,7 +193,7 @@ export default function Dashboard() {
                             />
                           </label>
                           <label className="label-select-alt">
-                            <Dropdown onChange={handleSortByFilter}
+                            <Dropdown selected={eventsRequestData.sort_by} onChange={handleSortByFilter}
                                 label="Sort by"
                                 listitems={[
                                   {id: 'event_name', name: "Event name"},
@@ -214,24 +224,29 @@ export default function Dashboard() {
                       <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><strong
                           style={{justifyContent: 'flex-end'}}>My Revenue</strong></div>
                     </div>
-                    {[...Array(10)].map(item =>
-                        <div key={item} className="d-flex align-items-center ebs-table-content">
-                          <div className="ebs-table-box ebs-box-1">
-                            <Image src={require('@/app/assets/img/logo-placeholder.png')} alt="" width={100}
-                                   height={34}/>
-                          </div>
-                          <div className="ebs-table-box ebs-box-2"><p>Parent event leadevent 2.</p></div>
-                          <div className="ebs-table-box ebs-box-3"><p>30/09/23 - 02/10/23</p></div>
-                          <div className="ebs-table-box ebs-box-4"><p>Eventorg</p></div>
-                          <div className="ebs-table-box ebs-box-4"><p>Mr Creig</p></div>
-                          <div className="ebs-table-box ebs-box-4"><p>3</p></div>
-                          <div className="ebs-table-box ebs-box-5"><p>5</p></div>
-                          <div className="ebs-table-box ebs-box-5"><p>20</p></div>
-                          <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-5"><p>25</p></div>
-                          <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right">
-                            <p>43128DKK</p></div>
-                        </div>
-                    )}
+                      {
+                          events.length > 0 ? (
+                              events.map((item:any, key:any) =>
+                                  <div key={key} className="d-flex align-items-center ebs-table-content">
+                                      <div className="ebs-table-box ebs-box-1">
+                                          <Image src={require('@/app/assets/img/logo-placeholder.png')} alt="" width={100}
+                                                 height={34}/>
+                                      </div>
+                                      <div className="ebs-table-box ebs-box-2"><p>{ item.name }</p></div>
+                                      <div className="ebs-table-box ebs-box-3"><p>{ item.start_date+' - '+item.end_date }</p></div>
+                                      <div className="ebs-table-box ebs-box-4"><p>{ item.organizer_name }</p></div>
+                                      <div className="ebs-table-box ebs-box-4"><p>{ item.organizer_name }</p></div>
+                                      <div className="ebs-table-box ebs-box-4"><p>{ item.event_stats.tickets_left }</p></div>
+                                      <div className="ebs-table-box ebs-box-5"><p>{ item.event_stats.total_tickets }</p></div>
+                                      <div className="ebs-table-box ebs-box-5"><p>{ item.sale_agent_stats.tickets_sold }</p></div>
+                                      <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-5"><p>{ item.sale_agent_stats.revenue }</p></div>
+                                      <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><p>{ item.sale_agent_stats.revenue }DKK</p></div>
+                                  </div>
+                              )
+                          ) : (
+                              !isLoading && ( <p> No data available</p> )
+                          )
+                      }
                   </div>
                 </div>
               </div>
@@ -240,5 +255,4 @@ export default function Dashboard() {
         </main>
       </>
   );
-
 }
