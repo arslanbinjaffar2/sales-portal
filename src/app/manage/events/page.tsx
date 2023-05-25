@@ -5,11 +5,12 @@ import Image from 'next/image';
 import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import Loader from '@/app/components/forms/loader';
 import { useRouter } from 'next/navigation';
-// const localStorage = window.localStorage;
+import Link from "next/link";
 
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 const agentEventEndpoint = `${process.env.serverHost}/api/v1/sales/agent/events`;
+
 
 // attempt sales-agent login using credentials
 function fetchAgentEvents(requestData:any, token:any) {
@@ -17,6 +18,7 @@ function fetchAgentEvents(requestData:any, token:any) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(requestData)
@@ -26,7 +28,8 @@ function fetchAgentEvents(requestData:any, token:any) {
 
 
 export default function Dashboard() {
-    const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
+    let accessToken: string | null;
+    // const [accessToken, setAccessToken] = useState<any>('');
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
@@ -34,11 +37,14 @@ export default function Dashboard() {
     const [responseData, setEventResponseData] = useState({success: false, title: '', message: '', data: {}});
     const router = useRouter();
     const [events, setEvents] = useState([]);
+    const [agent, setAgent] = useState({});
+    const [paginate, setPaginate] = useState({});
 
 
     useEffect(() => {
-        setAccessToken(localStorage.getItem('accessToken'));
-        if (!accessToken || accessToken == 'undefined') {
+        // setAccessToken(localStorage.getItem('accessToken'));
+        accessToken = localStorage.getItem('accessToken');
+        if (!accessToken || accessToken == 'undefined' || accessToken == 'Undefined' || accessToken == null) {
             return router.push('auth/login');
         }
         // fetch and populate page data
@@ -58,8 +64,8 @@ export default function Dashboard() {
     };
 
 
-    const handleSearchTextFilter = (event:any) => {
-        const {value} = event.target;
+    const handleSearchTextFilter = (e:any) => {
+        const {value} = e.target;
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate.search_text = value;
         // Update the requestData state with the modified array
@@ -68,30 +74,30 @@ export default function Dashboard() {
     }
 
 
-    const handleFilterByFilter = (event:any) => {
+    const handleFilterByFilter = (e:any) => {
         const eventsRequestDataUpdate = eventsRequestData;
-        eventsRequestDataUpdate['event_action'] = event.value;
+        eventsRequestDataUpdate['event_action'] = e.value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
         handleFetchEventData(eventsRequestData);
     }
 
 
-    const handleSortByFilter = (event:any) => {
+    const handleSortByFilter = (e:any) => {
         const eventsRequestDataUpdate = eventsRequestData;
-        eventsRequestDataUpdate['sort_by'] = event.value;
+        eventsRequestDataUpdate['sort_by'] = e.value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
         handleFetchEventData(eventsRequestData);
     }
 
 
-  const handleFetchEventData = (requestData:any) => {
+    const handleFetchEventData = (requestData:any) => {
         try {
             setIsLoading(true);
             fetchAgentEvents(requestData, accessToken)
             .then(response => {
-                if (response.message === 'Unauthenticated') { // handle unauthenticated response
+                if (response.message === 'Unauthenticated.') { // handle unauthenticated response
                     showAlert('error', 'Error', 'Unauthenticated');
                     return router.push('auth/login');
                 }
@@ -104,7 +110,9 @@ export default function Dashboard() {
                           data: response.data
                     }); // update responseData constant
                     setIsLoading(false);
-                    setEvents(response.data.agent_events.events);
+                    setAgent(response.data.agent);
+                    setEvents(response.data.events);
+                    setPaginate(response.data.paginate);
                 } else { // error response
                     setEventResponseData({
                         success: response.success,
@@ -120,10 +128,16 @@ export default function Dashboard() {
             setIsLoading(false);
             showAlert('error', 'Error', 'Something went wrong, please try again')
         }
-  }
+    }
 
 
-  return (
+    const routeEventDetail  = (eventDetail:any) => {
+        localStorage.setItem('eventDetail', eventDetail);
+        router.push('/manage/event/orders');
+    }
+
+
+    return (
       <>
         <header className="header">
           {/* loader */}
@@ -196,7 +210,7 @@ export default function Dashboard() {
                             <Dropdown selected={eventsRequestData.sort_by} onChange={handleSortByFilter}
                                 label="Sort by"
                                 listitems={[
-                                  {id: 'event_name', name: "Event name"},
+                                  {id: 'name', name: "Event name"},
                                   {id: 'organizer_name', name: "Organizer name"},
                                   {id: 'start_date', name: "Start date"},
                                   {id: 'end_date', name: "End date"}
@@ -227,10 +241,9 @@ export default function Dashboard() {
                       {
                           events.length > 0 ? (
                               events.map((item:any, key:any) =>
-                                  <div key={key} className="d-flex align-items-center ebs-table-content">
+                                  <div key={key} className="d-flex align-items-center ebs-table-content" onClick={() => routeEventDetail(item)}>
                                       <div className="ebs-table-box ebs-box-1">
-                                          <Image src={require('@/app/assets/img/logo-placeholder.png')} alt="" width={100}
-                                                 height={34}/>
+                                          <Image src={ item.header_logo ? (`${process.env.stageImageHost +'/'+ item.header_logo}`) : require('@/app/assets/img/logo-placeholder.png') } alt="" width={100} height={34}/>
                                       </div>
                                       <div className="ebs-table-box ebs-box-2"><p>{ item.name }</p></div>
                                       <div className="ebs-table-box ebs-box-3"><p>{ item.start_date+' - '+item.end_date }</p></div>
@@ -240,7 +253,7 @@ export default function Dashboard() {
                                       <div className="ebs-table-box ebs-box-5"><p>{ item.event_stats.total_tickets }</p></div>
                                       <div className="ebs-table-box ebs-box-5"><p>{ item.sale_agent_stats.tickets_sold }</p></div>
                                       <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-5"><p>{ item.sale_agent_stats.revenue }</p></div>
-                                      <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><p>{ item.sale_agent_stats.revenue }DKK</p></div>
+                                      <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><p>{ item.sale_agent_stats.revenue }{ (item.currency) ? item.currency : 'DKK'  }</p></div>
                                   </div>
                               )
                           ) : (
@@ -254,5 +267,5 @@ export default function Dashboard() {
           </div>
         </main>
       </>
-  );
+    );
 }

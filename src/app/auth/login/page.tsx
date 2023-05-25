@@ -17,7 +17,8 @@ function loginUser(credentials:any) {
     return fetch(loginEndPont, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         },
         body: JSON.stringify(credentials)
     })

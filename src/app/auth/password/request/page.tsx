@@ -15,7 +15,8 @@ function requestPasswordReset(resetRequest:any) {
     return fetch(requestResetEndpoint, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         },
         body: JSON.stringify(resetRequest)
     })

@@ -1,28 +1,42 @@
 'use client'
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image'
 import Dropdown from '@/app/components/DropDown';
+import {object} from "prop-types";
+
 
 export default function OrderListing() {
-  
+  // const [event, setEvent] = useState<any>({});
+  let event: any;
+
+
   useEffect(() => {
-    document.body.addEventListener('click',handleBody,false)
+    event = (localStorage.getItem('eventDetail'));
+    return console.log({orderCount: event.orders});
+
+
+    document.body.addEventListener('click', handleBody,false)
     return () => {
-      document.body.removeEventListener('click',handleBody,false)
+      document.body.removeEventListener('click', handleBody,false)
     }
   }, [])
-  
+
+
   const handleBody = (e:any) => {
-    var _items = document.querySelectorAll('.ebs-btn-dropdown');
+    let _items = document.querySelectorAll('.ebs-btn-dropdown');
     _items.forEach(element => {
       element.classList.remove('ebs-active')
     });
   }
+
+
   const handleToggle = (e:any) => {
     e.stopPropagation();
     e.preventDefault();
     e.target.classList.toggle('ebs-active');
   }
+
+
   return (
     <>
       <header className="header">
@@ -203,12 +217,12 @@ export default function OrderListing() {
                       <div className="ebs-table-box ebs-box-4"><strong>Company</strong></div>
                       <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket</strong></div>
                       <div className="ebs-table-box ebs-box-4"><strong>Revenue</strong></div>
-                      <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><strong>Payment STATus</strong></div>
+                      <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><strong>Payment STATUS</strong></div>
                       <div className="ebs-table-box ebs-box-2"  />
                     </div>
-                    {[...Array(10)].map((item,k) => 
-                    <div key={k} className="d-flex align-items-center ebs-table-content">
-                      <div className="ebs-table-box ebs-box-1"><p>25100{k}</p></div>
+                    {[event].map((item, key) =>
+                    <div key={key} className="d-flex align-items-center ebs-table-content">
+                      <div className="ebs-table-box ebs-box-1"><p>{key}</p></div>
                       <div className="ebs-table-box ebs-box-1"><p>12/04/2022</p></div>
                       <div className="ebs-table-box ebs-box-2"><p>Mudassir Umer Reg</p></div>
                       <div className="ebs-table-box ebs-box-2"><p>sales_info@mail.com</p></div>
