@@ -3,7 +3,7 @@ import { useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/app/assets/img/illustration.png'
 import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
-import Loader from '@/app/components/forms/loader';
+import Loader from '@/app/components/forms/Loader';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 

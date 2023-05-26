@@ -7,6 +7,11 @@ import Loader from '@/app/components/forms/loader';
 import { useRouter } from 'next/navigation';
 import Link from "next/link";
 
+import { useSelector, useDispatch } from 'react-redux'
+import { setAgentEvents, selectAgentEvents }  from "@/redux/store/slices/agentEventsSlice";
+import type { RootState } from '@/redux/store/store'
+
+
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 const agentEventEndpoint = `${process.env.serverHost}/api/v1/sales/agent/events`;
@@ -27,7 +32,13 @@ function fetchAgentEvents(requestData:any, token:any) {
 }
 
 
+
 export default function Dashboard() {
+    const agentEvents = useSelector((state: RootState) => state.agentEvents.value)
+    const dispatch = useDispatch();
+
+    return console.log(agentEvents);
+
     let accessToken: string | null;
     // const [accessToken, setAccessToken] = useState<any>('');
     const [isLoading, setIsLoading] = useState(false);
@@ -103,6 +114,10 @@ export default function Dashboard() {
                 }
 
                 if (response.success && response.data) { // success response
+                    dispatch(setAgentEvents(response.data.events));
+                    return console.log(selectAgentEvents);
+
+
                     setEventResponseData({
                           success: response.success,
                           title: 'Success',
@@ -138,6 +153,8 @@ export default function Dashboard() {
 
 
     return (
+
+
       <>
         <header className="header">
           {/* loader */}
@@ -268,4 +285,6 @@ export default function Dashboard() {
         </main>
       </>
     );
+
+
 }
