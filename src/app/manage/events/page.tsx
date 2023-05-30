@@ -3,23 +3,22 @@ import Dropdown from '@/app/components/DropDown';
 import { useState, useEffect } from "react";
 import Image from 'next/image';
 import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
-import Loader from '@/app/components/forms/loader';
+import Loader from '@/app/components/forms/Loader';
 import { useRouter } from 'next/navigation';
-import Link from "next/link";
-
-import { useSelector, useDispatch } from 'react-redux'
+// import redux
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { setAgentEvents, selectAgentEvents }  from "@/redux/store/slices/agentEventsSlice";
-import type { RootState } from '@/redux/store/store'
-
+// import { setAgent, setAccessToken, selectAgent, selectAgentAccessToken }  from "@/redux/store/slices/agentSlice";
+// import { setPaginationData, selectPagination }  from "@/redux/store/slices/pagination";
+import Pagination from "@/app/components/pagination";
 
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 const agentEventEndpoint = `${process.env.serverHost}/api/v1/sales/agent/events`;
 
-
 // attempt sales-agent login using credentials
-function fetchAgentEvents(requestData:any, token:any) {
-    return fetch(agentEventEndpoint, {
+function fetchAgentEvents(requestData:any, token:any, page:number) {
+    return fetch(`${agentEventEndpoint}?page=${page}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -32,36 +31,35 @@ function fetchAgentEvents(requestData:any, token:any) {
 }
 
 
-
 export default function Dashboard() {
-    const agentEvents = useSelector((state: RootState) => state.agentEvents.value)
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
-    return console.log(agentEvents);
-
-    let accessToken: string | null;
-    // const [accessToken, setAccessToken] = useState<any>('');
+    // let accessToken: string | null;
+    const [accessToken, setAccessToken] = useState<any>('');
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
     const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: ''});
     const [responseData, setEventResponseData] = useState({success: false, title: '', message: '', data: {}});
     const router = useRouter();
-    const [events, setEvents] = useState([]);
-    const [agent, setAgent] = useState({});
-    const [paginate, setPaginate] = useState({});
+    const [events, setEvents] = useState<any>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
 
     useEffect(() => {
-        // setAccessToken(localStorage.getItem('accessToken'));
-        accessToken = localStorage.getItem('accessToken');
-        if (!accessToken || accessToken == 'undefined' || accessToken == 'Undefined' || accessToken == null) {
-            return router.push('auth/login');
-        }
-        // fetch and populate page data
-        handleFetchEventData(eventsRequestData);
+        // setAccessToken(selectAgentAccessToken);
+        setTimeout(function() {
+            setAccessToken(localStorage.getItem('accessToken'));
+        }, 500);
+
     }, []);
 
+    useEffect(() => {
+        if(accessToken) {
+            handleFetchEventData(eventsRequestData, currentPage);
+        }
+    }, [accessToken]);
 
     // Function to show the alert message
     const showAlert = (type = '', title = '', message = '') => {
@@ -81,7 +79,7 @@ export default function Dashboard() {
         eventsRequestDataUpdate.search_text = value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        handleFetchEventData(eventsRequestData);
+        handleFetchEventData(eventsRequestData, currentPage);
     }
 
 
@@ -90,7 +88,7 @@ export default function Dashboard() {
         eventsRequestDataUpdate['event_action'] = e.value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        handleFetchEventData(eventsRequestData);
+        handleFetchEventData(eventsRequestData, currentPage);
     }
 
 
@@ -99,14 +97,14 @@ export default function Dashboard() {
         eventsRequestDataUpdate['sort_by'] = e.value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        handleFetchEventData(eventsRequestData);
+        handleFetchEventData(eventsRequestData, currentPage);
     }
 
 
-    const handleFetchEventData = (requestData:any) => {
+    const handleFetchEventData = (requestData:any, currentPage:number) => {
         try {
             setIsLoading(true);
-            fetchAgentEvents(requestData, accessToken)
+            fetchAgentEvents(requestData, accessToken, currentPage)
             .then(response => {
                 if (response.message === 'Unauthenticated.') { // handle unauthenticated response
                     showAlert('error', 'Error', 'Unauthenticated');
@@ -115,9 +113,6 @@ export default function Dashboard() {
 
                 if (response.success && response.data) { // success response
                     dispatch(setAgentEvents(response.data.events));
-                    return console.log(selectAgentEvents);
-
-
                     setEventResponseData({
                           success: response.success,
                           title: 'Success',
@@ -125,9 +120,12 @@ export default function Dashboard() {
                           data: response.data
                     }); // update responseData constant
                     setIsLoading(false);
-                    setAgent(response.data.agent);
                     setEvents(response.data.events);
-                    setPaginate(response.data.paginate);
+
+                    setTotalPages(response.data.paginate.total_pages);
+                    setCurrentPage(response.data.paginate.current_page);
+                    console.log(response.data.paginate.current_page);
+
                 } else { // error response
                     setEventResponseData({
                         success: response.success,
@@ -146,15 +144,21 @@ export default function Dashboard() {
     }
 
 
-    const routeEventDetail  = (eventDetail:any) => {
+    const routeEventOrders  = (eventDetail:any) => {
         localStorage.setItem('eventDetail', eventDetail);
         router.push('/manage/event/orders');
     }
 
 
+    const handlePageChange = (page:number) => {
+        console.log(page);
+        setCurrentPage(page);
+        // Perform API call or update data based on the new page
+        handleFetchEventData(eventsRequestData, currentPage);
+    };
+
+
     return (
-
-
       <>
         <header className="header">
           {/* loader */}
@@ -258,7 +262,7 @@ export default function Dashboard() {
                       {
                           events.length > 0 ? (
                               events.map((item:any, key:any) =>
-                                  <div key={key} className="d-flex align-items-center ebs-table-content" onClick={() => routeEventDetail(item)}>
+                                  <div key={key} className="d-flex align-items-center ebs-table-content" onClick={() => routeEventOrders(item)}>
                                       <div className="ebs-table-box ebs-box-1">
                                           <Image src={ item.header_logo ? (`${process.env.stageImageHost +'/'+ item.header_logo}`) : require('@/app/assets/img/logo-placeholder.png') } alt="" width={100} height={34}/>
                                       </div>
@@ -278,6 +282,13 @@ export default function Dashboard() {
                           )
                       }
                   </div>
+                    {/*<Pagination {...paginate}></Pagination>*/}
+                    {/* Render the pagination component */}
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
               </div>
             </div>
@@ -285,6 +296,4 @@ export default function Dashboard() {
         </main>
       </>
     );
-
-
 }

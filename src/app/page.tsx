@@ -2,6 +2,8 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/app/assets/css/page.module.css'
 
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {

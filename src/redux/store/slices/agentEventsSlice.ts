@@ -1,33 +1,33 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { HYDRATE } from 'next-redux-wrapper';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import {RootState} from "@/redux/store/store";
+
+type agentEventState = {
+    value: Array<any>;
+};
+
 
 const initialState = {
     value: []
-}
+} as agentEventState;
 
 
 export const eventsSlice = createSlice({
     name: 'agentEvents',
     initialState,
     reducers: {
+        reset: () => initialState,
         // update agent events
         setAgentEvents: (state, action: PayloadAction<any>) => {
             state.value = action.payload;
         },
-    },
-    extraReducers: {
-        [HYDRATE]: (state, action: PayloadAction<any>) => {
-            return {
-                ...state,
-                ...action.payload.auth,
-            };
+        getAgentEvents: (state) => {
+            state.value;
         },
     },
 })
 
 
 // Action creators are generated for each case reducer function
-export const { setAgentEvents } = eventsSlice.actions
-export const selectAgentEvents = (state:any) => state.agentEvents.value;
+export const { setAgentEvents, getAgentEvents } = eventsSlice.actions
+export const selectAgentEvents = (state: RootState) => state.agentEvents.value ;
 export default eventsSlice.reducer

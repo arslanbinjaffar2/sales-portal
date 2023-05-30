@@ -1,16 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit'
-import eventReducer from '@/redux/store/slices/agentEventsSlice'
+import { configureStore } from "@reduxjs/toolkit";
+import { applyMiddleware } from "redux";
+import eventReducer from "@/redux/store/slices/agentEventsSlice";
+import paginationReducer from "@/redux/store/slices/pagination";
 
 export const store = configureStore({
     reducer: {
         agentEvents: eventReducer,
+        pagination: paginationReducer,
     },
-})
+    devTools: process.env.NODE_ENV !== "production",
+});
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 
 
