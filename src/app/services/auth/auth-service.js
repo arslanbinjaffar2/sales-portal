@@ -9,23 +9,23 @@ export const AuthService = {
 };
 
 function login(email, password, logged) {
-
+    const loginEndPont = `${process.env.serverHost}/api/v1/sales/auth/login`;
+    const requestParams = {email: email, password: password, remember: logged};
     const requestOptions = {
         method: 'POST',
         headers: guestHeader(),
-        body: JSON.stringify({ email, password, logged })
+        body: JSON.stringify(requestParams)
     };
 
-    return fetch(`${process.env.REACT_APP_URL}/auth/login`, requestOptions)
+    return fetch(loginEndPont, requestOptions)
         .then(handleResponse)
-        .then(user => {
-            // login successful if there's a jwt token in the response
-            if (user.success && !user.logged) {
-                // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('agent', JSON.stringify(user));
-                localStorage.setItem('interface_language_id', user.data.inferface_language_id);
+        .then(response => {
+            if (response.success && !response.data.logged) {
+                // store new user details and access-token in local storage to keep user logged in between page refreshes
+                localStorage.setItem('agent', JSON.stringify(response.data.agent));
+                localStorage.setItem('interface_language_id', response.data.inferface_language_id ? response.data.inferface_language_id : 1 );
             }
-            return user;
+            return response;
         });
 }
 

@@ -7,7 +7,7 @@ import { template } from './template.reducer';
 import { invitation } from './invitation.reducer';
 import { redirect } from './redirect.reducer';
 import { update } from './update.reducer';
-import { auth } from './auth-reducer'; 
+import { auth } from './auth-reducer';
 
 const rootReducer = combineReducers({
   alert, event, eventState, eventStep, template, invitation, redirect, update, auth

@@ -1,33 +1,33 @@
 "use client"; // this is a client component
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Image from 'next/image';
-import Illustration from '@/app/assets/img/illustration.png'
+import Illustration from '@/app/assets/img/illustration.png';
 import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import Loader from '@/app/components/forms/Loader';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AuthAction } from '@/app/actions/auth/auth-action'
-
+import { AuthAction } from '@/app/actions/auth/auth-action';
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { RootState } from "@/redux/store/store";
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const loginEndPont = `${process.env.serverHost}/api/v1/sales/auth/login`;
-
-
-// attempt sales-agent login using credentials
-function loginUser(credentials:any) {
-    return fetch(loginEndPont, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(credentials)
-    })
-        .then(data => data.json())
-}
 
 
 export default function Login() {
+    function handleLoginForm(email:any, password:any, remember:any) {
+        if (email && password) {
+            // @ts-ignore
+            useAppDispatch(AuthAction.login(email, password, remember));
+        }
+    }
+
+    const router = useRouter();
+    const agent = useAppSelector((state: RootState) => state.auth);
+    const redirect = useAppSelector((state: RootState) => state.redirect);
+
+
+
+
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordType, setPasswordType] = useState(true)
@@ -35,14 +35,37 @@ export default function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const  [responseData, setResponseData ] = useState({ success: false, title: '', message: '', data: {} });
-    const router = useRouter();
+
+
+    const handleSubmit = (e:any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // try {
+            setIsLoading(true);
+            handleLoginForm(email, password, remember);
+            setIsLoading(false);
+        // } catch (error) {
+        //     setIsLoading(false);
+        //     showAlert('error', 'Exception', 'Something went wrong, please try again')
+        // }
+    }
+
+    useEffect(() => {
+        console.log({where: 'Inside/start use effect', redirect: redirect, agent: agent});
+        if(agent && agent.access_token) {
+            console.log({where: 'Token found'});
+            // router.push('/manage/events');
+        }
+        console.log({where: 'After use effect execution'});
+    }, []);
 
 
     const handleShowPass = (e:any) => {
         e.stopPropagation();
         setPasswordType(!passwordType)
     }
+
+
 
 
     // Function to show the alert message
@@ -57,20 +80,29 @@ export default function Login() {
     };
 
 
-    const handleSubmit = (e:any) => {
-        e.preventDefault();
-        e.stopPropagation();
-        try {
-            setIsLoading(true);
-            AuthAction.login({email, password, remember});
-        } catch (error) {
-            setIsLoading(false);
-            showAlert('error', responseData.title, responseData.message)
-        }
-    }
+    // const handleSubmit = (e:any) => {
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     try {
+    //         setIsLoading(true);
+    //         handleFormSubmit(email, password, remember);
+    //         setIsLoading(false);
+    //
+    //         // if (email && password) {
+    //         //     // @ts-ignore
+    //         //     useAppDispatch(AuthAction.login(email, password, remember));
+    //         //     return console.log({where: 'After login action', agent: agent, redirect: redirect});
+    //         // }
+    //         // setIsLoading(false);
+    //     } catch (error) {
+    //         setIsLoading(false);
+    //         showAlert('error', 'Exception', 'Something went wrong, please try again')
+    //     }
+    // }
 
 
     return (
+
         <div className="signup-wrapper">
             {/* loader */}
             {isLoading && (
