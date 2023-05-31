@@ -6,6 +6,7 @@ import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import Loader from '@/app/components/forms/Loader';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AuthAction } from '@/app/actions/auth/auth-action'
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -61,19 +62,7 @@ export default function Login() {
         e.stopPropagation();
         try {
             setIsLoading(true);
-            loginUser({email, password, remember})
-                .then( response => {
-                if (response.success) {
-                    setResponseData({ success: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
-                    localStorage.setItem('accessToken', response.data.access_token);
-                    setIsLoading(false);
-                    router.push('/manage/events');  // redirect to (agent events)
-                } else {
-                    setResponseData({ success: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
-                    setIsLoading(false);
-                    showAlert('error', response.title, response.message);
-                }
-            });
+            AuthAction.login({email, password, remember});
         } catch (error) {
             setIsLoading(false);
             showAlert('error', responseData.title, responseData.message)
