@@ -10,53 +10,53 @@ import { AuthAction } from '@/app/actions/auth/auth-action';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState } from "@/redux/store/store";
 
+
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
-
 export default function Login() {
-    function handleLoginForm(email:any, password:any, remember:any) {
-        if (email && password) {
-            // @ts-ignore
-            useAppDispatch(AuthAction.login(email, password, remember));
-        }
-    }
-
+    const dispatch = useAppDispatch();
     const router = useRouter();
-    const agent = useAppSelector((state: RootState) => state.auth);
-    const redirect = useAppSelector((state: RootState) => state.redirect);
-
-
-
+    const reduxStore = useAppSelector((state: RootState) => state);
+    const alert:any = reduxStore.alert;
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordType, setPasswordType] = useState(true)
     const [remember, setRemember] = useState(false)
     const [isLoading, setIsLoading] = useState(false);
-    const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
 
+    function handleFormSummation (email: any, password: any, remember: boolean) {
+        if (email && password) {
+            // @ts-ignore
+            dispatch(AuthAction.login(email, password, remember));
+        }
+    }
+
+    function handleAuthSetRedirect() {
+        // check user authenticated and redirect to redirect path
+        if(reduxStore.auth && reduxStore.auth.access_token) {
+            (alert && alert.redirect) ? router.push(alert.redirect) : router.push('/manage/events');
+        }
+    }
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
-        // try {
+        try {
             setIsLoading(true);
-            handleLoginForm(email, password, remember);
+            handleFormSummation(email, password, remember);
             setIsLoading(false);
-        // } catch (error) {
-        //     setIsLoading(false);
-        //     showAlert('error', 'Exception', 'Something went wrong, please try again')
-        // }
+        } catch (error:any) {
+            setIsLoading(false);
+            dispatch({ type: "error", message: error.message, title: 'Exception' });
+        }
     }
 
     useEffect(() => {
-        console.log({where: 'Inside/start use effect', redirect: redirect, agent: agent});
-        if(agent && agent.access_token) {
-            console.log({where: 'Token found'});
-            // router.push('/manage/events');
-        }
-        console.log({where: 'After use effect execution'});
+        setIsLoading(true);
+        // check user authenticated and redirect to redirect path
+        handleAuthSetRedirect();
+        setIsLoading(false);
     }, []);
 
 
@@ -66,43 +66,7 @@ export default function Login() {
     }
 
 
-
-
-    // Function to show the alert message
-    const showAlert = (type= '', title= '', message= '') => {
-        setAlertContent({ type: type, title: title, message: message });
-        setIsAlertVisible(true);
-        // Hide the alert after 3 seconds (adjust the delay as needed)
-        setTimeout(() => {
-            setAlertContent({type: '', title: '', message: ''});
-            setIsAlertVisible(false);
-        }, 3000);
-    };
-
-
-    // const handleSubmit = (e:any) => {
-    //     e.preventDefault();
-    //     e.stopPropagation();
-    //     try {
-    //         setIsLoading(true);
-    //         handleFormSubmit(email, password, remember);
-    //         setIsLoading(false);
-    //
-    //         // if (email && password) {
-    //         //     // @ts-ignore
-    //         //     useAppDispatch(AuthAction.login(email, password, remember));
-    //         //     return console.log({where: 'After login action', agent: agent, redirect: redirect});
-    //         // }
-    //         // setIsLoading(false);
-    //     } catch (error) {
-    //         setIsLoading(false);
-    //         showAlert('error', 'Exception', 'Something went wrong, please try again')
-    //     }
-    // }
-
-
     return (
-
         <div className="signup-wrapper">
             {/* loader */}
             {isLoading && (
@@ -113,11 +77,12 @@ export default function Login() {
             <main className="main-section" role="main">
                 <div className="container">
                     {/* Alert */}
-                    {isAlertVisible && (
-                        <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
-                                      icon= {alertContent.type === 'success' ? "check" : "info"}
-                                      title= {alertContent.title}
-                                      content= {alertContent.message} />
+                    {alert && (
+                        <AlertMessage className={ `alert ${alert.class}` }
+                                      icon= {alert.success ? "check" : "info"}
+                                      title= {alert.title}
+                                      content= {alert.message}
+                        />
                     )}
                     {/* /. Alert */}
                     <div className="wrapper-box">

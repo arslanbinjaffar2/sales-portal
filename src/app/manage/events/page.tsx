@@ -5,20 +5,20 @@ import Image from 'next/image';
 import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import Loader from '@/app/components/forms/Loader';
 import { useRouter } from 'next/navigation';
+import { AGENT_EVENTS_ENDPOINT } from '@/app/constants/endpoints';
+import Pagination from "@/app/components/pagination";
 // import redux
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
-import { setAgentEvents, selectAgentEvents }  from "@/redux/store/slices/agentEventsSlice";
-// import { setAgent, setAccessToken, selectAgent, selectAgentAccessToken }  from "@/redux/store/slices/agentSlice";
-// import { setPaginationData, selectPagination }  from "@/redux/store/slices/pagination";
-import Pagination from "@/app/components/pagination";
+import { RootState } from "@/redux/store/store";
+import { EventService } from "@/app/services/event/event-service"
+import { EventAction } from "@/app/actions/event/event-action"
 
 
-// const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const agentEventEndpoint = `${process.env.serverHost}/api/v1/sales/agent/events`;
+const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
 // attempt sales-agent login using credentials
 function fetchAgentEvents(requestData:any, token:any, page:number) {
-    return fetch(`${agentEventEndpoint}?page=${page}`, {
+    return fetch(`${AGENT_EVENTS_ENDPOINT}?page=${page}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -28,55 +28,43 @@ function fetchAgentEvents(requestData:any, token:any, page:number) {
         body: JSON.stringify(requestData)
     })
       .then(data => data.json())
+
+    // return EventService.listing(requestData, page);
+    // return console.log(eventsResponse);
 }
 
 
 export default function Dashboard() {
     const dispatch = useAppDispatch();
-
-    // let accessToken: string | null;
-    const [accessToken, setAccessToken] = useState<any>('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: ''});
-    const [responseData, setEventResponseData] = useState({success: false, title: '', message: '', data: {}});
     const router = useRouter();
-    const [events, setEvents] = useState<any>([]);
+    const reduxStore = useAppSelector((state: RootState) => state);
+    const alert:any = reduxStore.alert;
+    const auth = reduxStore.auth;
+    const accessToken = reduxStore.auth.access_token;
+    const events:any = reduxStore.events;
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: ''});
+
+    // const [events, setEvents] = useState<any>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
 
     useEffect(() => {
-        // setAccessToken(selectAgentAccessToken);
-        setTimeout(function() {
-            setAccessToken(localStorage.getItem('accessToken'));
-        }, 500);
+        setIsLoading(true);
+        // check user un-authenticated and redirect to sign-in
+        (!auth) ? router.push('/auth/login') : handleFetchEventData(eventsRequestData, currentPage);
 
+        handleFetchEventData(eventsRequestData, currentPage);
+        setIsLoading(false);
     }, []);
-
-    useEffect(() => {
-        if(accessToken) {
-            handleFetchEventData(eventsRequestData, currentPage);
-        }
-    }, [accessToken]);
-
-    // Function to show the alert message
-    const showAlert = (type = '', title = '', message = '') => {
-        setAlertContent({type: type, title: title, message: message});
-        setIsAlertVisible(true);
-        // Hide the alert after 3 seconds (adjust the delay as needed)
-            setTimeout(() => {
-                setAlertContent({type: '', title: '', message: ''});
-                setIsAlertVisible(false);
-      }, 3000);
-    };
 
 
     const handleSearchTextFilter = (e:any) => {
         const {value} = e.target;
         const eventsRequestDataUpdate = eventsRequestData;
-        eventsRequestDataUpdate.search_text = value;
+        eventsRequestDataUpdate['search_text'] = value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
         handleFetchEventData(eventsRequestData, currentPage);
@@ -107,39 +95,24 @@ export default function Dashboard() {
             fetchAgentEvents(requestData, accessToken, currentPage)
             .then(response => {
                 if (response.message === 'Unauthenticated.') { // handle unauthenticated response
-                    showAlert('error', 'Error', 'Unauthenticated');
+                    dispatch({ type: "error", title: 'Authentication error', message: 'Unauthenticated, please login again' });
                     return router.push('auth/login');
                 }
 
                 if (response.success && response.data) { // success response
-                    dispatch(setAgentEvents(response.data.events));
-                    setEventResponseData({
-                          success: response.success,
-                          title: 'Success',
-                          message: response.message,
-                          data: response.data
-                    }); // update responseData constant
-                    setIsLoading(false);
-                    setEvents(response.data.events);
-
+                    dispatch({ type: "events-info", events: response.data.events });
                     setTotalPages(response.data.paginate.total_pages);
                     setCurrentPage(response.data.paginate.current_page);
-                    console.log(response.data.paginate.current_page);
-
-                } else { // error response
-                    setEventResponseData({
-                        success: response.success,
-                        title: 'Error',
-                        message: response.message,
-                        data: response.data
-                    }); // update responseData constant
                     setIsLoading(false);
-                    showAlert('error', response.title, response.message);
+                } else { // error response
+                    setIsLoading(false);
+                    dispatch({ type: "events-info", events: response.data.events });
+                    dispatch({ type: "error", title: response.title, message: response.message });
                 }
             });
-        } catch (error) {
+        } catch (error:any) {
             setIsLoading(false);
-            showAlert('error', 'Error', 'Something went wrong, please try again')
+            dispatch({ type: "error", title: 'Exception', message: error.message });
         }
     }
 
@@ -167,14 +140,16 @@ export default function Dashboard() {
           )}
           {/* /. loader */}
           <div className="container">
-            {/* Alert */}
-            {isAlertVisible && (
-                <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
-                              icon= {alertContent.type === 'success' ? "check" : "info"}
-                              title= {alertContent.title}
-                              content= {alertContent.message} />
-            )}
-            {/* /. Alert */}
+              {/* Alert */}
+              {alert && (
+                  <AlertMessage
+                      className={ `alert ${alert.class}` }
+                      icon= {alert.success ? "check" : "info"}
+                      title= {alert.title}
+                      content= {alert.message}
+                  />
+              )}
+              {/* /. Alert */}
             <div className="row bottom-header-elements">
               <div className="col-8">
               </div>

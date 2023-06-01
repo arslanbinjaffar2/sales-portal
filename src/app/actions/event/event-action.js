@@ -1,5 +1,5 @@
 export const EventAction = {
-    eventInfo, eventState, template, invitation
+    eventInfo, eventsInfo, eventState
 };
 
 function eventInfo(event) {
@@ -8,20 +8,14 @@ function eventInfo(event) {
     };
 }
 
+function eventsInfo(events) {
+    return dispatch => {
+        dispatch({ type: "events-info", events: events });
+    };
+}
+
 function eventState(eventState = {}) {
     return dispatch => {
         dispatch({ type: "event-state", eventState: eventState });
-    };
-}
-
-function template(template) {
-    return dispatch => {
-        dispatch({ type: "template", template: template });
-    };
-}
-
-function invitation(invitation = null) {
-    return dispatch => {
-        dispatch({ type: "invitation", invitation: invitation });
     };
 }

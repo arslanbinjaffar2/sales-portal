@@ -1,6 +1,7 @@
 import { AuthService } from '@/app/services/auth/auth-service';
 import { store } from '@/redux/store/store';
 import { GeneralAction } from '@/app/actions/general-action';
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 
 export const AuthAction = {
     login,
@@ -10,42 +11,66 @@ export const AuthAction = {
     autoLogin
 };
 
+
 function login(email, password, logged = false) {
-    return dispatch => {
+    return (dispatch) => {
         AuthService.login(email, password, logged)
             .then(
                 response => {
                     if (response.success) {
-                        dispatch({ type: "success", redirect: "/manage/events", message: response.message, logged: response.data.logged ? response.data.logged : false });
+                        store.dispatch({ type: "success", redirect: "/manage/events", message: response.message, logged: response.data.logged ? response.data.logged : false });
                         if (response && response.data && response.data.agent) {
-                            dispatch(GeneralAction.auth(response.data.agent));
+                            store.dispatch(GeneralAction.auth(response.data.agent));
                         }
+                        store.dispatch(GeneralAction.redirect(true));
                     } else {
-                        dispatch(failure(response.message));
+                        store.dispatch(failure(response.message));
                     }
                 },
                 error => {
-                    dispatch(failure(error));
+                    store.dispatch(failure(error));
                 }
             );
     };
 }
 
+// function login(email, password, logged = false) {
+//     return (dispatch) => {
+//         AuthService.login(email, password, logged)
+//             .then(
+//                 response => {
+//                     if (response.success) {
+//                         store.dispatch({ type: "success", redirect: "/manage/events", message: response.message, title: response.title, logged: response.data.logged ? response.data.logged : false });
+//                         if (response && response.data && response.data.agent) {
+//                             store.dispatch(GeneralAction.auth(response.data.agent));
+//                         }
+//                         store.dispatch(GeneralAction.redirect(true));
+//                     } else {
+//                         store.dispatch(failure(response.message));
+//                     }
+//                 },
+//                 error => {
+//                     store.dispatch(failure(error));
+//                 }
+//             );
+//     };
+// }
+
 function autoLogin(token) {
     return dispatch => {
-        dispatch(request({ token }));
+        store.dispatch(request({ token }));
         AuthService.autoLogin(token)
             .then(
                 response => {
                     if (response.success) {
-                        dispatch(success(response));
+                        store.dispatch(success(response));
                         if (response && response.data && response.data.user) dispatch(GeneralAction.auth(response));
                     } else {
-                        dispatch(failure(response.message));
+                        store.dispatch(failure(response.message));
                     }
                 },
                 error => {
-                    dispatch(failure(error));
+                    store.dispatch(failure(error));
                 }
             );
     };
@@ -53,18 +78,18 @@ function autoLogin(token) {
 
 function passwordRequest(email) {
     return dispatch => {
-        dispatch(request({ email }));
+        store.dispatch(request({ email }));
         AuthService.passwordRequest(email)
             .then(
                 response => {
                     if (response.success) {
-                        dispatch({ type: "success", "redirect": "/reset-password", "message": response.message });
+                        store.dispatch({ type: "success", "redirect": "/reset-password", "message": response.message });
                     } else {
-                        dispatch(failure(response.message));
+                        store.dispatch(failure(response.message));
                     }
                 },
                 error => {
-                    dispatch(failure(error));
+                    store.dispatch(failure(error));
                 }
             );
     };
@@ -72,18 +97,18 @@ function passwordRequest(email) {
 
 function passwordReset(email, password, password_confirmation, token) {
     return dispatch => {
-        dispatch(request({ email }));
+        store.dispatch(request({ email }));
         AuthService.passwordReset(email, password, password_confirmation, token)
             .then(
                 response => {
                     if (response.success) {
-                        dispatch({ type: "success", "redirect": "/login", "message": response.message });
+                        store.dispatch({ type: "success", "redirect": "/login", "message": response.message });
                     } else {
-                        dispatch(failure(response.message));
+                        store.dispatch(failure(response.message));
                     }
                 },
                 error => {
-                    dispatch(failure(error));
+                    store.dispatch(failure(error));
                 }
             );
     };

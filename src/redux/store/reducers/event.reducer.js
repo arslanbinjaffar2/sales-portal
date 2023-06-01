@@ -1,5 +1,10 @@
-let eventInfo = localStorage.getItem('eventInfo');
-const initialState = (eventInfo && eventInfo !== undefined ? JSON.parse(eventInfo) : {});
+// let eventInfo = localStorage.getItem('eventInfo');
+// const initialState = (eventInfo && eventInfo !== undefined ? JSON.parse(eventInfo) : {});
+
+let eventInfo =
+    typeof window !== "undefined" && localStorage.getItem("eventInfo");
+const initialState =
+    eventInfo && eventInfo !== undefined ? JSON.parse(eventInfo) : {};
 
 export function event(state = initialState, action) {
     switch (action.type) {

@@ -1,4 +1,5 @@
 import { handleResponse, guestHeader, authHeader } from '../../helpers';
+import { LOGIN_ENDPOINT } from '@/app/constants/endpoints';
 
 export const AuthService = {
     login,
@@ -9,15 +10,14 @@ export const AuthService = {
 };
 
 function login(email, password, logged) {
-    const loginEndPont = `${process.env.serverHost}/api/v1/sales/auth/login`;
-    const requestParams = {email: email, password: password, remember: logged};
+    const requestBody = {email: email, password: password, remember: logged};
     const requestOptions = {
         method: 'POST',
         headers: guestHeader(),
-        body: JSON.stringify(requestParams)
+        body: JSON.stringify(requestBody)
     };
 
-    return fetch(loginEndPont, requestOptions)
+    return fetch(LOGIN_ENDPOINT, requestOptions)
         .then(handleResponse)
         .then(response => {
             if (response.success && !response.data.logged) {

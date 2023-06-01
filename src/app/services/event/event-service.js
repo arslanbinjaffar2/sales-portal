@@ -1,4 +1,5 @@
-import { authHeader, handleResponse } from 'helpers';
+import { authHeader, handleResponse } from '../../helpers';
+import { AGENT_EVENTS_ENDPOINT } from '../../constants/endpoints';
 
 export const EventService = {
     createEvent, listing, destroy, fetchEvent, updateEvent
@@ -6,20 +7,16 @@ export const EventService = {
 
 function listing(request_data, page) {
     const form = new FormData();
-    form.append('limit', request_data.limit);
-    form.append('query', request_data.query);
-    form.append('order_by', request_data.order_by);
+    form.append('search_text', request_data.search_text);
     form.append('sort_by', request_data.sort_by);
-    form.append('action', request_data.action);
+    form.append('event_action', request_data.event_action);
     const requestOptions = {
         method: "POST",
         headers: authHeader(),
         body: form
     };
-    return fetch(
-        `${process.env.REACT_APP_URL}/event/listing/${page}`,
-        requestOptions
-    ).then(handleResponse);
+    return fetch(`${AGENT_EVENTS_ENDPOINT}?page=${page}`, requestOptions).
+    then(handleResponse);
 }
 
 function createEvent(request_data) {

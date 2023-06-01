@@ -1,16 +1,10 @@
 export const GeneralAction = {
-    errors, step, redirect, update, auth
+    alert, errors, redirect, update, auth
 };
 
 function errors(errors) {
     return dispatch => {
         dispatch({ type: "errors", errors: errors });
-    };
-}
-
-function step(step) {
-    return dispatch => {
-        dispatch({ type: "step", step: step });
     };
 }
 
@@ -29,5 +23,11 @@ function update(update) {
 function auth(user) {
     return dispatch => {
         dispatch({ type: "auth-info", user: user });
+    };
+}
+
+function alert(type, user) {
+    return dispatch => {
+        dispatch({ type: type, user: user });
     };
 }
