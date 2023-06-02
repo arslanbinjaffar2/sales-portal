@@ -7,6 +7,6 @@ export function guestHeader() {
     //     return {'Content-Type': 'application/json'};
     // }
 
-        return {'Content-Type': 'application/json'};
+        return {'Content-Type': 'application/json',  'Accept': 'application/json'};
 
 }

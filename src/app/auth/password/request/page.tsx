@@ -3,69 +3,53 @@ import { useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/app/assets/img/illustration.png'
 import AlertMessage from "@/app/components/forms/alerts/AlertMessage";
-import Loader from '@/app/components/forms/loader';
+import Loader from '@/app/components/forms/Loader';
 import { useRouter } from 'next/navigation';
+import {useAppDispatch, useAppSelector} from "@/redux/hooks/hooks";
+import { RootState, store } from "@/redux/store/store";
+import { GeneralAction } from "@/app/actions/general-action";
+import { AuthAction } from "@/app/actions/auth/auth-action";
+import { AuthService } from "@/app/services/auth/auth-service";
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const requestResetEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset-request`;
-
-
-// attempt sales-agent login using credentials
-function requestPasswordReset(resetRequest:any) {
-    return fetch(requestResetEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(resetRequest)
-    })
-        .then(data => data.json())
-}
 
 
 export default function requestReset() {
-    const [email, setEmail] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const  [responseData, setResponseData ] = useState({ success: false, title: '', message: '', data: {} });
+    const dispatch = useAppDispatch();
     const router = useRouter();
+    const reduxStore = useAppSelector((state: RootState) => state);
+    const alert:any = reduxStore.alert;
+    const isLoading: boolean = reduxStore.loading;
 
-
-    // Function to show the alert message
-    const showAlert = (type= '', title= '', message= '') => {
-        setAlertContent({ type: type, title: title, message: message });
-        setIsAlertVisible(true);
-        // Hide the alert after 3 seconds (adjust the delay as needed)
-        setTimeout(() => {
-            setAlertContent({type: '', title: '', message: ''});
-            setIsAlertVisible(false);
-        }, 3000);
-    };
+    const [email, setEmail] = useState('');
 
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
         try {
-            setIsLoading(true);
-            requestPasswordReset({email})
-                .then( response => {
+            dispatch(GeneralAction.loading(true));
+            AuthService.passwordRequest(email).then(
+                response => {
                     if (response.success) {
-                        setIsLoading(false);
-                        setResponseData({ success: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
                         localStorage.setItem('email', email);
-                        router.push('/auth/password/verify');  // redirect to "verify reset code" page
+                        store.dispatch({ type: "success", message: response.message });
+                        store.dispatch(GeneralAction.loading(false));
+                        store.dispatch(GeneralAction.redirect(true));
+                        return router.push('/auth/password/verify');
                     } else {
-                        setResponseData({ success: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
-                        setIsLoading(false);
-                        showAlert('error', response.title, response.message)
+                        store.dispatch(AuthAction.failure(response.message));
+                        store.dispatch(GeneralAction.loading(false));
                     }
-                });
-        } catch (error) {
-            setIsLoading(false);
-            showAlert('error', responseData.title, responseData.message)
+                },
+                error => {
+                    store.dispatch(AuthAction.failure(error));
+                    store.dispatch(GeneralAction.loading(false));
+                }
+            );
+        } catch (error: any) {
+            dispatch(GeneralAction.loading(false));
+            dispatch({ type: "error", message: error.message, title: 'Exception' });
         }
     }
 
@@ -80,11 +64,12 @@ export default function requestReset() {
       <main className="main-section" role="main">
         <div className="container">
             {/* Alert */}
-            {isAlertVisible && (
-                <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
-                              icon= {alertContent.type === 'success' ? "check" : "info"}
-                              title= {alertContent.title}
-                              content= {alertContent.message} />
+            {alert && (
+                <AlertMessage className={ `alert ${alert.class}` }
+                              icon= {alert.success ? "check" : "info"}
+                              title= {alert.title}
+                              content= {alert.message}
+                />
             )}
             {/* /. Alert */}
           <div className="wrapper-box">

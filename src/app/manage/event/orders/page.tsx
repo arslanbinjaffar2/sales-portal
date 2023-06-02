@@ -2,19 +2,17 @@
 import React, {useEffect, useState} from 'react';
 import Image from 'next/image'
 import Dropdown from '@/app/components/DropDown';
-import {object} from "prop-types";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import {RootState} from "@/redux/store/store";
 
 
 export default function OrderListing() {
-  // const [event, setEvent] = useState<any>({});
-  let event: any;
-
+  const dispatch = useAppDispatch();
+  const event = useAppSelector((state: RootState) => state.event);
 
   useEffect(() => {
-    event = (localStorage.getItem('eventDetail'));
-    return console.log({orderCount: event.orders});
-
-
+    // todo, do further logic and API integration
+    return console.log({event});
     document.body.addEventListener('click', handleBody,false)
     return () => {
       document.body.removeEventListener('click', handleBody,false)

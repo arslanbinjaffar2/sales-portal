@@ -6,15 +6,15 @@ export function handleResponse(response) {
         if (!response.ok && response.status === 401) {
             const error = (data && data.message) || response.statusText;
             localStorage.removeItem('agent');
-            store.dispatch({ type: "success", "message": response.message });
+            store.dispatch({ type: "error", message: 'Unauthenticated, please login again' });
             return Promise.reject(error);
         } else if (!response.ok && response.status === 503) {
             const error = (data && data.message) || response.statusText;
             localStorage.removeItem('eventInfo');
-            store.dispatch({ type: "success", "message": error });
+            store.dispatch({ type: "success", message: error });
             return Promise.reject(error);
         } else if (!response.ok && response.status !== 422) {
-            store.dispatch({ type: "success", "message": response.message, "redirect": '/error' });
+            store.dispatch({ type: "success", message: response.message, redirect: '/auth/login' });
         }
         return data;
     });

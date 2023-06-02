@@ -1,5 +1,5 @@
 import { handleResponse, guestHeader, authHeader } from '../../helpers';
-import { LOGIN_ENDPOINT } from '@/app/constants/endpoints';
+import {LOGIN_ENDPOINT, PASSWORD_REQUEST_ENDPOINT} from '@/app/constants/endpoints';
 
 export const AuthService = {
     login,
@@ -49,15 +49,14 @@ function autoLogin(token) {
         });
 }
 
-function passwordRequest(email) {
 
+function passwordRequest(email) {
     const requestOptions = {
         method: 'POST',
         headers: guestHeader(),
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: email })
     };
-
-    return fetch(`${process.env.REACT_APP_URL}/auth/password/email`, requestOptions)
+    return fetch(`${PASSWORD_REQUEST_ENDPOINT}`, requestOptions)
         .then(handleResponse);
 }
 

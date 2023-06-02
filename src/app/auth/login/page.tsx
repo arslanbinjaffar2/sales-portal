@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { AuthAction } from '@/app/actions/auth/auth-action';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState } from "@/redux/store/store";
+import {GeneralAction} from "@/app/actions/general-action";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -18,12 +19,14 @@ export default function Login() {
     const router = useRouter();
     const reduxStore = useAppSelector((state: RootState) => state);
     const alert:any = reduxStore.alert;
+    const isLoading: boolean = reduxStore.loading;
+
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordType, setPasswordType] = useState(true)
     const [remember, setRemember] = useState(false)
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
 
     function handleFormSummation (email: any, password: any, remember: boolean) {
         if (email && password) {
@@ -43,20 +46,20 @@ export default function Login() {
         e.preventDefault();
         e.stopPropagation();
         try {
-            setIsLoading(true);
+            dispatch(GeneralAction.loading(true));
             handleFormSummation(email, password, remember);
-            setIsLoading(false);
+            dispatch(GeneralAction.loading(false));
         } catch (error:any) {
-            setIsLoading(false);
+            dispatch(GeneralAction.loading(false));
             dispatch({ type: "error", message: error.message, title: 'Exception' });
         }
     }
 
     useEffect(() => {
-        setIsLoading(true);
+        dispatch(GeneralAction.loading(true));
         // check user authenticated and redirect to redirect path
         handleAuthSetRedirect();
-        setIsLoading(false);
+        dispatch(GeneralAction.loading(false));
     }, []);
 
 

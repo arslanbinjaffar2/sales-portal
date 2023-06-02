@@ -5,9 +5,11 @@ import { events } from './events-reducer';
 import { redirect } from './redirect.reducer';
 import { update } from './update.reducer';
 import { auth } from './auth-reducer';
+import { paginate } from './paginate.reducer';
+import { loading } from './loading.reducer';
 
 const rootReducer = combineReducers({
-  alert, event, events, redirect, update, auth
+  alert, event, events, redirect, update, auth, paginate, loading
 });
 
 export default rootReducer;

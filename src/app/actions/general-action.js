@@ -1,5 +1,5 @@
 export const GeneralAction = {
-    alert, errors, redirect, update, auth
+    alert, errors, redirect, update, auth, updatePaginate, loading
 };
 
 function errors(errors) {
@@ -26,8 +26,20 @@ function auth(user) {
     };
 }
 
-function alert(type, user) {
+function alert(type, alertData) {
     return dispatch => {
-        dispatch({ type: type, user: user });
+        dispatch({ type: type, alert: alertData });
+    };
+}
+
+function updatePaginate(type, pagination) {
+    return {
+        type: type, pagination: pagination
+    };
+}
+
+function loading(loading) {
+    return dispatch => {
+        dispatch({ type: 'loading', loading: loading });
     };
 }
