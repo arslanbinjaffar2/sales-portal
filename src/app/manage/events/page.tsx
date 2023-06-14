@@ -1,16 +1,16 @@
 "use client"; // this is a client component
-import Dropdown from '@/app/components/DropDown';
+import Dropdown from '@/components/DropDown';
 import { useState, useEffect } from "react";
 import Image from 'next/image';
-import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
-import Loader from '@/app/components/forms/Loader';
+import AlertMessage from '@/components/forms/alerts/AlertMessage';
+import Loader from '@/components/forms/Loader';
 import { useRouter } from 'next/navigation';
-import Pagination from "@/app/components/pagination";
+import Pagination from "@/components/pagination";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState, store } from "@/redux/store/store";
-import { EventService } from "@/app/services/event/event-service"
-import { EventAction } from "@/app/actions/event/event-action"
-import { GeneralAction } from "@/app/actions/general-action"
+import { EventService } from "@/services/event/event-service"
+import { EventAction } from "@/actions/event/event-action"
+import { GeneralAction } from "@/actions/general-action"
 
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -20,20 +20,22 @@ export default function Dashboard() {
     const router = useRouter();
     const reduxStore = useAppSelector((state: RootState) => state);
     const alert:any = reduxStore.alert;
-    const auth = reduxStore.auth;
+    const authUser = reduxStore.authUser.user;
+    const [isLoading, setIsLoading] = useState(false);
     const events: [] = reduxStore.events;
-    const pagination:any = reduxStore.paginate;
-    const currentPage: number = pagination.current_page;
-    const totalPages: number = pagination.total_pages;
-    const isLoading: boolean = reduxStore.loading;
+    // const pagination:any = reduxStore.paginate;
+    // const currentPage: number = pagination.current_page;
+    // const totalPages: number = pagination.total_pages;
+    // const isLoading: boolean = reduxStore.loading;
 
     const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: ''});
 
 
     useEffect(() => {
         dispatch(GeneralAction.loading(true));
-        // check user un-authenticated and redirect to sign-in
-        (!!(auth)) ? router.push('/auth/login') : handleFetchEventData(eventsRequestData, currentPage);
+        // check user un-authUserenticated and redirect to sign-in
+        console.log(authUser);
+        (authUser !== null) ? router.push('auth/login') : handleFetchEventData(eventsRequestData);
 
         dispatch(GeneralAction.loading(false));
     }, []);
@@ -69,25 +71,25 @@ export default function Dashboard() {
 
     const handleFetchEventData = (requestData:any, currentPage:number = 1) => {
         try {
-            dispatch(GeneralAction.loading(true));
+            setIsLoading(true);
             EventService.listing(requestData, currentPage)
-                .then(response => {
-                    if (response.message === 'Unauthenticated.') { // handle unauthenticated response
-                        store.dispatch({ type: "error", title: 'Authentication error', message: 'Unauthenticated, please login again' });
-                        return router.push('auth/login');
+                .then((response:any) => {
+                    if (response.message === 'UnauthUserenticated.') { // handle unauthUserenticated response
+                        store.dispatch({ type: "error", title: 'authUserentication error', message: 'UnauthUserenticated, please login again' });
+                        return router.push('authUser/login');
                     }
                     if (response.success && response.data) { // success response
                         store.dispatch({ type: "events-info", events: response.data.events });
                         store.dispatch(GeneralAction.updatePaginate('pagination', response.data.paginate));
-                        dispatch(GeneralAction.loading(false));
+                        setIsLoading(false);
                     } else { // error response
                         store.dispatch({ type: "events-info", events: [] });
                         store.dispatch({ type: "error", title: response.title, message: response.message });
-                        dispatch(GeneralAction.loading(false));
+                        setIsLoading(false);
                     }
                 });
         } catch (error:any) {
-            dispatch(GeneralAction.loading(false));
+            setIsLoading(false);
             store.dispatch({ type: "error", title: 'Exception', message: 'Something went wrong, please try again' });
         }
     }
@@ -159,7 +161,7 @@ export default function Dashboard() {
                                         <div className="logo">
                                             <a href="">
                                                 <Image
-                                                    src={require('@/app/assets/img/logo.svg')} alt="" width="200" height="29"
+                                                    src={require('@/assets/img/logo.svg')} alt="" width="200" height="29"
                                                     className='logos'
                                                 />
                                             </a>
@@ -223,7 +225,7 @@ export default function Dashboard() {
                                                          onClick={() => routeEventOrders(item)}>
                                                         <div className="ebs-table-box ebs-box-1">
                                                             <Image
-                                                                src={item.header_logo ? (`${process.env.stageImageHost + '/' + item.header_logo}`) : require('@/app/assets/img/logo-placeholder.png')}
+                                                                src={item.header_logo ? (`${process.env.stageImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.png')}
                                                                 alt="" width={100} height={34}/>
                                                         </div>
                                                         <div className="ebs-table-box ebs-box-2"><p>{item.name}</p>
@@ -257,11 +259,11 @@ export default function Dashboard() {
                                 </div>
                                 {/* Render the pagination component */}
                                 <div>
-                                    <Pagination
+                                    {/* <Pagination
                                         currentPage={currentPage}
                                         totalPages={totalPages}
                                         onPageChange={handlePageChange}
-                                    />
+                                    /> */}
                                 </div>
                             </div>
                         </div>

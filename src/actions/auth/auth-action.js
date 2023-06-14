@@ -1,6 +1,6 @@
-import { AuthService } from '@/app/services/auth/auth-service';
+import { AuthService } from '@/services/auth/auth-service';
 import { store } from '@/redux/store/store';
-import { GeneralAction } from '@/app/actions/general-action';
+import { GeneralAction } from '@/actions/general-action';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { router } from "next/client";
 

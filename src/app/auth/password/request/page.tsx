@@ -1,15 +1,15 @@
 "use client"; // this is a client component
 import { useState } from "react";
 import Image from 'next/image';
-import Illustration from '@/app/assets/img/illustration.png'
-import AlertMessage from "@/app/components/forms/alerts/AlertMessage";
-import Loader from '@/app/components/forms/Loader';
+import Illustration from '@/assets/img/illustration.png'
+import AlertMessage from "@/components/forms/alerts/AlertMessage";
+import Loader from '@/components/forms/Loader';
 import { useRouter } from 'next/navigation';
 import {useAppDispatch, useAppSelector} from "@/redux/hooks/hooks";
 import { RootState, store } from "@/redux/store/store";
-import { GeneralAction } from "@/app/actions/general-action";
-import { AuthAction } from "@/app/actions/auth/auth-action";
-import { AuthService } from "@/app/services/auth/auth-service";
+import { GeneralAction } from "@/actions/general-action";
+import { AuthAction } from "@/actions/auth/auth-action";
+import { AuthService } from "@/services/auth/auth-service";
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 

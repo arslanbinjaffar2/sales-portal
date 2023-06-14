@@ -1,5 +1,5 @@
-import { authHeader, handleResponse } from '../../helpers';
-import { AGENT_EVENTS_ENDPOINT } from '../../constants/endpoints';
+import { authHeader, handleResponse } from '@/helpers';
+import { AGENT_EVENTS_ENDPOINT } from '@/constants/endpoints';
 
 export const EventService = {
     listing

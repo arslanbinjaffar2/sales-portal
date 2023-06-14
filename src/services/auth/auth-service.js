@@ -1,5 +1,5 @@
-import { handleResponse, guestHeader, authHeader } from '../../helpers';
-import {LOGIN_ENDPOINT, PASSWORD_REQUEST_ENDPOINT} from '@/app/constants/endpoints';
+import { handleResponse, guestHeader, authHeader } from '@/helpers';
+import {LOGIN_ENDPOINT, PASSWORD_REQUEST_ENDPOINT} from '@/constants/endpoints';
 
 export const AuthService = {
     login,

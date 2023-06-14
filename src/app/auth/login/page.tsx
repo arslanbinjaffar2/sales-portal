@@ -1,15 +1,15 @@
 "use client"; // this is a client component
 import {useEffect, useState} from "react";
 import Image from 'next/image';
-import Illustration from '@/app/assets/img/illustration.png';
-import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
-import Loader from '@/app/components/forms/Loader';
+import Illustration from '@/assets/img/illustration.png';
+import AlertMessage from '@/components/forms/alerts/AlertMessage';
+import Loader from '@/components/forms/Loader';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AuthAction } from '@/app/actions/auth/auth-action';
+import { AuthAction } from '@/actions/auth/auth-action';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState } from "@/redux/store/store";
-import {GeneralAction} from "@/app/actions/general-action";
+import {GeneralAction} from "@/actions/general-action";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -93,7 +93,7 @@ export default function Login() {
                             <div className="row">
                                 <div className="col-6">
                                     <div className="left-signup">
-                                        <Image src={require('@/app/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
+                                        <Image src={require('@/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
                                         <div className="text-block">
                                             <h4>WELCOME TO SALES PORTAL</h4>
                                             <p>Maximize your sales potential with our customizable portal solutions</p>
@@ -112,7 +112,7 @@ export default function Login() {
                                         <ul className="main-navigation">
                                             <li>
                                                 <a href="#!">
-                                                    <i className="icons"><Image src={require('@/app/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
+                                                    <i className="icons"><Image src={require('@/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
                                                     <span id="language-switch">English</span><i className="material-icons">keyboard_arrow_down</i>
                                                 </a>
                                                 <ul>
@@ -137,7 +137,7 @@ export default function Login() {
                                                     </div>
                                                     <div className='form-row-box'>
                                                 <span className="icon-eye">
-                                                    <Image onClick={handleShowPass} src={require(`@/app/assets/img/${passwordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
+                                                    <Image onClick={handleShowPass} src={require(`@/assets/img/${passwordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
                                                 </span>
                                                         <input className={password ? 'ieHack': ''} type={passwordType ? 'password' : 'text'} value={password} id="password" onChange={(e) => setPassword(e.target.value)}  />
                                                         <label className="title">Password</label>

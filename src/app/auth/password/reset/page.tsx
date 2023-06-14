@@ -1,10 +1,10 @@
 "use client"; // this is a client component
 import { useState } from "react";
 import Image from 'next/image';
-import Illustration from '@/app/assets/img/illustration.png'
+import Illustration from '@/assets/img/illustration.png'
 import { useRouter } from 'next/navigation';
-import Loader from '@/app/components/forms/Loader';
-import AlertMessage from "@/app/components/forms/alerts/AlertMessage";
+import Loader from '@/components/forms/Loader';
+import AlertMessage from "@/components/forms/alerts/AlertMessage";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];

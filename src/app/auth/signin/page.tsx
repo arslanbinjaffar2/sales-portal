@@ -1,7 +1,7 @@
 "use client"; // this is a client component
 import { useState } from "react";
 import Image from 'next/image';
-import Illustration from '@/app/assets/img/illustration.png'
+import Illustration from '@/assets/img/illustration.png'
 // import AlertMessage from '@/app/components/forms/alerts/AlertMessage';
 import { useRouter } from 'next/navigation';
 

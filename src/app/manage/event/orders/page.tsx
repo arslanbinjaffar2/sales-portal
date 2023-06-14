@@ -1,7 +1,7 @@
 'use client'
 import React, {useEffect, useState} from 'react';
 import Image from 'next/image'
-import Dropdown from '@/app/components/DropDown';
+import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {RootState} from "@/redux/store/store";
 
