@@ -22,7 +22,7 @@ export default function Dashboard() {
     const alert:any = reduxStore.alert;
     const authUser = reduxStore.authUser.user;
     const [isLoading, setIsLoading] = useState(false);
-    const events: [] = reduxStore.events;
+    const events:any = [];
     // const pagination:any = reduxStore.paginate;
     // const currentPage: number = pagination.current_page;
     // const totalPages: number = pagination.total_pages;
@@ -32,13 +32,8 @@ export default function Dashboard() {
 
 
     useEffect(() => {
-        dispatch(GeneralAction.loading(true));
-        // check user un-authUserenticated and redirect to sign-in
-        console.log(authUser);
-        (authUser !== null) ? router.push('auth/login') : handleFetchEventData(eventsRequestData);
-
-        dispatch(GeneralAction.loading(false));
-    }, []);
+        (authUser === null) ? router.push('auth/login') : handleFetchEventData(eventsRequestData);
+    }, [authUser]);
 
 
     const handleSearchTextFilter = (e:any) => {
@@ -76,7 +71,7 @@ export default function Dashboard() {
                 .then((response:any) => {
                     if (response.message === 'UnauthUserenticated.') { // handle unauthUserenticated response
                         store.dispatch({ type: "error", title: 'authUserentication error', message: 'UnauthUserenticated, please login again' });
-                        return router.push('authUser/login');
+                        // return router.push('authUser/login');
                     }
                     if (response.success && response.data) { // success response
                         store.dispatch({ type: "events-info", events: response.data.events });
@@ -99,7 +94,7 @@ export default function Dashboard() {
         dispatch(GeneralAction.loading(false));
         dispatch({type: 'event-info', event: eventInfo});
         store.dispatch({ type: "error", title: 'Exception', message: 'Something went wrong, please try again' });
-        router.push('/manage/event/orders');
+        // router.push('/manage/event/orders');
     }
 
 

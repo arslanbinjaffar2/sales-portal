@@ -1,5 +1,5 @@
 "use client"; // this is a client component
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/assets/img/illustration.png'
 import AlertMessage from "@/components/forms/alerts/AlertMessage";
@@ -10,6 +10,8 @@ import { RootState, store } from "@/redux/store/store";
 import { GeneralAction } from "@/actions/general-action";
 import { AuthAction } from "@/actions/auth/auth-action";
 import { AuthService } from "@/services/auth/auth-service";
+import { forgotPasswordRequest, setForgetPasswordEmail, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
+import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
@@ -17,67 +19,38 @@ const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 export default function requestReset() {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const reduxStore = useAppSelector((state: RootState) => state);
-    const alert:any = reduxStore.alert;
-    const isLoading: boolean = reduxStore.loading;
-
+    const {loading, redirect, error, errors} = useAppSelector((state: RootState) => state.authUser);
     const [email, setEmail] = useState('');
-
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
-        try {
-            dispatch(GeneralAction.loading(true));
-            AuthService.passwordRequest(email).then(
-                response => {
-                    if (response.success) {
-                        localStorage.setItem('email', email);
-                        store.dispatch({ type: "success", message: response.message });
-                        store.dispatch(GeneralAction.loading(false));
-                        store.dispatch(GeneralAction.redirect(true));
-                        return router.push('/auth/password/verify');
-                    } else {
-                        store.dispatch(AuthAction.failure(response.message));
-                        store.dispatch(GeneralAction.loading(false));
-                    }
-                },
-                error => {
-                    store.dispatch(AuthAction.failure(error));
-                    store.dispatch(GeneralAction.loading(false));
-                }
-            );
-        } catch (error: any) {
-            dispatch(GeneralAction.loading(false));
-            dispatch({ type: "error", message: error.message, title: 'Exception' });
+        if(email !== ''){
+          dispatch(setForgetPasswordEmail(email));
+          dispatch(forgotPasswordRequest({email}));
         }
     }
+
+    useEffect(() => {
+      if(redirect !== null) {
+        dispatch(setRedirect(null));
+        dispatch(setLoading(null));
+        router.push(redirect);
+      }
+  }, [redirect]);
 
 
     return (
     <div className="signup-wrapper">
-        {/* loader */}
-        {isLoading && (
-            <Loader className='' fixed='' />
-        )}
-        {/* /. loader */}
       <main className="main-section" role="main">
         <div className="container">
-            {/* Alert */}
-            {alert && (
-                <AlertMessage className={ `alert ${alert.class}` }
-                              icon= {alert.success ? "check" : "info"}
-                              title= {alert.title}
-                              content= {alert.message}
-                />
-            )}
-            {/* /. Alert */}
+           
           <div className="wrapper-box">
             <div className="container-box">
               <div className="row">
                 <div className="col-6">
                   <div className="left-signup">
-                    <Image src={require('@/app/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
+                    <Image src={require('@/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
                     <div className="text-block">
                         <h4>WELCOME TO SALES PORTAL</h4>
                         <p>Maximize your sales potential with our customizable portal solutions</p>
@@ -96,7 +69,7 @@ export default function requestReset() {
                     <ul className="main-navigation">
                       <li>
                           <a href="#!">
-                            <i className="icons"><Image src={require('@/app/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
+                            <i className="icons"><Image src={require('@/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
                             <span id="language-switch">English</span><i className="material-icons">keyboard_arrow_down</i>
                           </a>
                           <ul>
@@ -111,6 +84,16 @@ export default function requestReset() {
                       </li>
                     </ul>
                     <div className="right-formarea">
+                      {errors && errors.length > 0 && <ErrorMessage 
+                          icon= {"info"}
+                          title= {"Invalid data"}
+                          errors= {errors}
+                      />}
+                      {error && <ErrorMessage 
+                          icon= {"info"}
+                          title= {"Sorry! Something went wrong"}
+                          error= {error}
+                      />}
                       <h2>Did you forget your password ?</h2>
                       <p>Enter your email address you’re using for your account below and we will send you a password reset link.</p>
                       <form role="" onSubmit={handleSubmit}>
@@ -120,7 +103,7 @@ export default function requestReset() {
                               <label className="title">Enter your email</label>
                           </div>
                           <div className="form-row-box button-panel">
-                              <button className="btn btn-primary" type='submit'>SEND</button>
+                              <button className="btn btn-primary" disabled={loading} type='submit'>{loading?"SENDING...":"SEND"}</button>
                           </div>
                         </div>
                       </form>

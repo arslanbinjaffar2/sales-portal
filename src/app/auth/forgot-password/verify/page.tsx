@@ -6,101 +6,71 @@ import { useRouter } from 'next/navigation';
 import Loader from '@/components/forms/Loader';
 import AlertMessage from "@/components/forms/alerts/AlertMessage";
 import {GeneralAction} from "@/actions/general-action";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { RootState } from "@/redux/store/store";
+import { forgotPasswordVerify, setForgetPasswordToken, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
+import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const requestVerifyEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset-code/verify`;
-
 
 // attempt sales-agent login using credentials
-function verifyResetCodeAction(resetRequest:any) {
-    return fetch(requestVerifyEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(resetRequest)
-    })
-        .then(data => data.json())
-}
+// function verifyResetCodeAction(resetRequest:any) {
+//     return fetch(requestVerifyEndpoint, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Accept': 'application/json',
+//         },
+//         body: JSON.stringify(resetRequest)
+//     })
+//         .then(data => data.json())
+// }
 
 
 export default function verifyResetCode() {
-    const [token, setToken] = useState('');
-    const [email, setEmail] = useState<any>('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const [responseData, setResponseData ] = useState({ success: false, title: '', message: '', data: {} });
+    const dispatch = useAppDispatch();
     const router = useRouter();
-
+    const {loading, redirect, error, errors, forgetPasswordEmail } = useAppSelector((state: RootState) => state.authUser);
+    const [token, setToken] = useState('');
+    const [render, setRender] = useState(false)
+    
+    useEffect(() => {
+        if(forgetPasswordEmail !== null){
+            setRender(true);
+        }else{
+            router.push('/auth/forgot-password/request');
+        }
+    }, [])
 
     useEffect(() => {
-        setEmail(localStorage.getItem('email'));
-    }, []);
-
-    // Function to show the alert message
-    const showAlert = (type= '', title= '', message= '') => {
-        setAlertContent({ type: type, title: title, message: message });
-        setIsAlertVisible(true);
-        // Hide the alert after 3 seconds
-        setTimeout(() => {
-            setAlertContent({type: '', title: '', message: ''});
-            setIsAlertVisible(false);
-        }, 3000);
-    };
-
+        if(redirect !== null) {
+            dispatch(setRedirect(null));
+            dispatch(setLoading(null));
+            router.push(redirect);
+        }
+    }, [redirect]);
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
-        try {
-            setIsLoading(true);
-            verifyResetCodeAction({token, email})
-                .then( response => {
-                    if (response.success) {
-                        setIsLoading(false);
-                        // return console.log(response);
-                        setResponseData({ success: response.success, title: response.title, message: response.message, data: response.data }); // update responseData constant
-                        localStorage.setItem('resetCode', response.data.resetCode);
-                        router.push('/auth/password/reset');  // redirect to reset password page
-                    } else {
-                        setResponseData({ success: response.success, title: response.title, message: response.message, data: response.data }); // update responseData constant
-                        setIsLoading(false);
-                        showAlert('error', response.title, response.message)
-                    }
-                });
-        } catch (error) {
-            setIsLoading(false);
-            showAlert('error', responseData.title, responseData.message)
-        }
+        dispatch(forgotPasswordVerify({token, email:forgetPasswordEmail}));
     }
 
+    if(!render){
+        return <Loader className='' fixed=''/>;
+    }
 
     return (
         <div className="signup-wrapper">
-            {/* loader */}
-            {isLoading && (
-                <Loader className='' fixed='' />
-            )}
-            {/* /. loader */}
             <main className="main-section" role="main">
                 <div className="container">
-                    {/* Alert */}
-                    {isAlertVisible && (
-                        <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
-                                      icon= {alertContent.type === 'success' ? "check" : "info"}
-                                      title= {alertContent.title}
-                                      content= {alertContent.message} />
-                    )}
-                    {/* /. Alert */}
                     <div className="wrapper-box">
                         <div className="container-box">
                             <div className="row">
                                 <div className="col-6">
                                     <div className="left-signup">
-                                        <Image src={require('@/app/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
+                                        <Image src={require('@/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
                                         <div className="text-block">
                                             <h4>WELCOME TO SALES PORTAL</h4>
                                             <p>Maximize your sales potential with our customizable portal solutions</p>
@@ -119,7 +89,7 @@ export default function verifyResetCode() {
                                         <ul className="main-navigation">
                                             <li>
                                                 <a href="#!">
-                                                    <i className="icons"><Image src={require('@/app/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
+                                                    <i className="icons"><Image src={require('@/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
                                                     <span id="language-switch">English</span><i className="material-icons">keyboard_arrow_down</i>
                                                 </a>
                                                 <ul>
@@ -134,6 +104,16 @@ export default function verifyResetCode() {
                                             </li>
                                         </ul>
                                         <div className="right-formarea">
+                                        {errors && errors.length > 0 && <ErrorMessage 
+                                            icon= {"info"}
+                                            title= {"Invalid data"}
+                                            errors= {errors}
+                                        />}
+                                        {error && <ErrorMessage 
+                                            icon= {"info"}
+                                            title= {"Sorry! Something went wrong"}
+                                            error= {error}
+                                        />}
                                             <h2>Verify reset password code</h2>
                                             <p>Please enter the reset password token that we have just sent to your registered email address.</p>
                                             <form role="" onSubmit={handleSubmit}>
@@ -143,7 +123,7 @@ export default function verifyResetCode() {
                                                         <label className="title">Enter reset code</label>
                                                     </div>
                                                     <div className="form-row-box button-panel">
-                                                        <button className="btn btn-primary" type='submit'>VERIFY</button>
+                                                        <button className="btn btn-primary" disabled={loading} type='submit'>{loading ? "VERIFYING" : "VERIFY"}</button>
                                                     </div>
                                                 </div>
                                             </form>

@@ -16,19 +16,17 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
   const user = useAppSelector((state)=>state.authUser.user);
   const router = useRouter();
-  // useEffect(() => {
-  //   if(user !== null){
-  //     router.push("/manage/events");
-  //   }else{
-  //     router.push("/auth/login");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if(user !== null){
+      router.push("/manage/events");
+    }else{
+      router.push("/auth/login");
+    }
+  }, []);
   
   return (
     <>
-      {user !== null ? <Events/> :
-      <Login/>}
-      {/* <Loader className='' fixed=''/> */}
+      <Loader className='' fixed=''/>
     </>
   )
 }

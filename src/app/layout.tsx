@@ -1,4 +1,5 @@
 import '@/assets/css/app.scss'
+
 import { Providers } from "@/redux/providers/provider";
 
 export const metadata = {

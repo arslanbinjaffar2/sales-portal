@@ -1,4 +1,4 @@
-import { store } from '@/redux/store/store';
+// import { store } from '@/redux/store/store';
 
 export function handleResponse(response) {
     return response.text().then(text => {

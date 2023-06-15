@@ -1,101 +1,78 @@
 "use client"; // this is a client component
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image';
 import Illustration from '@/assets/img/illustration.png'
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/forms/Loader';
 import AlertMessage from "@/components/forms/alerts/AlertMessage";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { forgotPasswordReset, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
+import { RootState } from "@/redux/store/store";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-const resetPasswordEndpoint = `${process.env.serverHost}/api/v1/sales/auth/password/reset`;
 
 
 // attempt sales-agent login using credentials
-function resetPasswordAction(resetPasswordRequestData:any) {
-    return fetch(resetPasswordEndpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify(resetPasswordRequestData)
-    })
-        .then(data => data.json())
-}
+// function resetPasswordAction(resetPasswordRequestData:any) {
+//     return fetch(resetPasswordEndpoint, {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Accept': 'application/json',
+//         },
+//         body: JSON.stringify(resetPasswordRequestData)
+//     })
+//         .then(data => data.json())
+// }
 
 
 export default function requestReset() {
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    const resetCode = localStorage.getItem('resetCode');
-    const email = localStorage.getItem('email');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isAlertVisible, setIsAlertVisible] = useState(false);
-    const [alertContent, setAlertContent] = useState({type: '', title: '', message: ''});
-    const [responseData, setResponseData ] = useState({ status: false, title: '', message: '', data: {} });
+    
+    const dispatch = useAppDispatch();
     const router = useRouter();
+    const {loading, redirect, error, errors, forgetPasswordEmail, forgetPasswordToken } = useAppSelector((state: RootState) => state.authUser);
+    const [render, setRender] = useState(false)
+    
+    useEffect(() => {
+        if(forgetPasswordEmail !== null){
+            setRender(true);
+        }else{
+            router.push('/auth/forgot-password/request');
+        }
+    }, [])
 
-
-    // Function to show the alert message
-    const showAlert = (type= '', title= '', message= '') => {
-        setAlertContent({ type: type, title: title, message: message });
-        setIsAlertVisible(true);
-        // Hide the alert after 3 seconds (adjust the delay as needed)
-        setTimeout(() => {
-            setAlertContent({type: '', title: '', message: ''});
-            setIsAlertVisible(false);
-        }, 3000);
-    };
-
+    useEffect(() => {
+        if(redirect !== null) {
+            dispatch(setRedirect(null));
+            dispatch(setLoading(null));
+            router.push(redirect);
+        }
+    }, [redirect]);
 
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
-        try {
-            setIsLoading(true);
-            resetPasswordAction({reset_code: resetCode, email: email, password: password, password_confirmation: passwordConfirmation})
-                .then( response => {
-                    if (response.success) {
-                        setIsLoading(false);
-                        setResponseData({ status: response.success, title: 'Success', message: response.message, data: response.data }); // update responseData constant
-                        localStorage.setItem('accessToken', response.data.access_token);
-                        router.push('/auth/login');  // redirect to login page
-                    } else {
-                        setResponseData({ status: response.success, title: 'Error', message: response.message, data: response.data }); // update responseData constant
-                        setIsLoading(false);
-                        showAlert('error', response.title, response.message)
-                    }
-                });
-        } catch (error) {
-            setIsLoading(false);
-            showAlert('error', responseData.title, responseData.message)
+        if(password !== '' && passwordConfirmation !== '' && (password === passwordConfirmation)){
+            dispatch(forgotPasswordReset({reset_code: forgetPasswordToken, email: forgetPasswordEmail, password: password, password_confirmation: passwordConfirmation}))
         }
     }
 
 
     return (
         <div className="signup-wrapper">
-            {/* loader */}
-            {isLoading && (
-                <Loader className='' fixed='' />
-            )}
+           
             <main className="main-section" role="main">
                 <div className="container">
-                    {/* Alert */}
-                    {isAlertVisible && (
-                        <AlertMessage className={ `alert ${alertContent.type === 'success' ? 'alert-success' : 'alert-danger'}` }
-                                      icon= {alertContent.type === 'success' ? "check" : "info"}
-                                      title= {alertContent.title}
-                                      content= {alertContent.message} />
-                    )}
-                    {/* /. Alert */}
+                    
                     <div className="wrapper-box">
                         <div className="container-box">
                             <div className="row">
                                 <div className="col-6">
                                     <div className="left-signup">
-                                        <Image src={require('@/app/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
+                                        <Image src={require('@/assets/img/logo.svg')} alt="" width="200" height="29" className='logos' />
                                         <div className="text-block">
                                             <h4>WELCOME TO SALES PORTAL</h4>
                                             <p>Maximize your sales potential with our customizable portal solutions</p>
@@ -114,7 +91,7 @@ export default function requestReset() {
                                         <ul className="main-navigation">
                                             <li>
                                                 <a href="#!">
-                                                    <i className="icons"><Image src={require('@/app/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
+                                                    <i className="icons"><Image src={require('@/assets/img/ico-globe.svg')} alt="" width="16" height="16" /></i>
                                                     <span id="language-switch">English</span><i className="material-icons">keyboard_arrow_down</i>
                                                 </a>
                                                 <ul>
@@ -142,7 +119,7 @@ export default function requestReset() {
                                                         <label className="title">Confirm new password</label>
                                                     </div>
                                                     <div className="form-row-box button-panel">
-                                                        <button className="btn btn-primary" type='submit'>RESET PASSWORD</button>
+                                                        <button className="btn btn-primary" disabled={loading} type='submit'>{loading ? "Sending..." : "RESET PASSWORD"}</button>
                                                     </div>
                                                 </div>
                                             </form>
