@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect } from 'react';
 import Image from 'next/image'
-import Dropdown from '@/app/components/DropDown';
+import Dropdown from '@/components/DropDown';
 
 export default function Invoice() {
   
@@ -72,7 +72,7 @@ export default function Invoice() {
                     <div className="logo">
                       <a href="">
                         <Image
-                          src={require("@/app/assets/img/logo.svg")}
+                          src={require("@/assets/img/logo.svg")}
                           alt=""
                           width="200"
                           height="29"

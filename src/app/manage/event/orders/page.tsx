@@ -102,7 +102,7 @@ export default function OrderListing() {
                     <div className="logo">
                       <a href="">
                         <Image
-                          src={require("@/app/assets/img/logo.svg")}
+                          src={require("@/assets/img/logo.svg")}
                           alt=""
                           width="200"
                           height="29"
@@ -190,7 +190,7 @@ export default function OrderListing() {
                       </div>
                       <div className="col-7 d-flex justify-content-end align-items-center">
                         <button className="btn-full-screen">
-                          <Image src={require("@/app/assets/img/ico-fullscreen.svg")} alt="" width="27" height="28" />
+                          <Image src={require("@/assets/img/ico-fullscreen.svg")} alt="" width="27" height="28" />
                         </button>
                         <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
                           <button onClick={handleToggle} className="ebs-btn-dropdown btn-select">
@@ -233,7 +233,7 @@ export default function OrderListing() {
                           <li>
                             <button className='ebs-btn-panel'>
                               <Image
-                                src={require("@/app/assets/img/ico-edit.svg")}
+                                src={require("@/assets/img/ico-edit.svg")}
                                 alt=""
                                 width="12"
                                 height="12"
@@ -243,7 +243,7 @@ export default function OrderListing() {
                           <li>
                             <button className='ebs-btn-panel'>
                               <Image
-                                src={require("@/app/assets/img/ico-folder.svg")}
+                                src={require("@/assets/img/ico-folder.svg")}
                                 alt=""
                                 width="12"
                                 height="12"
@@ -253,7 +253,7 @@ export default function OrderListing() {
                           <li>
                             <button className='ebs-btn-panel'>
                               <Image
-                                src={require("@/app/assets/img/ico-trash.svg")}
+                                src={require("@/assets/img/ico-trash.svg")}
                                 alt=""
                                 width="12"
                                 height="14"
