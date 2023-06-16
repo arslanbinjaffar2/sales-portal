@@ -11,29 +11,44 @@ import { RootState, store } from "@/redux/store/store";
 import { EventService } from "@/services/event/event-service"
 import { EventAction } from "@/actions/event/event-action"
 import { GeneralAction } from "@/actions/general-action"
+import { setCurrentPage, userEvents } from '@/redux/store/slices/EventsSlice';
+import Link from 'next/link';
 
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
+const eventFilters = [
+    {id: 'active_future', name: "Active and future events"},
+    {id: 'active', name: "Active events"},
+    {id: 'future', name: "Future events"},
+    {id: 'expired', name: "Expired events"},
+    {id: 'name', name: "All events"}
+];
+const sortFilters = [
+    {id: 'name', name: "Event name"},
+    {id: 'organizer_name', name: "Organizer name"},
+    {id: 'start_date', name: "Start date"},
+    {id: 'end_date', name: "End date"}
+];
+
 export default function Dashboard() {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const reduxStore = useAppSelector((state: RootState) => state);
-    const alert:any = reduxStore.alert;
-    const authUser = reduxStore.authUser.user;
-    const [isLoading, setIsLoading] = useState(false);
-    const events:any = [];
+    const {user} = useAppSelector((state: RootState) => state.authUser);
+    const {events, loading, totalPages, currentPage} = useAppSelector((state: RootState) => state.events);
+    
+    
     // const pagination:any = reduxStore.paginate;
     // const currentPage: number = pagination.current_page;
     // const totalPages: number = pagination.total_pages;
     // const isLoading: boolean = reduxStore.loading;
 
-    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: ''});
+    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1});
 
 
     useEffect(() => {
-        (authUser === null) ? router.push('auth/login') : handleFetchEventData(eventsRequestData);
-    }, [authUser]);
+        (user === null) ? router.push('auth/login') : dispatch(userEvents(eventsRequestData));
+    }, [user]);
 
 
     const handleSearchTextFilter = (e:any) => {
@@ -42,16 +57,15 @@ export default function Dashboard() {
         eventsRequestDataUpdate.search_text = value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        handleFetchEventData(eventsRequestData);
+        dispatch(userEvents(eventsRequestData));
     }
 
 
     const handleFilterByFilter = (e:any) => {
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate['event_action'] = e.value;
-        // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        handleFetchEventData(eventsRequestData);
+        dispatch(userEvents(eventsRequestData));
     }
 
 
@@ -60,35 +74,8 @@ export default function Dashboard() {
         eventsRequestDataUpdate['sort_by'] = e.value;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        handleFetchEventData(eventsRequestData);
+        dispatch(userEvents(eventsRequestData));
     }
-
-
-    const handleFetchEventData = (requestData:any, currentPage:number = 1) => {
-        try {
-            setIsLoading(true);
-            EventService.listing(requestData, currentPage)
-                .then((response:any) => {
-                    if (response.message === 'UnauthUserenticated.') { // handle unauthUserenticated response
-                        store.dispatch({ type: "error", title: 'authUserentication error', message: 'UnauthUserenticated, please login again' });
-                        // return router.push('authUser/login');
-                    }
-                    if (response.success && response.data) { // success response
-                        store.dispatch({ type: "events-info", events: response.data.events });
-                        store.dispatch(GeneralAction.updatePaginate('pagination', response.data.paginate));
-                        setIsLoading(false);
-                    } else { // error response
-                        store.dispatch({ type: "events-info", events: [] });
-                        store.dispatch({ type: "error", title: response.title, message: response.message });
-                        setIsLoading(false);
-                    }
-                });
-        } catch (error:any) {
-            setIsLoading(false);
-            store.dispatch({ type: "error", title: 'Exception', message: 'Something went wrong, please try again' });
-        }
-    }
-
 
     const routeEventOrders  = (eventInfo:any) => {
         dispatch(GeneralAction.loading(false));
@@ -100,41 +87,37 @@ export default function Dashboard() {
 
     const handlePageChange = (page: number) => {
         // Perform API call or update data based on the new page
-        handleFetchEventData(eventsRequestData, page);
+        const eventsRequestDataUpdate = eventsRequestData;
+        eventsRequestDataUpdate['page'] = page;
+        setEventsRequestData(eventsRequestDataUpdate);
+        dispatch(setCurrentPage(page));
+        dispatch(userEvents(eventsRequestData));
     };
+
+    const getSelectedLabel = (item:any, id:any) => {
+        if (item && item.length > 0 && id) {
+          let obj = item.find((o:any) => o.id.toString() === id.toString());
+          return (obj ? obj.name : '');
+        }
+      }
 
 
     return (
         <>
             <header className="header">
-                {/* loader */}
-                {isLoading && (
-                    <Loader className='' fixed='' />
-                )}
-                {/* /. loader */}
                 <div className="container">
-                    {/* Alert */}
-                    {alert && (
-                      <AlertMessage
-                          className={ `alert ${alert.class}` }
-                          icon= {alert.success ? "check" : "info"}
-                          title= {alert.title}
-                          content= {alert.message}
-                      />
-                    )}
-                    {/* /. Alert */}
                     <div className="row bottom-header-elements">
                         <div className="col-8">
                         </div>
                         <div className="col-4 d-flex justify-content-end">
                             <ul className="main-navigation">
-                                <li>Irfan Danish <i className="material-icons">expand_more</i>
-                                    <ul>
+                                {<li>{user?.first_name} {user?.last_name} <i className="material-icons">expand_more</i>
+                                    {/* <ul>
                                         <li><a href="">My account</a></li>
                                         <li><a href=""> Change password</a></li>
                                         <li><a href="">Logout</a></li>
-                                    </ul>
-                                </li>
+                                    </ul> */}
+                                </li>}
                                 <li>English <i className="material-icons">expand_more</i>
                                     <ul>
                                         <li><a href="">English</a></li>
@@ -164,30 +147,23 @@ export default function Dashboard() {
                                     </div>
                                     <div className="col-8">
                                         <div className="right-top-header">
-                                            <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onChange={handleSearchTextFilter} />
+                                            <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} onChange={(e)=>{setEventsRequestData((prev)=> ({...prev, search_text:e.target.value}))}} />
                                             <label className="label-select-alt">
                                                 <Dropdown
-                                                    selected={eventsRequestData.event_action} onChange={handleFilterByFilter}
+                                                    selected={eventsRequestData.event_action} 
+                                                    onChange={handleFilterByFilter}
+                                                    selectedlabel={getSelectedLabel(eventFilters,eventsRequestData.event_action)}
                                                     label="Filter by"
-                                                    listitems={[
-                                                        {id: 'active_future', name: "Active and future events"},
-                                                        {id: 'active', name: "Active events"},
-                                                        {id: 'future', name: "Future events"},
-                                                        {id: 'expired', name: "Expired events"},
-                                                        {id: 'name', name: "All events"}
-                                                    ]}
+                                                    listitems={eventFilters}
                                                 />
                                             </label>
                                             <label className="label-select-alt">
                                                 <Dropdown
-                                                    selected={eventsRequestData.sort_by} onChange={handleSortByFilter}
+                                                    selected={eventsRequestData.sort_by}
+                                                    onChange={handleSortByFilter}
+                                                    selectedlabel={getSelectedLabel(sortFilters,eventsRequestData.sort_by)}
                                                     label="Sort by"
-                                                    listitems={[
-                                                        {id: 'name', name: "Event name"},
-                                                        {id: 'organizer_name', name: "Organizer name"},
-                                                        {id: 'start_date', name: "Start date"},
-                                                        {id: 'end_date', name: "End date"}
-                                                    ]}
+                                                    listitems={sortFilters}
                                                 />
                                             </label>
                                         </div>
@@ -215,7 +191,8 @@ export default function Dashboard() {
                                         {
                                             events.length > 0 ? (
                                                 events.map((item: any, key: any) =>
-                                                    <div key={key}
+                                                <Link key={key} style={{textDecoration:"none"}} href={`/manage/events/${item.id}/orders`}>
+                                                    <div 
                                                          className="d-flex align-items-center ebs-table-content"
                                                          onClick={() => routeEventOrders(item)}>
                                                         <div className="ebs-table-box ebs-box-1">
@@ -245,20 +222,21 @@ export default function Dashboard() {
                                                             <p>{item.sale_agent_stats.revenue}{(item.currency) ? item.currency : 'DKK'}</p>
                                                         </div>
                                                     </div>
+                                                </Link>
                                                 )
                                             ) : (
-                                                !isLoading && (<div><p> No data available</p></div>)
+                                                !loading ? (<div><p> No data available</p></div>) : <Loader className='' fixed='' />
                                             )
                                         }
                                     </>
                                 </div>
                                 {/* Render the pagination component */}
                                 <div>
-                                    {/* <Pagination
+                                    <Pagination
                                         currentPage={currentPage}
                                         totalPages={totalPages}
                                         onPageChange={handlePageChange}
-                                    /> */}
+                                    />
                                 </div>
                             </div>
                         </div>

@@ -22,7 +22,6 @@ class DropDown extends React.Component {
   render() {
     const { label, selected, required, onChange, className, selectedlabel } = this.props;
     let {listitems } = this.props;
-  
     const { isOpen } = this.state;
     const isSearchable =
       this.props.isSearchable !== undefined
@@ -54,7 +53,7 @@ class DropDown extends React.Component {
           }
         });
     
-    
+        
     const isAttendee =
       this.props.type !== undefined && this.props.type=='attendee_type'
         ? options.unshift({

@@ -5,7 +5,7 @@ const nextConfig = {
     },
     env: {
         serverHost: process.env.SERVER_HOST,
-        stageImageHost: process.env.STAGE_IMAGE_HOST,
+        serverImageHost: process.env.SERVER_IMAGE_HOST,
     },
     eslint: {
         // Warning: This allows production builds to successfully complete even if
@@ -19,8 +19,13 @@ const nextConfig = {
                 hostname: 'stage.eventbuizz.com',
                 port: '',
             },
+            {
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '8200',
+            },
         ],
-        domains: ['https://stage.eventbuizz.com']
+        domains: ['https://stage.eventbuizz.com', 'http:/localhost:8200']
     },
 }
 

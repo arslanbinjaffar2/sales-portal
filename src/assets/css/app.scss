@@ -663,6 +663,9 @@
   border-radius: 0 0 6px 6px;
   padding: 15px;
   position: relative;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .wrapper-select {
