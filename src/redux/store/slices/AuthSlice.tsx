@@ -2,8 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/redux/store/store'
 import axios from 'axios'
-import { guestHeader } from '@/helpers'
-import { LOGIN_ENDPOINT, PASSWORD_REQUEST_ENDPOINT, PASSWORD_RESET_ENDPOINT, PASSWORD_VERIFY_ENDPOINT } from '@/constants/endpoints'
+import { authHeader, guestHeader } from '@/helpers'
+import { LOGIN_ENDPOINT, LOGOUT_ENDPOINT, PASSWORD_REQUEST_ENDPOINT, PASSWORD_RESET_ENDPOINT, PASSWORD_VERIFY_ENDPOINT } from '@/constants/endpoints'
 
 // Slice Thunks
 export const loginUser = createAsyncThunk(
@@ -21,9 +21,26 @@ export const loginUser = createAsyncThunk(
   }
 )
 
+// Slice Thunks
+export const logOutUser = createAsyncThunk(
+  'users/logOut',
+  async (data:any , { signal }) => {
+    const source = axios.CancelToken.source()
+    signal.addEventListener('abort', () => {
+      source.cancel()
+    })
+    const response = await axios.post(LOGOUT_ENDPOINT, data,{
+      cancelToken: source.token,
+      headers: authHeader('GET'),
+    })
+    return response.data
+  }
+)
+
 export const forgotPasswordRequest = createAsyncThunk(
   'forgotPassword/request',
   async (data:any , { signal }) => {
+    
     const source = axios.CancelToken.source()
     signal.addEventListener('abort', () => {
       source.cancel()
@@ -147,7 +164,27 @@ export const authUserSlice = createSlice({
     }),
     builder.addCase(loginUser.rejected, (state, action) => {
       console.log("rejected", action.payload);
-      state.error = "Something went wrong";
+      state.error = "Network Error";
+      state.loading = false;
+    }),
+    // LogOut thuckCases
+    builder.addCase(logOutUser.pending, (state, action) => {
+      state.loading = true;
+      state.redirect = null;
+      state.forgetPasswordEmail = null;
+      state.forgetPasswordToken = null;
+      state.forgetPasswordTokenSuccess = false;
+      state.user = null;
+      state.error = null;
+      state.successMessage = null;
+    }),
+    builder.addCase(logOutUser.fulfilled, (state, action) => {
+      state.loading = false;
+      localStorage.removeItem('agent');
+    }),
+    builder.addCase(logOutUser.rejected, (state, action) => {
+      console.log("rejected", action.payload);
+      state.error = "Network Error";
       state.loading = false;
     }),
     // 
@@ -175,7 +212,7 @@ export const authUserSlice = createSlice({
     }),
     builder.addCase(forgotPasswordRequest.rejected, (state, action) => {
       console.log("rejected", action.payload);
-      state.error = "";
+      state.error = "Network Error";
       state.loading = false;
     }),
     // 
@@ -207,7 +244,7 @@ export const authUserSlice = createSlice({
     }),
     builder.addCase(forgotPasswordVerify.rejected, (state, action) => {
       console.log("rejected", action.payload);
-      state.error = "Something went wrong";
+      state.error = "Network Error";
       state.loading = false;
     }),
     // forgotPassworReset thuckCases
@@ -236,7 +273,7 @@ export const authUserSlice = createSlice({
     }),
     builder.addCase(forgotPasswordReset.rejected, (state, action) => {
       console.log("rejected", action.payload);
-      state.error = "";
+      state.error = "Network Error";
       state.loading = false;
     })
   },
