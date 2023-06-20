@@ -1,11 +1,7 @@
 "use client"; // this is a client component
 import {useEffect, useState} from "react";
-import Image from 'next/image';
-import Illustration from '@/assets/img/illustration.png'
 import { useRouter } from 'next/navigation';
 import Loader from '@/components/forms/Loader';
-import AlertMessage from "@/components/forms/alerts/AlertMessage";
-import {GeneralAction} from "@/actions/general-action";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState } from "@/redux/store/store";
 import { forgotPasswordVerify, setForgetPasswordToken, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";

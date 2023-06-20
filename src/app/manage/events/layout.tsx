@@ -52,7 +52,7 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
     <main className="main-section" role="main">
         <div className="container">
             <div className="wrapper-box">
-                <div className="container-box main-landing-page">
+                <div className="container-box main-landing-page" style={{position:'relative'}}>
                     {children}
                 </div>
             </div>

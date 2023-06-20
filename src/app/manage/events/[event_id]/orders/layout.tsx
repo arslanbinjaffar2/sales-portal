@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { userEvent } from '@/redux/store/slices/EventSlice';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/forms/Loader';
+import Link from 'next/link';
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
 export const metadata = {
@@ -19,7 +20,6 @@ export const metadata = {
 export default function RootLayout({ children, params}: { children: React.ReactNode, params: { event_id: string } }) {
     const dispatch = useAppDispatch();
     const pathname = usePathname();
-    console.log(pathname)
     const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
 
     useEffect(() => {
@@ -64,9 +64,13 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                     </div>
                     <div className="col-4">
                         <div className="right-top-header">
-                        {!pathname.includes('invoice') && (event?.payment_settings?.eventsite_billing === 1) ? <button className="btn btn-default">
-                            <i className="material-symbols-outlined">add</i> Create Order
-                        </button> : null}
+                        {(!pathname.includes('invoice') && !pathname.includes('edit') && !pathname.includes('create')) && (event?.payment_settings?.eventsite_billing === 1) ? 
+                            <Link href={`/manage/events/${params.event_id}/orders/create`}>
+                                <button className="btn btn-default">
+                                    <i className="material-symbols-outlined">add</i> Create Order
+                                </button> 
+                            </Link>
+                        : null}
                         {pathname.includes('invoice') ? 
                             <>
                             <button className="btn btn-default">
@@ -85,11 +89,12 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                     {children}
             </div>
         </> :null}
-      {loading === true && <Loader className=''fixed='' />}
+      {loading === true && event === null ? <Loader className=''fixed='' /> : null}
       {loading === false && event === null ? 
-      <div>
-        No event found..
-      </div> : null }
+        <div className='d-flex justify-content-center align-items-center' style={{fontSize:"32px", textAlign:"center", fontStyle:"italic",  minHeight:"350px"}}>
+            No event found
+        </div> 
+      : null }
     </>
   )
 }

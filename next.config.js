@@ -6,6 +6,7 @@ const nextConfig = {
     env: {
         serverHost: process.env.SERVER_HOST,
         serverImageHost: process.env.SERVER_IMAGE_HOST,
+        regSiteHost: process.env.REG_SITE_HOST,
     },
     eslint: {
         // Warning: This allows production builds to successfully complete even if

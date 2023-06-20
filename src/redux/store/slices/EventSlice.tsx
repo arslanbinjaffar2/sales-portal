@@ -51,8 +51,8 @@ interface EventState {
 const initialState: EventState = {
   event: null,
   event_orders: null,
-  loading:false,
-  fetching_orders:false,
+  loading:true,
+  fetching_orders:true,
   error:null,
 }
 

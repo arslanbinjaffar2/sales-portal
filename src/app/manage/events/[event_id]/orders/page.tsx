@@ -1,13 +1,15 @@
 'use client'
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Image from 'next/image'
 import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {RootState} from "@/redux/store/store";
 import { userEvent, userEventOrders } from '@/redux/store/slices/EventSlice';
 import Loader from '@/components/forms/Loader';
+import Countdown from '@/components/Countdown';
 import {getSelectedLabel} from '@/helpers'; 
 import Link from 'next/link';
+import moment from 'moment';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -20,13 +22,19 @@ const orderFilters = [
 
 export default function OrderListing({ params }: { params: { event_id: string } }) {
   const dispatch = useAppDispatch();
-  const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
+  const {loading, event, event_orders, fetching_orders} = useAppSelector((state: RootState) => state.event);
 
   const [limit, setLimit] = useState(10);
   const [type, setType] = useState('all');
   const [searchText, setSearchText] = useState('');
   const [toggoleLimited, settoggoleLimited] = useState(false)
 
+  const registerDateEnd = useMemo(()=>{
+    let currentDate = moment();
+    let endDate = moment(event.eventsite_settings.registration_end_date);
+    let diff = event.eventsite_settings.registration_end_date !== "0000-00-00 00:00:00" ? currentDate.diff(endDate) < 0 : true;
+    return diff;
+  },[event]);
   useEffect(()=>{
     let promise:any = '';
     if(event !== null){
@@ -138,7 +146,9 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                 </div>
                 <div className="col-2">
                   <div className="ebs-time-counter">
-                    <strong>00:00:00:00</strong>
+                    <strong>
+                       {registerDateEnd && (event.eventsite_settings.registration_end_date !== "0000-00-00 00:00:00") ?  <Countdown date={moment(event.eventsite_settings.registration_end_date)} /> : "00:00:00:00"}
+                    </strong>
                     <span>Time left</span>
                   </div>
                 </div>
@@ -204,7 +214,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   <div className="ebs-table-box ebs-box-2 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
                       <li>
-                        
+                      <Link href={`/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
                           <button className='ebs-btn-panel'>
                             <Image
                               src={require("@/assets/img/ico-edit.svg")}
@@ -213,6 +223,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                               height="12"
                             />
                           </button>
+                          </Link>
                       </li>
                       {/* <li>
                         <button className='ebs-btn-panel'>
@@ -225,6 +236,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                         </button>
                       </li> */}
                       <li>
+
                         <button className='ebs-btn-panel'>
                           <Image
                             src={require("@/assets/img/ico-trash.svg")}
@@ -252,10 +264,14 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                     </ul>
                   </div>
                 </div>) :
-                <div style={{position:"relative", minHeight:"350px"}}>
+                (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
                   <Loader className=''fixed='' />
-                </div>
+                </div> : 
+                <div className='d-flex justify-content-center align-items-center' style={{fontSize:"32px", textAlign:"center", fontStyle:"italic",  minHeight:"350px"}} >
+                    No orders found...
+                </div>)
               }
+              
               </div>
             </div>
 

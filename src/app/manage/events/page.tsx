@@ -8,9 +8,6 @@ import { useRouter } from 'next/navigation';
 import Pagination from "@/components/pagination";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState, store } from "@/redux/store/store";
-import { EventService } from "@/services/event/event-service"
-import { EventAction } from "@/actions/event/event-action"
-import { GeneralAction } from "@/actions/general-action"
 import { setCurrentPage, userEvents } from '@/redux/store/slices/EventsSlice';
 import Link from 'next/link';
 
@@ -70,13 +67,6 @@ export default function Dashboard() {
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(userEvents(eventsRequestData));
-    }
-
-    const routeEventOrders  = (eventInfo:any) => {
-        dispatch(GeneralAction.loading(false));
-        dispatch({type: 'event-info', event: eventInfo});
-        store.dispatch({ type: "error", title: 'Exception', message: 'Something went wrong, please try again' });
-        // router.push('/manage/event/orders');
     }
 
     const handlePageChange = (page: number) => {
@@ -153,7 +143,7 @@ export default function Dashboard() {
                                 <Link key={key} style={{textDecoration:"none"}} href={`/manage/events/${item.id}/orders`}>
                                     <div 
                                             className="d-flex align-items-center ebs-table-content"
-                                            onClick={() => routeEventOrders(item)}>
+                                            >
                                         <div className="ebs-table-box ebs-box-1">
                                             <Image
                                                 src={item.header_logo ? (`${process.env.serverImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.png')}

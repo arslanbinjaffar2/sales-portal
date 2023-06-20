@@ -7,9 +7,6 @@ import Loader from '@/components/forms/Loader';
 import { useRouter } from 'next/navigation';
 import {useAppDispatch, useAppSelector} from "@/redux/hooks/hooks";
 import { RootState, store } from "@/redux/store/store";
-import { GeneralAction } from "@/actions/general-action";
-import { AuthAction } from "@/actions/auth/auth-action";
-import { AuthService } from "@/services/auth/auth-service";
 import { forgotPasswordRequest, setForgetPasswordEmail, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
 import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 

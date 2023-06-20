@@ -11,9 +11,10 @@ import authUser from '../slices/AuthSlice';
 import alert from '../slices/AlertSlice';
 import events from '../slices/EventsSlice';
 import event from '../slices/EventSlice';
+import order from '../slices/OrderSlice';
 
 const rootReducer = combineReducers({
-  alert,  authUser,  event, events
+  alert,  authUser,  event, events, order
 });
 
 export default rootReducer;
