@@ -4,24 +4,41 @@ import Image from 'next/image'
 import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {RootState} from "@/redux/store/store";
-import { userEventOrders } from '@/redux/store/slices/EventSlice';
+import { userEvent, userEventOrders } from '@/redux/store/slices/EventSlice';
 import Loader from '@/components/forms/Loader';
+import {getSelectedLabel} from '@/helpers'; 
+import Link from 'next/link';
 
+const orderFilters = [
+  { id: "all", name: "All orders" },
+  { id: "completed", name: "Completed" },
+  { id: "cancelled", name: "Cancelled" },
+  { id: "pending", name: "Pending" },
+  { id: "payment_received", name: "Payment received" },
+  { id: "payment_pending", name: "Payment pending" },
+];
 
 export default function OrderListing({ params }: { params: { event_id: string } }) {
   const dispatch = useAppDispatch();
-  const {loading, event} = useAppSelector((state: RootState) => state.event);
+  const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
 
   const [limit, setLimit] = useState(10);
-  const [toggoleLimitdd, settoggoleLimitdd] = useState(false)
+  const [type, setType] = useState('all');
+  const [searchText, setSearchText] = useState('');
+  const [toggoleLimited, settoggoleLimited] = useState(false)
 
-  useEffect(() => {
-    const promise = dispatch(userEventOrders({event_id:params.event_id}));  
-  
-    return () => {
-      promise.abort();
+  useEffect(()=>{
+    let promise:any = '';
+    if(event !== null){
+       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type}));  
+    
     }
-  }, []);
+    return () => {
+      if(typeof promise === 'object' && typeof promise.then === 'function'){
+        promise.abort();
+      }
+    }
+  }, [event])
   
 
   useEffect(() => {
@@ -45,53 +62,40 @@ export default function OrderListing({ params }: { params: { event_id: string } 
   const handleToggle = (e:any) => {
     e.stopPropagation();
     e.preventDefault();
-    settoggoleLimitdd(!toggoleLimitdd);
+    settoggoleLimited(!toggoleLimited);
   }
+
+
+
+  const handleSearchTextFilter = (e:any) => {
+    const {value} = e.target;
+    setSearchText(value);
+    // Update the requestData state with the modified array
+    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type}));
+  }
+
+    const handleFilterByFilter = (e:any) => {
+        setType(e.value);
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value}));
+    }
+
+    const handleLimitChange = (e:any, value:any) => {
+      setLimit(value); 
+      handleToggle(e);
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type}));
+    }
+
+    const handleRowControlsToggle = (e:any) => {
+      e.stopPropagation();
+      e.preventDefault();
+      e.target.classList.toggle('ebs-active');
+    }
 
 
   return (
     <>
      {(loading === false && event !== null) ?
      <>
-        
-          <div className="top-landing-page">
-            <div className="row d-flex">
-              <div className="col-8">
-                <div className="logo">
-                  <a href="">
-                    <Image
-                      src={event?.brand_logo !== '' ? `${process.env.serverImageHost}/assets/event/branding/${event?.brand_logo}`: require("@/assets/img/logo.svg")}
-                      alt=""
-                      width="200"
-                      height="29"
-                      className="logos"
-                    />
-                  </a>
-                  <div className="ebs-bottom-header-left">
-                    <h3>
-                      <a href="#!">{event?.event_name}</a>
-                    </h3>
-                    <ul>
-                      <li>
-                        <i className="material-symbols-outlined">calendar_month</i>{event?.event_date}
-                      </li>
-                      <li>
-                        <i className="material-symbols-outlined">place</i>{event?.event_location}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-4">
-                <div className="right-top-header">
-                  {event?.payment_settings?.eventsite_billing === 1 ? <button className="btn btn-default">
-                    <i className="material-symbols-outlined">add</i> Create Order
-                  </button> : null}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={{ background: "#fff" }} className="main-data-table">
             <div className="ebs-ticket-section">
               <h4>Tickets</h4>
               <div className="row d-flex">
@@ -145,17 +149,14 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                 <h4>Orders List</h4>
                 <div className="row">
                   <div className="col-5 d-flex">
-                    <input type="text" className="ebs-search-area" defaultValue="Search" />
+                    <input type="text" className="ebs-search-area" placeholder="Search" onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} value={searchText} onChange={(e)=>{setSearchText(e.target.value)}} />
                     <label style={{ width: "210px" }} className="label-select-alt">
                       <Dropdown
                         label="Select type"
-                        listitems={[
-                          { id: "active_future", name: "Active and future events" },
-                          { id: "active", name: "Active events" },
-                          { id: "future", name: "Future events" },
-                          { id: "expired", name: "Expired events" },
-                          { id: "name", name: "All events" },
-                        ]}
+                        selected={type} 
+                        onChange={handleFilterByFilter}
+                        selectedlabel={getSelectedLabel(orderFilters,type)}
+                        listitems={orderFilters}
                       />
                     </label>
                   </div>
@@ -164,14 +165,15 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                       <Image src={require("@/assets/img/ico-fullscreen.svg")} alt="" width="27" height="28" />
                     </button>
                     <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                      <button onClick={handleToggle} className="ebs-btn-dropdown btn-select">
+                      <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
                         {limit} <i className="material-symbols-outlined">expand_more</i>
                       </button>
-                      <div className={`ebs-dropdown-menu ebs-active`}>
-                        <button className="dropdown-item" onClick={(e)=> { setLimit(10); handleToggle(e); }}>10</button>
-                        <button className="dropdown-item" onClick={()=> { setLimit(20); }}>20</button>
-                        <button className="dropdown-item" onClick={()=> { setLimit(100); }}>100</button>
-                        <button className="dropdown-item" onClick={()=> { setLimit(500); }}>500</button>
+                      <div className={`ebs-dropdown-menu`}>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 2) }}>2</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
                       </div>
                     </div>
                   </div>
@@ -189,29 +191,30 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><strong>Payment STATUS</strong></div>
                   <div className="ebs-table-box ebs-box-2"  />
                 </div>
-                {[event].map((item, key) =>
-                <div key={key} className="d-flex align-items-center ebs-table-content">
-                  <div className="ebs-table-box ebs-box-1"><p>{key}</p></div>
-                  <div className="ebs-table-box ebs-box-1"><p>12/04/2022</p></div>
-                  <div className="ebs-table-box ebs-box-2"><p>Mudassir Umer Reg</p></div>
-                  <div className="ebs-table-box ebs-box-2"><p>sales_info@mail.com</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>Ab Tech</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>1</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>52315 DKK</p></div>
-                  <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><p>Pending</p></div>
+                {event_orders !== null ? event_orders.data.map((order:any, key:number) =>
+                <div key={order.id} className="d-flex align-items-center ebs-table-content">
+                  <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
+                  <div className="ebs-table-box ebs-box-1"><p>{order.order_date}</p></div>
+                  <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
+                  <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
+                  <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
+                  <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
+                  <div className="ebs-table-box ebs-box-4"><p>{order.grand_total} DKK</p></div>
+                  <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><p>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-2 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
                       <li>
-                        <button className='ebs-btn-panel'>
-                          <Image
-                            src={require("@/assets/img/ico-edit.svg")}
-                            alt=""
-                            width="12"
-                            height="12"
-                          />
-                        </button>
+                        
+                          <button className='ebs-btn-panel'>
+                            <Image
+                              src={require("@/assets/img/ico-edit.svg")}
+                              alt=""
+                              width="12"
+                              height="12"
+                            />
+                          </button>
                       </li>
-                      <li>
+                      {/* <li>
                         <button className='ebs-btn-panel'>
                           <Image
                             src={require("@/assets/img/ico-folder.svg")}
@@ -220,7 +223,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                             height="12"
                           />
                         </button>
-                      </li>
+                      </li> */}
                       <li>
                         <button className='ebs-btn-panel'>
                           <Image
@@ -233,12 +236,14 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                       </li>
                       <li>
                         <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                          <button onClick={handleToggle} className='ebs-btn-panel ebs-btn-dropdown'>
+                          <button onClick={handleRowControlsToggle} className='ebs-btn-panel ebs-btn-dropdown'>
                             <i className="material-icons">more_horiz</i>
                           </button>
                           <div style={{minWidth: 130}} className="ebs-dropdown-menu">
+                          <Link href={`/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
                             <button className="dropdown-item">View</button>
-                            <button className="dropdown-item">Print Badge</button>
+                          </Link>
+                            {/* <button className="dropdown-item">Print Badge</button> */}
                             <button className="dropdown-item">Download </button>
                             <button style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">Download as Invoice</button>
                           </div>
@@ -246,19 +251,17 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                       </li>
                     </ul>
                   </div>
-                </div>)}
+                </div>) :
+                <div style={{position:"relative", minHeight:"350px"}}>
+                  <Loader className=''fixed='' />
+                </div>
+              }
               </div>
             </div>
-          </div>
-        
-          
+
       </>
       : null}
-      {loading === true && <Loader className=''fixed='' />}
-      {loading === false && event === null ? 
-      <div>
-        No event found..
-      </div> : null }
+      
     </>
   );
 }

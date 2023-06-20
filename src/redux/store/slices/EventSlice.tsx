@@ -7,8 +7,23 @@ import { authHeader } from '@/helpers'
 
 
 // Slice Thunks
+export const userEvent = createAsyncThunk(
+  'users/Event',
+  async (data:any , { signal }) => {
+    const source = axios.CancelToken.source()
+    signal.addEventListener('abort', () => {
+      source.cancel()
+    })
+    const response = await axios.post(`${AGENT_EVENTS_ENDPOINT}/${data.event_id}/data`,data, {
+      cancelToken: source.token,
+      headers: authHeader('GET'),
+    })
+    return response.data
+  }
+)
+
 export const userEventOrders = createAsyncThunk(
-  'users/EventOrder',
+  'users/EventOrders',
   async (data:any , { signal }) => {
     const source = axios.CancelToken.source()
     signal.addEventListener('abort', () => {
@@ -25,7 +40,9 @@ export const userEventOrders = createAsyncThunk(
 // Define a type for the slice state
 interface EventState {
   event:any,
+  event_orders:any
   loading:boolean,
+  fetching_orders:boolean,
   error:any,
 }
 
@@ -33,7 +50,9 @@ interface EventState {
 // Define the initial state using that type
 const initialState: EventState = {
   event: null,
+  event_orders: null,
   loading:false,
+  fetching_orders:false,
   error:null,
 }
 
@@ -51,11 +70,11 @@ export const eventSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Login thuckCases
-    builder.addCase(userEventOrders.pending, (state, action) => {
+    builder.addCase(userEvent.pending, (state, action) => {
       state.loading = true;
       state.event = null;
     }),
-    builder.addCase(userEventOrders.fulfilled, (state, action) => {
+    builder.addCase(userEvent.fulfilled, (state, action) => {
       let res = action.payload;
       if(res.success){
         state.event = action.payload.data;
@@ -64,9 +83,27 @@ export const eventSlice = createSlice({
       }
       state.loading = false;
     }),
-    builder.addCase(userEventOrders.rejected, (state, action) => {
+    builder.addCase(userEvent.rejected, (state, action) => {
       console.log("rejected", action.payload);
       state.loading = false;
+    }),
+    // Login thuckCases
+    builder.addCase(userEventOrders.pending, (state, action) => {
+      state.fetching_orders = true;
+      state.event_orders = null;
+    }),
+    builder.addCase(userEventOrders.fulfilled, (state, action) => {
+      let res = action.payload;
+      if(res.success){
+        state.event_orders = action.payload.data;
+      }else{
+          state.error = res.message;
+      }
+      state.fetching_orders = false;
+    }),
+    builder.addCase(userEventOrders.rejected, (state, action) => {
+      console.log("rejected", action.payload);
+      state.fetching_orders = false;
     })
   },
 })

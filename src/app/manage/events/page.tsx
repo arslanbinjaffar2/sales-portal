@@ -14,6 +14,7 @@ import { GeneralAction } from "@/actions/general-action"
 import { setCurrentPage, userEvents } from '@/redux/store/slices/EventsSlice';
 import Link from 'next/link';
 
+import {getSelectedLabel} from '@/helpers'; 
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
@@ -87,12 +88,7 @@ export default function Dashboard() {
         dispatch(userEvents(eventsRequestData));
     };
 
-    const getSelectedLabel = (item:any, id:any) => {
-        if (item && item.length > 0 && id) {
-          let obj = item.find((o:any) => o.id.toString() === id.toString());
-          return (obj ? obj.name : '');
-        }
-    }
+    
 
     return (
         <>

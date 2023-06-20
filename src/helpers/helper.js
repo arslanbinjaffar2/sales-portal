@@ -20,3 +20,10 @@ export function scrollToTop() {
       behavior: "smooth"
     });
 }
+
+export const getSelectedLabel = (item, id) => {
+    if (item && item.length > 0 && id) {
+      let obj = item.find((o) => o.id.toString() === id.toString());
+      return (obj ? obj.name : '');
+    }
+}
