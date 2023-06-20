@@ -4,8 +4,9 @@ import Image from 'next/image';
 import Illustration from '@/assets/img/illustration.png';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
 import { RootState } from '@/redux/store/store';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { logOutUser } from '@/redux/store/slices/AuthSlice';
+import { useEffect } from 'react';
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
@@ -18,6 +19,11 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const dispatch = useAppDispatch();
+    const pathname = usePathname();
+
+    useEffect(() => {
+         (user === null) ? router.push('auth/login') : null;
+    }, [user]);
     
   return (
     <>
@@ -25,11 +31,11 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
         <div className="container">
             <div className="row bottom-header-elements">
                 <div className="col-8">
-                    <p>
+                    {pathname !== "/manage/events" ?<p>
                         <a href="#!" onClick={(e)=>{e.preventDefault(); router.back();}}>
                             <i className="material-icons">arrow_back</i> Return to list
                         </a>
-                    </p>
+                    </p>: null}
                 </div>
                 <div className="col-4 d-flex justify-content-end">
                     <ul className="main-navigation">

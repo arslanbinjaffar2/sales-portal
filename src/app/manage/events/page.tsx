@@ -37,13 +37,11 @@ export default function Dashboard() {
     const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1});
 
     useEffect(() => {
-        const promise = (user === null) ? router.push('auth/login') : dispatch(userEvents(eventsRequestData));
+        const promise = dispatch(userEvents(eventsRequestData));
         return () =>{
-            if(typeof promise === 'object' && typeof promise.then === 'function'){
-                promise.abort();
-            }
+            promise.abort();
         }
-    }, [user]);
+    }, []);
 
     const handleSearchTextFilter = (e:any) => {
         const {value} = e.target;
