@@ -68,11 +68,11 @@ export default function requestReset() {
             <form role="" onSubmit={handleSubmit}>
                 <div className="form-area-signup">
                     <div className='form-row-box'>
-                        <input className='' value={password} type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)}  />
+                        <input className='' value={password} type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)} required  />
                         <label className="title">Enter new password</label>
                     </div>
                     <div className='form-row-box'>
-                        <input className='' value={passwordConfirmation} type="password" name="password_confirmation" id="password_confirmation" onChange={(e) => setPasswordConfirmation(e.target.value)}  />
+                        <input className='' value={passwordConfirmation} type="password" name="password_confirmation" id="password_confirmation" required onChange={(e) => setPasswordConfirmation(e.target.value)}  />
                         <label className="title">Confirm new password</label>
                     </div>
                     <div className="form-row-box button-panel">

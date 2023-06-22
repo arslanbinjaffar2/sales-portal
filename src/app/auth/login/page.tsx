@@ -8,6 +8,7 @@ import { RootState } from "@/redux/store/store";
 import { loginUser } from "@/redux/store/slices/AuthSlice";
 import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 import SuccessAlert from "@/components/forms/alerts/SuccessMessage";
+import Loading from "../loading";
 
 export default function Login() {
     const dispatch = useAppDispatch();
@@ -64,14 +65,14 @@ export default function Login() {
             <form name="form" role="" onSubmit={handleSubmit}>
                 <div className="form-area-signup">
                     <div className='form-row-box'>
-                        <input className={email ? 'ieHack': ''} value={email} type="text" name="email" id="email" onChange={(e) => setEmail(e.target.value)}  />
+                        <input className={email ? 'ieHack': ''} value={email} type="email" name="email" id="email" onChange={(e) => setEmail(e.target.value)}  required/>
                         <label className="title">Enter your email</label>
                     </div>
                     <div className='form-row-box'>
                 <span className="icon-eye">
                     <Image onClick={handleShowPass} src={require(`@/assets/img/${passwordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
                 </span>
-                        <input className={password ? 'ieHack': ''} type={passwordType ? 'password' : 'text'} value={password} id="password" onChange={(e) => setPassword(e.target.value)}  />
+                        <input className={password ? 'ieHack': ''} type={passwordType ? 'password' : 'text'} value={password} id="password" required onChange={(e) => setPassword(e.target.value)}  />
                         <label className="title">Password</label>
                     </div>
                     <div className="login-others clearfix">
