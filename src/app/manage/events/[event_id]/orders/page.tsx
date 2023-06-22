@@ -81,18 +81,22 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
-    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page}));
+    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1}));
+    setPage(1);
+
   }
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
-        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page}));
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1}));
+        setPage(1);
     }
 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page}));
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1}));
+      setPage(1);
     }
 
     const handleRowControlsToggle = (e:any) => {
