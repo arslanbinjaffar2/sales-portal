@@ -68,6 +68,8 @@ interface EventState {
   loading:boolean,
   fetching_orders:boolean,
   error:any,
+  totalPages:number,
+  currentPage:number,
 }
 
 
@@ -78,6 +80,8 @@ const initialState: EventState = {
   loading:true,
   fetching_orders:true,
   error:null,
+  totalPages:0,
+  currentPage:1,
 }
 
 export const eventSlice = createSlice({
@@ -120,6 +124,8 @@ export const eventSlice = createSlice({
       let res = action.payload;
       if(res.success){
         state.event_orders = action.payload.data;
+        state.totalPages = action.payload.data.last_page;
+        state.currentPage = action.payload.data.current_page;
       }else{
           state.error = res.message;
       }

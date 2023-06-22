@@ -10,6 +10,7 @@ import Countdown from '@/components/Countdown';
 import {getSelectedLabel} from '@/helpers'; 
 import Link from 'next/link';
 import moment from 'moment';
+import Pagination from '@/components/pagination';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -22,11 +23,12 @@ const orderFilters = [
 
 export default function OrderListing({ params }: { params: { event_id: string } }) {
   const dispatch = useAppDispatch();
-  const {loading, event, event_orders, fetching_orders} = useAppSelector((state: RootState) => state.event);
+  const {loading, event, event_orders, fetching_orders, currentPage, totalPages} = useAppSelector((state: RootState) => state.event);
 
   const [limit, setLimit] = useState(10);
   const [type, setType] = useState('all');
   const [searchText, setSearchText] = useState('');
+  const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
 
   const registerDateEnd = useMemo(()=>{
@@ -79,18 +81,18 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
-    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type}));
+    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page}));
   }
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
-        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value}));
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page}));
     }
 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type}));
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page}));
     }
 
     const handleRowControlsToggle = (e:any) => {
@@ -98,6 +100,11 @@ export default function OrderListing({ params }: { params: { event_id: string } 
       e.preventDefault();
       e.target.classList.toggle('ebs-active');
     }
+
+    const handlePageChange = (page: number) => {
+      setPage(page);
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page}));
+    };
 
 
   return (
@@ -273,6 +280,13 @@ export default function OrderListing({ params }: { params: { event_id: string } 
               }
               
               </div>
+            </div>
+            <div>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+            />
             </div>
 
       </>

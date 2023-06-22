@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
-export default function RootLayout({ children}: { children: React.ReactNode }) {
+export default function RootLayout({ children, params}: { children: React.ReactNode, params: { event_id: string } }) {
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const dispatch = useAppDispatch();
@@ -27,7 +27,18 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
             <div className="row bottom-header-elements">
                 <div className="col-8">
                     {pathname !== "/manage/events" ?<p>
-                        <a href="#!" onClick={(e)=>{e.preventDefault(); router.back();}}>
+                        <a href="#!" onClick={(e)=>{e.preventDefault(); 
+                            console.log('pathname', pathname);
+                            if(pathname.includes('invoice') || pathname.includes('create') || pathname.includes('edit')){
+                                router.push(`/manage/events/${pathname.split('/')[3]}/orders`);
+                            }
+                            else if(pathname.includes('orders')){
+                                router.push(`/manage/events`);
+                            }
+                            else{
+                                router.push(`/manage/events`);
+                            }
+                        }}>
                             <i className="material-icons">arrow_back</i> Return to list
                         </a>
                     </p>: null}
