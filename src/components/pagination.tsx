@@ -24,13 +24,14 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             setPages(pageArray);
         };
         generatePages();
-    }, [currentPage]);
+    }, [currentPage, totalPages]);
 
     return (
         <nav>
             <ul className="pagination">
                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                     <button
+                        disabled={currentPage === 1}
                         className="page-link"
                         onClick={() => onPageChange(currentPage - 1)}
                     >
@@ -50,6 +51,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                     <button
                         className="page-link"
+                        disabled={currentPage === totalPages}
                         onClick={() => onPageChange(currentPage + 1)}
                     >
                         Next

@@ -14,6 +14,7 @@ export const userEvents = createAsyncThunk(
     signal.addEventListener('abort', () => {
       source.cancel()
     })
+    console.log(data);
     try {
       const response = await axios.post(`${AGENT_EVENTS_ENDPOINT}?page=${data.page}`,data, {
         cancelToken: source.token,
@@ -78,7 +79,7 @@ export const eventsSlice = createSlice({
       let res = action.payload;
       if(res.success){
         state.events = action.payload.data.events;
-        state.totalPages = action.payload.data.paginate.total_page;
+        state.totalPages = action.payload.data.paginate.total_pages;
         state.currentPage = action.payload.data.paginate.current_page;
       }else{
           state.error = res.message;

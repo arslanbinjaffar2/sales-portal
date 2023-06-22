@@ -34,7 +34,9 @@ export default function Dashboard() {
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const {events, loading, totalPages, currentPage} = useAppSelector((state: RootState) => state.events);
-    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1});
+    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1, limit:10});
+    const [toggoleLimited, settoggoleLimited] = useState(false)
+    const [limit, setLimit] = useState(10);
 
     useEffect(() => {
         const promise = dispatch(userEvents(eventsRequestData));
@@ -47,24 +49,27 @@ export default function Dashboard() {
         const {value} = e.target;
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate.search_text = value;
+        eventsRequestDataUpdate['page'] = 1;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        dispatch(userEvents(eventsRequestData));
+        dispatch(userEvents(eventsRequestDataUpdate));
     }
 
     const handleFilterByFilter = (e:any) => {
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate['event_action'] = e.value;
+        eventsRequestDataUpdate['page'] = 1;
         setEventsRequestData(eventsRequestDataUpdate);
-        dispatch(userEvents(eventsRequestData));
+        dispatch(userEvents(eventsRequestDataUpdate));
     }
 
     const handleSortByFilter = (e:any) => {
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate['sort_by'] = e.value;
+        eventsRequestDataUpdate['page'] = 1;
         // Update the requestData state with the modified array
         setEventsRequestData(eventsRequestDataUpdate);
-        dispatch(userEvents(eventsRequestData));
+        dispatch(userEvents(eventsRequestDataUpdate));
     }
 
     const handlePageChange = (page: number) => {
@@ -73,9 +78,24 @@ export default function Dashboard() {
         eventsRequestDataUpdate['page'] = page;
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(setCurrentPage(page));
-        dispatch(userEvents(eventsRequestData));
+        dispatch(userEvents(eventsRequestDataUpdate));
     };
 
+    const handleToggle = (e:any) => {
+        e.stopPropagation();
+        e.preventDefault();
+        settoggoleLimited(!toggoleLimited);
+      }
+
+      const handleLimitChange = (e:any, value:any) => {
+        setLimit(value); 
+        handleToggle(e);
+        const eventsRequestDataUpdate = eventsRequestData;
+        eventsRequestDataUpdate['limit'] = value;
+        eventsRequestDataUpdate['page'] = 1;
+        setEventsRequestData(eventsRequestDataUpdate);
+        dispatch(userEvents(eventsRequestDataUpdate));
+      }
     
 
     return (
@@ -178,12 +198,24 @@ export default function Dashboard() {
                     </>
                 </div>
                 {/* Render the pagination component */}
-                <div>
+                <div className='d-flex justify-content-between align-items-center'>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
                     />
+                    <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                      <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
+                        {limit} <i className="material-symbols-outlined">expand_more</i>
+                      </button>
+                      <div className={`ebs-dropdown-menu`}>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 2) }}>2</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
+                      </div>
+                    </div>
                 </div>
             </div>    
         </>
