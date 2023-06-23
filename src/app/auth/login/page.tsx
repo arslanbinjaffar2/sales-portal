@@ -34,8 +34,8 @@ export default function Login() {
     }
 
     useEffect(() => {
-			setEmail(_email?.current.value || '')
-			setPassword(_password?.current.value || '')
+			setEmail(_email.current?.value || '')
+			setPassword(_password.current?.value || '')
         if(user && user.access_token) {
             router.push('/manage/events');
         }
@@ -52,7 +52,6 @@ export default function Login() {
 		}
     return (
         <>
-					<ConfirmPopup handleClose={handlePopup} />
             <h2>Sign in</h2>
             <p></p>
                 {errors && errors.length > 0 && <ErrorMessage 
