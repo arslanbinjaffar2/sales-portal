@@ -47,7 +47,7 @@ export default function Login() {
         setPasswordType(!passwordType)
     }
 
-		const handlePopup = (e) => {
+		const handlePopup = (e:any) => {
 			alert(e)
 		}
     return (
