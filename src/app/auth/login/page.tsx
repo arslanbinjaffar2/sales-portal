@@ -12,8 +12,8 @@ import Loading from "../loading";
 import ConfirmPopup from "@/components/ConfirmPopup";
 
 export default function Login() {
-		const _email = useRef<HTMLInputElement>(null);
-		const _password = useRef<HTMLInputElement>(null);
+		const _email = useRef<any>(null);
+		const _password = useRef<any>(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {user, loading, error, errors, successMessage} = useAppSelector((state: RootState) => state.authUser);

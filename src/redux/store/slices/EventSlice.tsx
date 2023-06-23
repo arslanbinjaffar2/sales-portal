@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/redux/store/store'
 import axios from 'axios'
-import { AGENT_EVENTS_ENDPOINT } from '@/constants/endpoints'
+import { AGENT_ENDPOINT, AGENT_EVENTS_ENDPOINT } from '@/constants/endpoints'
 import { authHeader, handleErrorResponse } from '@/helpers'
 
 
@@ -48,6 +48,59 @@ export const userEventOrders = createAsyncThunk(
       })
       return response.data
       
+    } catch (err:any) {
+      if (!err.response) {
+        throw err
+      }
+      if(err.response.status !== 200){
+        handleErrorResponse(err.response.status, dispatch);
+      }
+        // Return the known error for future handling
+      return rejectWithValue(err.response.status);
+    }
+  }
+)
+
+export const userEventOrderDelete = createAsyncThunk(
+  'users/EventOrderDelete',
+  async (data:any , { signal, dispatch, rejectWithValue }) => {
+    const source = axios.CancelToken.source()
+    signal.addEventListener('abort', () => {
+      source.cancel()
+    })
+    try {
+      const response = await axios.get(`${AGENT_ENDPOINT}/billing/delete-order/${data.id}`, {
+        cancelToken: source.token,
+        headers: authHeader('GET'),
+      })
+      dispatch(userEventOrders(data));
+      return response.data
+    } catch (err:any) {
+      if (!err.response) {
+        throw err
+      }
+      if(err.response.status !== 200){
+        handleErrorResponse(err.response.status, dispatch);
+      }
+        // Return the known error for future handling
+      return rejectWithValue(err.response.status);
+    }
+  }
+)
+// send order
+export const userEventOrderSend = createAsyncThunk(
+  'users/EventOrderSend',
+  async (data:any , { signal, dispatch, rejectWithValue }) => {
+    const source = axios.CancelToken.source()
+    signal.addEventListener('abort', () => {
+      source.cancel()
+    })
+    try {
+      const response = await axios.post(`${AGENT_ENDPOINT}/billing/send-order/${data.id}`, {},  {
+        cancelToken: source.token,
+        headers: authHeader('GET'),
+      })
+      return response.data
     } catch (err:any) {
       if (!err.response) {
         throw err
@@ -115,6 +168,7 @@ export const eventSlice = createSlice({
       console.log("rejected", action.payload);
       state.loading = false;
     }),
+
     // Login thuckCases
     builder.addCase(userEventOrders.pending, (state, action) => {
       state.fetching_orders = true;
@@ -132,6 +186,39 @@ export const eventSlice = createSlice({
       state.fetching_orders = false;
     }),
     builder.addCase(userEventOrders.rejected, (state, action) => {
+      console.log("rejected", action.payload);
+      state.fetching_orders = false;
+    }),
+    // 
+
+    builder.addCase(userEventOrderDelete.pending, (state, action) => {
+      state.fetching_orders = true;
+    }),
+    builder.addCase(userEventOrderDelete.fulfilled, (state, action) => {
+      let res = action.payload;
+      if(res.success){
+      }else{
+          state.error = res.message;
+      }
+      // state.fetching_orders = false;
+    }),
+    builder.addCase(userEventOrderDelete.rejected, (state, action) => {
+      console.log("rejected", action.payload);
+      state.fetching_orders = false;
+    }),
+    
+    builder.addCase(userEventOrderSend.pending, (state, action) => {
+      // state.fetching_orders = true;
+    }),
+    builder.addCase(userEventOrderSend.fulfilled, (state, action) => {
+      let res = action.payload;
+      if(res.success){
+      }else{
+          state.error = res.message;
+      }
+      // state.fetching_orders = false;
+    }),
+    builder.addCase(userEventOrderSend.rejected, (state, action) => {
       console.log("rejected", action.payload);
       state.fetching_orders = false;
     })

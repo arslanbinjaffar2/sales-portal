@@ -4,14 +4,16 @@ import Image from 'next/image'
 import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {RootState} from "@/redux/store/store";
-import { userEvent, userEventOrders } from '@/redux/store/slices/EventSlice';
+import { setLoading, userEvent, userEventOrderDelete, userEventOrders } from '@/redux/store/slices/EventSlice';
 import Loader from '@/components/forms/Loader';
 import Countdown from '@/components/Countdown';
-import {getSelectedLabel} from '@/helpers'; 
+import {authHeader, getSelectedLabel} from '@/helpers'; 
 import Link from 'next/link';
 import Pagination from '@/components/pagination';
+import { AGENT_ENDPOINT } from '@/constants/endpoints';
+import axios from 'axios';
+import moment from 'moment'
 import TicketDetail from '@/components/TicketDetail';
-import moment from 'moment';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -22,17 +24,23 @@ const orderFilters = [
   { id: "payment_pending", name: "Payment pending" },
 ];
 
+let ordersRequestDataStored =
+    typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
+const ordersRequestDataStore =
+    ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
+
+
 export default function OrderListing({ params }: { params: { event_id: string } }) {
   const dispatch = useAppDispatch();
   const {loading, event, event_orders, fetching_orders, currentPage, totalPages} = useAppSelector((state: RootState) => state.event);
 
-  const [limit, setLimit] = useState(10);
-  const [toggle, setToggle] = useState(false)
-  const [type, setType] = useState('all');
+  const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
+  const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
-
+  const [toggle, setToggle] = useState(false)
+  
   const registerDateEnd = useMemo(()=>{
     let currentDate = moment();
     let endDate = moment(event.eventsite_settings.registration_end_date);
@@ -76,12 +84,17 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     settoggoleLimited(!toggoleLimited);
   }
 
-
+  const storeEventRequestData = (ordersRequestDataStored:any) => {
+    if(window !== undefined){
+        localStorage.setItem('ordersRequestData', JSON.stringify(ordersRequestDataStored));
+    }
+}
 
   const handleSearchTextFilter = (e:any) => {
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
+    storeEventRequestData({searchText:value, limit, type, page:1});
     dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1}));
     setPage(1);
 
@@ -89,6 +102,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
+        storeEventRequestData({ searchText, limit, type:e.value, page:1});
         dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1}));
         setPage(1);
     }
@@ -96,6 +110,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
+      storeEventRequestData({ searchText, limit:value, type, page:1});
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1}));
       setPage(1);
     }
@@ -108,12 +123,30 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
     const handlePageChange = (page: number) => {
       setPage(page);
+      storeEventRequestData({ searchText, limit, type, page});
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page}));
     };
 
-    const handlePopup = (e:any) => {
-			setToggle(false);
-		}
+    const downloadPdf = async (data:any) => {
+      try {
+          const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}`,  {
+            headers: authHeader('GET'),
+            responseType: 'blob'
+          });
+          console.log(response);
+          let url = window.URL.createObjectURL(response.data);
+          console.log(url);
+          let a = document.createElement("a");
+          a.href = url;
+          a.download = data.id+".pdf";
+          a.click();
+        } catch (err:any) {
+          
+        }
+  }
+  const handlePopup = (e:any) => {
+    setToggle(false);
+  }
   return (
     <>
      {(loading === false && event !== null) ?
@@ -196,7 +229,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                       </li>
                       <li>
 
-                        <button className='ebs-btn-panel'>
+                        <button className='ebs-btn-panel' onClick={(e)=>{ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id}))}}>
                           <Image
                             src={require("@/assets/img/ico-trash.svg")}
                             alt=""
@@ -215,8 +248,8 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                             <button className="dropdown-item">View</button>
                           </Link>
                             {/* <button className="dropdown-item">Print Badge</button> */}
-                            <button className="dropdown-item">Download </button>
-                            <button style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">Download as Invoice</button>
+                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id})}}>Download </button>
+                            <button onClick={()=> { downloadPdf({id:order.id})}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">Download as Invoice</button>
                           </div>
                         </div>
                       </li>
