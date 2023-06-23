@@ -9,10 +9,11 @@ import Loader from '@/components/forms/Loader';
 import Countdown from '@/components/Countdown';
 import {authHeader, getSelectedLabel} from '@/helpers'; 
 import Link from 'next/link';
-import moment from 'moment';
 import Pagination from '@/components/pagination';
 import { AGENT_ENDPOINT } from '@/constants/endpoints';
 import axios from 'axios';
+import moment from 'moment'
+import TicketDetail from '@/components/TicketDetail';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -38,6 +39,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
+  const [toggle, setToggle] = useState(false)
   
   const registerDateEnd = useMemo(()=>{
     let currentDate = moment();
@@ -142,61 +144,35 @@ export default function OrderListing({ params }: { params: { event_id: string } 
           
         }
   }
-
+  const handlePopup = (e:any) => {
+    setToggle(false);
+  }
   return (
     <>
      {(loading === false && event !== null) ?
-     <>
+     <>     
             <div className="ebs-ticket-section">
-              <h4>Tickets</h4>
-              <div className="row d-flex">
-                <div className="col-10">
-                  <div className="row">
-                    <div className="col">
-                      <div className="ebs-ticket-information">
-                        <strong>{event?.event_stats?.tickets_left}</strong>
-                        <span>LEFT</span>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="ebs-ticket-information">
-                        <strong>{event?.event_stats?.tickets_sold}</strong>
-                        <span>sold</span>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="ebs-ticket-information">
-                        <strong>{event?.event_stats?.total_tickets}</strong>
-                        <span>total</span>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="ebs-ticket-information">
+              <div className="ebs-ticket-section-inner">
+                  <div className="ebs-ticket-box">
+                    <button onClick={() => setToggle(true)} className='btn'><em className="material-symbols-outlined">local_activity</em></button>
+                  </div>
+                  <div className="ebs-ticket-box">
+                    <strong>{event?.event_stats?.tickets_sold}</strong>
+                    <span>sold</span>
+                  </div>
+                  <div className="ebs-ticket-box">
                         <strong>{event?.sales_agent_stats?.tickets_sold}</strong>
                         <span>My Sold Tickets</span>
-                      </div>
                     </div>
-                    <div className="col">
-                      <div className="ebs-ticket-information">
-                        <strong>{event?.sales_agent_stats?.revenue}</strong>
-                        <span>
-                          My Revenue <br />
-                          <small>(DKK)</small>
-                        </span>
-                      </div>
-                    </div>
+                  <div className="ebs-ticket-box">
+                    <strong>{event?.sales_agent_stats?.revenue}</strong>
+                    <span>
+                      My Revenue <small>(DKK)</small>
+                    </span>
                   </div>
-                </div>
-                <div className="col-2">
-                  <div className="ebs-time-counter">
-                    <strong>
-                       {registerDateEnd && (event.eventsite_settings.registration_end_date !== "0000-00-00 00:00:00") ?  <Countdown date={moment(event.eventsite_settings.registration_end_date)} /> : "00:00:00:00"}
-                    </strong>
-                    <span>Time left</span>
-                  </div>
-                </div>
               </div>
             </div>
+            {toggle && <TicketDetail handleClose={handlePopup} />}
             <div className="ebs-order-list-section">
               <div className="ebs-order-header">
                 <h4>Orders List</h4>
@@ -224,20 +200,20 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   <div className="ebs-table-box ebs-box-4"><strong>Company <em className="material-symbols-outlined">unfold_more</em></strong></div>
                   <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket <em className="material-symbols-outlined">unfold_more</em></strong></div>
                   <div className="ebs-table-box ebs-box-4"><strong>Revenue <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><strong>Payment STATUS <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-2"  />
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>Payment STATUS <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-3"  />
                 </div>}
                 {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
                 <div key={order.id} className="d-flex align-items-center ebs-table-content">
                   <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
-                  <div className="ebs-table-box ebs-box-1"><p>{order.order_date}</p></div>
+                  <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MM-YYYY')}</p></div>
                   <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
                   <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.grand_total} DKK</p></div>
-                  <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><p>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
-                  <div className="ebs-table-box ebs-box-2 d-flex justify-content-end">
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
+                  <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
                       <li>
                       <Link href={`/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>

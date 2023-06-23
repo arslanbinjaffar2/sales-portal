@@ -849,8 +849,9 @@
       text-transform: uppercase;
       display: flex;
       align-items: center;
-      i {
+      em {
         font-size: 18px;
+        cursor: pointer;
       }
     }
   }
@@ -909,69 +910,63 @@
 .ebs-ticket-section {
   padding-top: 15px;
   margin-bottom: 30px;
-  h4 {
-    font-size: 20px;
-    color: $darktext;
-    margin-bottom: 15px;
-    font-weight: 700;
-  }
-  .row {
-    margin: 0 -12px;
-    div[class="col-"],
-    .col {
-      padding: 0 12px;
-    }
-    .col-10 {
-      width: 79%;
-    }
-    .col-2 {
-      width: 21%;
-    }
-  }
-  .ebs-ticket-information {
-    color: $white;
-    font-size: 30px;
-    font-weight: 600;
-    text-transform: uppercase;
-    text-align: center;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 140px;
+  .ebs-ticket-section-inner {
+    padding: 15px 30px;
     border-radius: 4px;
-    background: $darkcolor;
-    strong {
-      font-weight: 600;
-    }
-    span {
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
-      padding-top: 15px;
-    }
-  }
-  .ebs-time-counter {
-    border: 1px solid $darkcolor;
-    background: $white;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    strong {
-      font-size: 24px;
-      color: $darktext;
-      font-weight: 500;
-    }
-    span {
-      padding-top: 15px;
-      font-weight: 14px;
-      font-weight: 500;
-      color: $darktext;
+    background: $lightheader;
+    display: inline-block;
+    .ebs-ticket-box {
+      display: inline-block;
+      text-align: center;
+      vertical-align: top;
+      padding-left: 30px;
+      margin-left: 30px;
+      position: relative;
+      .btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 4px;
+        padding: 0;
+        color: $darktext;
+        background: $borderlight;
+        box-shadow: none;
+        margin-top: 8px;
+        em {
+          transform: rotate(-45deg);
+          margin-top: 2px;
+        }
+      }
+      &::before {
+        content: '';
+        width: 1px;
+        height: 80%;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        background: $borderlight;
+        transform: translateY(-50%);
+      }
+      &:first-of-type {
+        padding-left: 0;
+        margin: 0;
+        &::before {
+          display: none;
+        }
+      }
+      strong {
+        display: block;
+        font-size: 26px;
+        font-weight: 700;
+        color: $darkcolor;
+        margin-bottom: 5px;
+      }
+      span {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: $darktext;
+        text-transform: uppercase;
+      }
     }
   }
 }
@@ -1163,15 +1158,15 @@
         font-size: 18px;
         margin-top: 1px;
         margin-right: 5px;
-        color: $darkcolor;
+        color: $darktext;
       }
     }
   }
   h3 {
-    margin-bottom: 3px;
+    margin-bottom: 8px;
     a {
       font-size: 22px;
-      color: $black;
+      color: $borderhover;
       font-weight: 700;
       text-decoration: none;
     }
@@ -1254,6 +1249,7 @@
     align-items: center;
     justify-content: center;
     padding: 30px;
+    overflow: hidden;
     .modal-dialog {
       width: 100%;
       max-width: 640px;
@@ -1263,6 +1259,9 @@
           color: $borderhover;
           margin-bottom: 12px;
           font-size: 20px;
+          .material-symbols-outlined {
+            cursor: pointer;
+          }
         }
         p {
           margin: 0;
@@ -1286,6 +1285,61 @@
           }
         }
       }
+      &.ebs-modal-tickets {
+        max-width: 770px;
+        max-height: 100%;
+        margin: 0;
+        .modal-content {
+          max-height: 100%;
+        }
+        .modal-body {
+          padding: 25px;
+          max-height: 100%;
+        }
+      }
     }
   }
+}
+.ebs-grid-ticket-wrapper {
+  padding-top: 25px;
+  .ebs-grid-ticket-row {
+    padding-top: 20px;
+    .ebs-box-1,.ebs-box-2 {
+      width: 24%;
+      padding: 0 10px;
+      font-size: 12px;
+      p {
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    .ebs-box-2 {
+      width: 19%;
+    }
+
+  }
+  .ebs-grid-ticket-header {
+    padding-bottom: 10px;
+    padding-top: 0;
+    border-bottom: 1px solid $darkcolor;
+    strong {
+      text-transform: uppercase;
+      color: $darktext;
+      font-size: 12px;
+      em {
+        font-size: 16px;
+        vertical-align: middle;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.ebs-grid-ticket-scroll {
+  max-height: 450px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: $border #F2F2F2;
+  scrollbar-gutter: stable;
 }
