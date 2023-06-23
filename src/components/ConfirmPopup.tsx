@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 
-const ConfirmPopup = ({handleClose}) => {
+const ConfirmPopup = ({handleClose}: any) => {
   return (
     <div className="ebs-modal-wrapper">
       <div className="modal" role="dialog">
