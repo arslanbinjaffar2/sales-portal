@@ -39,7 +39,7 @@ export default function Dashboard() {
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const {events, loading, totalPages, currentPage} = useAppSelector((state: RootState) => state.events);
-    const [eventsRequestData, setEventsRequestData] = useState<any>(eventsRequestDataStore !== null ? eventsRequestDataStore : {search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1, limit:10});
+    const [eventsRequestData, setEventsRequestData] = useState<any>(eventsRequestDataStore !== null ? eventsRequestDataStore : {search_text: '', event_action: 'active_future', sort_by: '', order_by: '', page:1, limit:10});
     const [toggoleLimited, settoggoleLimited] = useState(false)
     const [limit, setLimit] = useState(eventsRequestDataStore !== null ? eventsRequestDataStore.limit : 10);
     console.log(eventsRequestData, '2');
@@ -131,7 +131,7 @@ export default function Dashboard() {
                     </div>
                     <div className="col-8">
                         <div className="right-top-header">
-                            <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} onChange={(e)=>{setEventsRequestData((prev)=> ({...prev, search_text:e.target.value}))}} />
+                            <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} onChange={(e)=>{setEventsRequestData((prev:any)=> ({...prev, search_text:e.target.value}))}} />
                             <label className="label-select-alt">
                                 <Dropdown
                                     selected={eventsRequestData.event_action} 

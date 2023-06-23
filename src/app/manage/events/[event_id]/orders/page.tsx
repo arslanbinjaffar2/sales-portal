@@ -4,13 +4,15 @@ import Image from 'next/image'
 import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {RootState} from "@/redux/store/store";
-import { userEvent, userEventOrders } from '@/redux/store/slices/EventSlice';
+import { setLoading, userEvent, userEventOrderDelete, userEventOrders } from '@/redux/store/slices/EventSlice';
 import Loader from '@/components/forms/Loader';
 import Countdown from '@/components/Countdown';
-import {getSelectedLabel} from '@/helpers'; 
+import {authHeader, getSelectedLabel} from '@/helpers'; 
 import Link from 'next/link';
 import moment from 'moment';
 import Pagination from '@/components/pagination';
+import { AGENT_ENDPOINT } from '@/constants/endpoints';
+import axios from 'axios';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -123,6 +125,24 @@ export default function OrderListing({ params }: { params: { event_id: string } 
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page}));
     };
 
+    const downloadPdf = async (data:any) => {
+      try {
+          const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}`,  {
+            headers: authHeader('GET'),
+            responseType: 'blob'
+          });
+          console.log(response);
+          let url = window.URL.createObjectURL(response.data);
+          console.log(url);
+          let a = document.createElement("a");
+          a.href = url;
+          a.download = data.id+".pdf";
+          a.click();
+        } catch (err:any) {
+          
+        }
+  }
+
   return (
     <>
      {(loading === false && event !== null) ?
@@ -233,7 +253,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                       </li>
                       <li>
 
-                        <button className='ebs-btn-panel'>
+                        <button className='ebs-btn-panel' onClick={(e)=>{ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id}))}}>
                           <Image
                             src={require("@/assets/img/ico-trash.svg")}
                             alt=""
@@ -252,8 +272,8 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                             <button className="dropdown-item">View</button>
                           </Link>
                             {/* <button className="dropdown-item">Print Badge</button> */}
-                            <button className="dropdown-item">Download </button>
-                            <button style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">Download as Invoice</button>
+                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id})}}>Download </button>
+                            <button onClick={()=> { downloadPdf({id:order.id})}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">Download as Invoice</button>
                           </div>
                         </div>
                       </li>
