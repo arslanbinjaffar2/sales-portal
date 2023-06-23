@@ -29,15 +29,21 @@ const sortFilters = [
     {id: 'end_date', name: "End date"}
 ];
 
+let eventsRequestDataStored =
+    typeof window !== "undefined" && localStorage.getItem("eventsRequestData");
+const eventsRequestDataStore =
+    eventsRequestDataStored && eventsRequestDataStored !== undefined ? JSON.parse(eventsRequestDataStored) : null;
+
 export default function Dashboard() {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const {events, loading, totalPages, currentPage} = useAppSelector((state: RootState) => state.events);
-    const [eventsRequestData, setEventsRequestData] = useState({search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1, limit:10});
+    const [eventsRequestData, setEventsRequestData] = useState<any>(eventsRequestDataStore !== null ? eventsRequestDataStore : {search_text: '', event_action: 'name', sort_by: '', order_by: '', page:1, limit:10});
     const [toggoleLimited, settoggoleLimited] = useState(false)
-    const [limit, setLimit] = useState(10);
-
+    const [limit, setLimit] = useState(eventsRequestDataStore !== null ? eventsRequestDataStore.limit : 10);
+    console.log(eventsRequestData, '2');
+    console.log(eventsRequestDataStored, '3');
     useEffect(() => {
         const promise = dispatch(userEvents(eventsRequestData));
         return () =>{
@@ -45,12 +51,19 @@ export default function Dashboard() {
         }
     }, []);
 
+    const storeEventRequestData = (eventsRequestDataStored:any) => {
+        if(window !== undefined){
+            localStorage.setItem('eventsRequestData', JSON.stringify(eventsRequestDataStored));
+        }
+    }
+
     const handleSearchTextFilter = (e:any) => {
         const {value} = e.target;
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate.search_text = value;
         eventsRequestDataUpdate['page'] = 1;
         // Update the requestData state with the modified array
+        storeEventRequestData(eventsRequestDataUpdate);
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(userEvents(eventsRequestDataUpdate));
     }
@@ -59,6 +72,7 @@ export default function Dashboard() {
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate['event_action'] = e.value;
         eventsRequestDataUpdate['page'] = 1;
+        storeEventRequestData(eventsRequestDataUpdate);
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(userEvents(eventsRequestDataUpdate));
     }
@@ -68,6 +82,7 @@ export default function Dashboard() {
         eventsRequestDataUpdate['sort_by'] = e.value;
         eventsRequestDataUpdate['page'] = 1;
         // Update the requestData state with the modified array
+        storeEventRequestData(eventsRequestDataUpdate);
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(userEvents(eventsRequestDataUpdate));
     }
@@ -76,6 +91,7 @@ export default function Dashboard() {
         // Perform API call or update data based on the new page
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate['page'] = page;
+        storeEventRequestData(eventsRequestDataUpdate);
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(setCurrentPage(page));
         dispatch(userEvents(eventsRequestDataUpdate));
@@ -93,6 +109,7 @@ export default function Dashboard() {
         const eventsRequestDataUpdate = eventsRequestData;
         eventsRequestDataUpdate['limit'] = value;
         eventsRequestDataUpdate['page'] = 1;
+        storeEventRequestData(eventsRequestDataUpdate);
         setEventsRequestData(eventsRequestDataUpdate);
         dispatch(userEvents(eventsRequestDataUpdate));
       }
@@ -137,12 +154,11 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
-            <div className="main-data-table">
+            <div className="main-data-table" style={{minHeight:'calc(100vh - 272px)'}}>
                  <div className="ebs-data-table">
 								 {events.length > 0 && <div className="d-flex align-items-center ebs-table-header">
                         <div className="ebs-table-box ebs-box-1"><strong>Event Logo</strong></div>
-                        <div className="ebs-table-box ebs-box-2"><strong>Event Name <i
-                            className="material-symbols-outlined">unfold_more</i></strong></div>
+                        <div className="ebs-table-box ebs-box-2"><strong>Event Name </strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>Event Date</strong></div>
                         <div className="ebs-table-box ebs-box-4"><strong>Created by</strong></div>
                         <div className="ebs-table-box ebs-box-4"><strong>Organized by</strong></div>

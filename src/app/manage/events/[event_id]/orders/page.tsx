@@ -21,16 +21,22 @@ const orderFilters = [
   { id: "payment_pending", name: "Payment pending" },
 ];
 
+let ordersRequestDataStored =
+    typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
+const ordersRequestDataStore =
+    ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
+
+
 export default function OrderListing({ params }: { params: { event_id: string } }) {
   const dispatch = useAppDispatch();
   const {loading, event, event_orders, fetching_orders, currentPage, totalPages} = useAppSelector((state: RootState) => state.event);
 
-  const [limit, setLimit] = useState(10);
-  const [type, setType] = useState('all');
+  const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
+  const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
-
+  
   const registerDateEnd = useMemo(()=>{
     let currentDate = moment();
     let endDate = moment(event.eventsite_settings.registration_end_date);
@@ -74,12 +80,17 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     settoggoleLimited(!toggoleLimited);
   }
 
-
+  const storeEventRequestData = (ordersRequestDataStored:any) => {
+    if(window !== undefined){
+        localStorage.setItem('ordersRequestData', JSON.stringify(ordersRequestDataStored));
+    }
+}
 
   const handleSearchTextFilter = (e:any) => {
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
+    storeEventRequestData({searchText:value, limit, type, page:1});
     dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1}));
     setPage(1);
 
@@ -87,6 +98,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
+        storeEventRequestData({ searchText, limit, type:e.value, page:1});
         dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1}));
         setPage(1);
     }
@@ -94,6 +106,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
+      storeEventRequestData({ searchText, limit:value, type, page:1});
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1}));
       setPage(1);
     }
@@ -106,6 +119,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
     const handlePageChange = (page: number) => {
       setPage(page);
+      storeEventRequestData({ searchText, limit, type, page});
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page}));
     };
 

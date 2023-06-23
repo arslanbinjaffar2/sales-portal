@@ -34,8 +34,9 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                     <div className="col-8">
                         <div className="logo">
                         <div className="ebs-bottom-header-left">
+                            
                             <h3>
-                            <a href="#!">{event?.event_name}</a>
+                                <a href="#!">{event?.event_name}</a>
                             </h3>
                             <ul>
                             <li>
@@ -43,6 +44,9 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                             </li>
                             <li>
                                 <i className="material-symbols-outlined">place</i>{event?.event_location}
+                            </li>
+                            <li>
+                                <strong>Event id : </strong>  {params.event_id}
                             </li>
                             </ul>
                         </div>
@@ -71,7 +75,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                     </div>
                     </div>
                 </div>
-            <div style={{ background: "#fff" }} className="main-data-table">
+            <div style={{ background: "#fff",  }} className="main-data-table">
                     {children}
             </div>
         </> :null}

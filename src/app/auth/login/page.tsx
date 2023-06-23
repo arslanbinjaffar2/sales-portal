@@ -11,8 +11,8 @@ import SuccessAlert from "@/components/forms/alerts/SuccessMessage";
 import Loading from "../loading";
 
 export default function Login() {
-		const _email = useRef<HTMLInputElement>(null);
-		const _password = useRef<HTMLInputElement>(null);
+		const _email = useRef<any>(null);
+		const _password = useRef<any>(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {user, loading, error, errors, successMessage} = useAppSelector((state: RootState) => state.authUser);
@@ -33,7 +33,7 @@ export default function Login() {
     }
 
     useEffect(() => {
-			setEmail(_email?.current.value)
+			setEmail(_email?.current?.value)
 			setPassword(_password?.current.value)
         if(user && user.access_token) {
             router.push('/manage/events');
