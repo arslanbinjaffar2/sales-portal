@@ -53,7 +53,6 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
   useEffect(() => {
     // todo, do further logic and API integration
-    return console.log({event});
     document.body.addEventListener('click', handleBody,false)
     return () => {
       document.body.removeEventListener('click', handleBody,false)
@@ -109,7 +108,6 @@ export default function OrderListing({ params }: { params: { event_id: string } 
       setPage(page);
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page}));
     };
-
 
   return (
     <>
@@ -169,7 +167,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
               <div className="ebs-order-header">
                 <h4>Orders List</h4>
                 <div className="row">
-                  <div className="col-5 d-flex">
+                  <div className="col-12 d-flex">
                     <input type="text" className="ebs-search-area" placeholder="Search" onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} value={searchText} onChange={(e)=>{setSearchText(e.target.value)}} />
                     <label style={{ width: "210px" }} className="label-select-alt">
                       <Dropdown
@@ -181,38 +179,21 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                       />
                     </label>
                   </div>
-                  <div className="col-7 d-flex justify-content-end align-items-center">
-                    <button className="btn-full-screen">
-                      <Image src={require("@/assets/img/ico-fullscreen.svg")} alt="" width="27" height="28" />
-                    </button>
-                    <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                      <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
-                        {limit} <i className="material-symbols-outlined">expand_more</i>
-                      </button>
-                      <div className={`ebs-dropdown-menu`}>
-                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 2) }}>2</button>
-                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
-                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
-                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
-                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="ebs-data-table ebs-order-table">
-                <div className="d-flex align-items-center ebs-table-header">
-                  <div className="ebs-table-box ebs-box-1"><strong>Order #</strong></div>
-                  <div className="ebs-table-box ebs-box-1"><strong>Date</strong></div>
-                  <div className="ebs-table-box ebs-box-2"><strong>Name</strong></div>
-                  <div className="ebs-table-box ebs-box-2"><strong>Email</strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Company</strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket</strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Revenue</strong></div>
-                  <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><strong>Payment STATUS</strong></div>
+                {event_orders !== null && event_orders.data.length > 0 && <div className="d-flex align-items-center ebs-table-header">
+                  <div className="ebs-table-box ebs-box-1"><strong>Order # <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-1"><strong>Date <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-2"><strong>Name <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-2"><strong>Email <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-4"><strong>Company <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-4"><strong>Revenue <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0}}><strong>Payment STATUS <em className="material-symbols-outlined">unfold_more</em></strong></div>
                   <div className="ebs-table-box ebs-box-2"  />
-                </div>
-                {event_orders !== null ? event_orders.data.map((order:any, key:number) =>
+                </div>}
+                {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
                 <div key={order.id} className="d-flex align-items-center ebs-table-content">
                   <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
                   <div className="ebs-table-box ebs-box-1"><p>{order.order_date}</p></div>
@@ -236,16 +217,6 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                           </button>
                           </Link>
                       </li>
-                      {/* <li>
-                        <button className='ebs-btn-panel'>
-                          <Image
-                            src={require("@/assets/img/ico-folder.svg")}
-                            alt=""
-                            width="12"
-                            height="12"
-                          />
-                        </button>
-                      </li> */}
                       <li>
 
                         <button className='ebs-btn-panel'>
@@ -278,20 +249,37 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                 (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
                   <Loader className=''fixed='' />
                 </div> : 
-                <div className='d-flex justify-content-center align-items-center' style={{fontSize:"32px", textAlign:"center", fontStyle:"italic",  minHeight:"350px"}} >
-                    No orders found...
-                </div>)
+                  <div style={{minHeight: '335px', backgroundColor: '#fff', borderRadius: '8px'}} className='d-flex align-items-center justify-content-center h-100 w-100'>
+                      <div className="text-center">
+                            <Image
+                                src={require('@/assets/img/no_record_found.svg')} alt="" width="100" height="100"
+                            />
+                            <p className='pt-3 m-0'>No data available</p>
+                      </div>
+                   </div>)
               }
               
               </div>
             </div>
-            <div>
-            <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-            />
-            </div>
+            {event_orders !== null && event_orders.data.length > 0  && <div className='d-flex justify-content-end align-items-center pt-3'>
+              <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+              />
+            <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
+                  {limit} <i className="material-symbols-outlined">expand_more</i>
+                </button>
+                <div className={`ebs-dropdown-menu`}>
+                  <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 2) }}>2</button>
+                  <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
+                  <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
+                  <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
+                  <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
+                </div>
+              </div>
+            </div>}
 
       </>
       : null}

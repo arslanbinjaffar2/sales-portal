@@ -24,7 +24,7 @@ export default function Invoice({ params }: { params: { event_id: string, order_
   return (
     <>
     
-      {invoice ?  <div dangerouslySetInnerHTML={{__html:invoice}}>
+      {invoice ?  <div className='ebs-invoice-wrapper' dangerouslySetInnerHTML={{__html:invoice}}>
 
       </div> : <Loader className='' fixed=''/>}
     </>

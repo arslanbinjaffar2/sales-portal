@@ -28,33 +28,33 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
 
     return (
         <nav>
-            <ul className="pagination">
-                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+            <ul className="ebs-pagination list-inline">
+                <li className={`list-inline-item page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                     <button
+											className='ebs-prev-next'
                         disabled={currentPage === 1}
-                        className="page-link"
                         onClick={() => onPageChange(currentPage - 1)}
                     >
-                        Previous
+                       <span className="material-symbols-outlined">chevron_left</span>
                     </button>
                 </li>
                 {pages.map((page) => (
                     <li
                         key={page}
-                        className={`page-item ${currentPage === page ? 'active' : ''}`}
+                        className={`list-inline-item page-item ${currentPage === page ? 'active' : ''}`}
                     >
-                        <button className="page-link" onClick={() => onPageChange(page)}>
+                        <button  onClick={() => onPageChange(page)}>
                             {page}
                         </button>
                     </li>
                 ))}
-                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <li className={`list-inline-item page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                     <button
-                        className="page-link"
+											className='ebs-prev-next'
                         disabled={currentPage === totalPages}
                         onClick={() => onPageChange(currentPage + 1)}
                     >
-                        Next
+                        <span className="material-symbols-outlined">chevron_right</span>
                     </button>
                 </li>
             </ul>

@@ -63,6 +63,14 @@ class DropDown extends React.Component {
         })
         : false;
     const style = {
+      option: (base, { data, isDisabled, isFocused, isSelected }) => ({
+          ...base,
+          backgroundColor: isSelected ? "#86A4AE" : "",
+          ":hover": {
+            backgroundColor: "rgb(200, 200, 200)",
+            color: '#fff'
+          },
+        }),
       control: base => ({
         ...base,
         border: 0,
@@ -179,6 +187,7 @@ class DropDown extends React.Component {
               isClearable={false}
               isSearchable={true}
               isMulti={isMulti}
+              
               />
             </label>
         ) : (

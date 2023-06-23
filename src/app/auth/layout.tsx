@@ -1,6 +1,5 @@
 import '@/assets/css/app.scss'
 import Image from 'next/image';
-import Illustration from '@/assets/img/illustration.png';
 import Loading from './loading';
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -20,7 +19,7 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
                             <div className="row">
                                 <div className="col-6">
                                     <div className="left-signup">
-                                        <Image src={'/img/logo.svg'} alt="" width="200" height="29" className='logos' />
+                                        <Image src={'/img/logo.svg'} alt="" width="150" height="32" className='logos' />
                                         <div className="text-block">
                                             <h4>WELCOME TO SALES PORTAL</h4>
                                             <p>Maximize your sales potential with our customizable portal solutions</p>
@@ -31,7 +30,7 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
                                                 <li>Feel safe with our step by step navigation</li>
                                             </ul>
                                         </div>
-                                        <Image src={Illustration} alt="" width="300" height="220" className='illustration' />
+                                        <Image src={'/img/illustration.svg'} alt="" width="300" height="220" className='illustration' />
                                     </div>
                                 </div>
                                 <div className="col-6">

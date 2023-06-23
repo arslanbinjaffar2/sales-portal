@@ -33,15 +33,6 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                     <div className="row d-flex">
                     <div className="col-8">
                         <div className="logo">
-                        <a href="">
-                            <Image
-                            src={event?.brand_logo !== '' ? `${process.env.serverImageHost}/assets/event/branding/${event?.brand_logo}`: require("@/assets/img/logo.svg")}
-                            alt=""
-                            width="200"
-                            height="29"
-                            className="logos"
-                            />
-                        </a>
                         <div className="ebs-bottom-header-left">
                             <h3>
                             <a href="#!">{event?.event_name}</a>

@@ -106,7 +106,7 @@ export default function Dashboard() {
                         <div className="logo">
                             <a href="">
                                 <Image
-                                    src={require('@/assets/img/logo.svg')} alt="" width="200" height="29"
+                                    src={require('@/assets/img/logo.svg')} alt="" width="150" height="32"
                                     className='logos'
                                 />
                             </a>
@@ -138,11 +138,11 @@ export default function Dashboard() {
                 </div>
             </div>
             <div className="main-data-table">
-                <div className="ebs-data-table">
-                    <div className="d-flex align-items-center ebs-table-header">
+                 <div className="ebs-data-table">
+								 {events.length > 0 && <div className="d-flex align-items-center ebs-table-header">
                         <div className="ebs-table-box ebs-box-1"><strong>Event Logo</strong></div>
                         <div className="ebs-table-box ebs-box-2"><strong>Event Name <i
-                            className="material-icons">unfold_more</i></strong></div>
+                            className="material-symbols-outlined">unfold_more</i></strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>Event Date</strong></div>
                         <div className="ebs-table-box ebs-box-4"><strong>Created by</strong></div>
                         <div className="ebs-table-box ebs-box-4"><strong>Organized by</strong></div>
@@ -153,7 +153,7 @@ export default function Dashboard() {
                             Tickets</strong></div>
                         <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><strong
                             style={{justifyContent: 'flex-end'}}>My Revenue</strong></div>
-                    </div>
+                    </div>}
                     <>
                         {
                             events.length > 0 ? (
@@ -164,13 +164,15 @@ export default function Dashboard() {
                                             >
                                         <div className="ebs-table-box ebs-box-1">
                                             <Image
-                                                src={item.header_logo ? (`${process.env.serverImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.png')}
+                                                src={item.header_logo ? (`${process.env.serverImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}
                                                 alt="" width={100} height={34}/>
                                         </div>
                                         <div className="ebs-table-box ebs-box-2"><p>{item.name}</p>
                                         </div>
                                         <div className="ebs-table-box ebs-box-3">
-                                            <p>{item.start_date + ' - ' + item.end_date}</p></div>
+                                            <p>{item.start_date}</p>
+                                            <p>{item.end_date}</p>
+																					</div>
                                         <div className="ebs-table-box ebs-box-4">
                                             <p>{item.organizer_name}</p></div>
                                         <div className="ebs-table-box ebs-box-4">
@@ -192,13 +194,22 @@ export default function Dashboard() {
                                 </Link>
                                 )
                             ) : (
-                                !loading ? (<div><p> No data available</p></div>) : <Loader className='' fixed='' />
+                                !loading ? (
+																	<div style={{minHeight: '450px', backgroundColor: '#fff', borderRadius: '8px'}} className='d-flex align-items-center justify-content-center h-100 w-100'>
+																					<div className="text-center">
+																									<Image
+																											src={require('@/assets/img/no_record_found.svg')} alt="" width="100" height="100"
+																									/>
+																									<p className='pt-3 m-0'>No data available</p>
+																					</div>
+																		</div>
+																) : <Loader className='' fixed='' />
                             )
                         }
                     </>
                 </div>
                 {/* Render the pagination component */}
-                <div className='d-flex justify-content-between align-items-center'>
+                {events.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -216,7 +227,7 @@ export default function Dashboard() {
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
                       </div>
                     </div>
-                </div>
+                </div>}
             </div>    
         </>
     );

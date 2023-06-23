@@ -1,11 +1,11 @@
 
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,300,0,200');
+@import './bootstrap/index';
 // Base
 @import './base/vars';
 
 // Vendors
-@import './bootstrap/index';
 
 @-moz-document url-prefix() {
   select,
@@ -42,7 +42,7 @@ textarea {
   resize: none;
 }
 html {
-  background: $lightgray;
+  background: $white;
   display: flex;
   flex-direction: column;
 }
@@ -50,11 +50,14 @@ body {
   font-family: $defaultFont !important;
   font-size: 14px;
   color: $black;
-  background: linear-gradient(0deg, $lightgray calc(100% - 250px), $borderhover 250px) no-repeat !important;
+  background: linear-gradient(0deg, $white calc(100% - 250px), $lightgreen 250px) no-repeat !important;
   background-attachment: fixed;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+}
+img {
+  height: auto;
 }
 #template {
   margin-top: 5px;
@@ -86,15 +89,15 @@ html,body {
 .main-navigation {
   list-style: none;
   padding: 0px 0 0;
-  margin: 0;
+  margin: 0 0 10px ;
 }
 .main-navigation > li {
   display: inline-block;
   position: relative;
   margin-left: 40px;
   font-size: 13px;
-  color: $white;
-  font-weight: 600;
+  color: $darktext;
+  font-weight: 500;
   line-height: 18px;
 }
 .main-navigation > li > a {
@@ -153,8 +156,8 @@ html,body {
 .main-navigation ul li a:hover,
 .main-navigation ul li a.active  {
   text-decoration: none;
-  color: $darkcolor;
-  background: $lightbackground;
+  color: $white;
+  background: $darkcolor;
 }
 .signup-wrapper {
   background: $white;
@@ -203,7 +206,7 @@ html,body {
       width: 325px;
       height: 325px;
       border-radius: 100%;
-      border: 41px solid $color-warning;
+      border: 41px solid $lightgreen;
       display: block;
       position: absolute;
       left: -100px;
@@ -216,7 +219,7 @@ html,body {
       width: 325px;
       height: 325px;
       border-radius: 100%;
-      border: 41px solid $color-secondary;
+      border: 41px solid $lightgreen;
       display: block;
       position: absolute;
       right: -120px;
@@ -234,7 +237,7 @@ html,body {
         width: 120px;
         height: 120px;
         border-radius: 100%;
-        background: rgba($color-secondary, 0.5);
+        background: $lightgreen;
         position: absolute;
         left: -40px;
         z-index: -1;

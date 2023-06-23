@@ -13,23 +13,13 @@ import { RootState } from "@/redux/store/store";
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
 
-// attempt sales-agent login using credentials
-// function resetPasswordAction(resetPasswordRequestData:any) {
-//     return fetch(resetPasswordEndpoint, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json',
-//         },
-//         body: JSON.stringify(resetPasswordRequestData)
-//     })
-//         .then(data => data.json())
-// }
 
 
 export default function requestReset() {
     const [password, setPassword] = useState('');
+    const [passwordType, setPasswordType] = useState(true)
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [confirmpasswordType, setConfirmPasswordType] = useState(true)
     
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -68,11 +58,17 @@ export default function requestReset() {
             <form role="" onSubmit={handleSubmit}>
                 <div className="form-area-signup">
                     <div className='form-row-box'>
-                        <input className='' value={password} type="password" name="password" id="password" onChange={(e) => setPassword(e.target.value)} required  />
+                        <span className="icon-eye">
+                            <Image onClick={() => setPasswordType(!passwordType)}  src={require(`@/assets/img/${passwordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
+                        </span>
+                        <input autoComplete="false" className={password ? 'ieHack' : ''} value={password} type={passwordType ? 'password' : 'text'} name="password" id="password" onChange={(e) => setPassword(e.target.value)} required  />
                         <label className="title">Enter new password</label>
                     </div>
                     <div className='form-row-box'>
-                        <input className='' value={passwordConfirmation} type="password" name="password_confirmation" id="password_confirmation" required onChange={(e) => setPasswordConfirmation(e.target.value)}  />
+                        <span className="icon-eye">
+                            <Image  onClick={() => setConfirmPasswordType(!confirmpasswordType)} src={require(`@/assets/img/${confirmpasswordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
+                        </span>
+                        <input autoComplete="false" className={passwordConfirmation ? 'ieHack' : ''} value={passwordConfirmation} type={confirmpasswordType ? 'password' : 'text'} name="password_confirmation" id="password_confirmation" required onChange={(e) => setPasswordConfirmation(e.target.value)}  />
                         <label className="title">Confirm new password</label>
                     </div>
                     <div className="form-row-box button-panel">
