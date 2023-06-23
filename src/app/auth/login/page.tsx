@@ -9,6 +9,7 @@ import { loginUser } from "@/redux/store/slices/AuthSlice";
 import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 import SuccessAlert from "@/components/forms/alerts/SuccessMessage";
 import Loading from "../loading";
+import ConfirmPopup from "@/components/ConfirmPopup";
 
 export default function Login() {
 		const _email = useRef<HTMLInputElement>(null);
@@ -33,8 +34,8 @@ export default function Login() {
     }
 
     useEffect(() => {
-			setEmail(_email?.current.value)
-			setPassword(_password?.current.value)
+			setEmail(_email?.current.value || '')
+			setPassword(_password?.current.value || '')
         if(user && user.access_token) {
             router.push('/manage/events');
         }
@@ -46,9 +47,12 @@ export default function Login() {
         setPasswordType(!passwordType)
     }
 
-
+		const handlePopup = (e) => {
+			alert(e)
+		}
     return (
         <>
+					<ConfirmPopup handleClose={handlePopup} />
             <h2>Sign in</h2>
             <p></p>
                 {errors && errors.length > 0 && <ErrorMessage 
