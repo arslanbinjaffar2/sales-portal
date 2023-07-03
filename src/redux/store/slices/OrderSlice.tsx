@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/redux/store/store'
 import axios from 'axios'
-import { AGENT_EVENTS_ENDPOINT } from '@/constants/endpoints'
+import { AGENT_ENDPOINT, AGENT_EVENTS_ENDPOINT } from '@/constants/endpoints'
 import { authHeader, handleErrorResponse } from '@/helpers'
 
 
@@ -16,6 +16,32 @@ export const userEventOrderInvoice = createAsyncThunk(
     })
     try {
       const response = await axios.post(`${AGENT_EVENTS_ENDPOINT}/${data.event_id}/orders/${data.order_id}/invoice`,data, {
+        cancelToken: source.token,
+        headers: authHeader('GET'),
+      })
+      return response.data
+    } catch (err:any) {
+      if (!err.response) {
+        throw err
+      }
+      if(err.response.status !== 200){
+        handleErrorResponse(err.response.status, dispatch);
+      }
+        // Return the known error for future handling
+      return rejectWithValue(err.response.status);
+    }
+  }
+)
+// change payment status
+export const userEventOrderChangePymentStatus = createAsyncThunk(
+  'users/EventOrderChangePymentStatus',
+  async (data:any , { signal, dispatch, rejectWithValue }) => {
+    const source = axios.CancelToken.source()
+    signal.addEventListener('abort', () => {
+      source.cancel()
+    })
+    try {
+      const response = await axios.post(`${AGENT_ENDPOINT}/billing/change-payment-status/${data.order_id}`,data, {
         cancelToken: source.token,
         headers: authHeader('GET'),
       })
@@ -75,6 +101,24 @@ export const orderSlice = createSlice({
       state.loading = false;
     }),
     builder.addCase(userEventOrderInvoice.rejected, (state, action) => {
+      console.log("rejected", action.payload);
+      state.loading = false;
+    }),
+    // Login thuckCases
+    builder.addCase(userEventOrderChangePymentStatus.pending, (state, action) => {
+      state.loading = true;
+      state.invoice = null;
+    }),
+    builder.addCase(userEventOrderChangePymentStatus.fulfilled, (state, action) => {
+      let res = action.payload;
+      if(res.success){
+        state.invoice = action.payload.data.invoice;
+      }else{
+          state.error = res.message;
+      }
+      state.loading = false;
+    }),
+    builder.addCase(userEventOrderChangePymentStatus.rejected, (state, action) => {
       console.log("rejected", action.payload);
       state.loading = false;
     })

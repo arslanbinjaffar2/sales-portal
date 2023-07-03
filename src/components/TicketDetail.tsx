@@ -30,10 +30,10 @@ const TicketDetail = ({handleClose, form_stats }: any) => {
               </div>
               <div className="ebs-grid-ticket-wrapper">
                 <div className="d-flex ebs-grid-ticket-row ebs-grid-ticket-header">
-                  <div className="ebs-box-1"><strong>Form <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-box-2"><strong>Tickets Sold <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-box-2"><strong>Tickets Left <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-box-2"><strong>Total tickets <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                  <div className="ebs-box-1"><strong>Form </strong></div>
+                  <div className="ebs-box-2"><strong>Tickets Sold </strong></div>
+                  <div className="ebs-box-2"><strong>Tickets Left </strong></div>
+                  <div className="ebs-box-2"><strong>Total tickets </strong></div>
                   <div className="ebs-box-2 text-center"><strong>Time left</strong></div>
                 </div>
                 <div style={{maxHeight: _container?.current?.offsetHeight - 300}} className="ebs-grid-ticket-scroll">

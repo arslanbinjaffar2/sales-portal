@@ -14,6 +14,8 @@ import { AGENT_ENDPOINT } from '@/constants/endpoints';
 import axios from 'axios';
 import moment from 'moment'
 import TicketDetail from '@/components/TicketDetail';
+import ConfirmPopup from "@/components/ConfirmPopup";
+import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlice';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -43,6 +45,10 @@ export default function OrderListing({ params }: { params: { event_id: string } 
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
   const [toggle, setToggle] = useState(false)
+  const [showPaymentRecievedPopup, setshowPaymentRecievedPopup] = useState(false)
+  const [paymentRevcievedOrderId, setPaymentRevcievedOrderId] = useState<null| number>(null)
+  const [paymentRevcievedStatusToSet, setPaymentRevcievedStatusToSet] = useState(false)
+  const [processingPaymentchange, setProcessingPaymentChange] = useState(false);
 
   useEffect(()=>{
     let promise:any = '';
@@ -136,6 +142,37 @@ export default function OrderListing({ params }: { params: { event_id: string } 
       storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
       dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
     };
+    
+    const handleShowPaymentChangePopup = (order_id:number, payment_status:boolean) => {
+      setshowPaymentRecievedPopup(true);
+      setPaymentRevcievedOrderId(order_id);
+      setPaymentRevcievedStatusToSet(payment_status);
+    };
+    
+    const closeShowPaymentChangePopup = async (type:string) => {
+      if(paymentRevcievedOrderId !== null && type === 'continue'){
+        setProcessingPaymentChange(true);
+        try {
+          const res = await dispatch(userEventOrderChangePymentStatus({order_id:paymentRevcievedOrderId, payment_status:paymentRevcievedStatusToSet ? 1 : 0 })).unwrap();
+          setshowPaymentRecievedPopup(false);
+          setPaymentRevcievedOrderId(null);
+          setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol}));
+          
+        } catch (error) {
+          setshowPaymentRecievedPopup(false);
+          setPaymentRevcievedOrderId(null);
+          setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol}));
+        }
+        setProcessingPaymentChange(false);
+
+      }else{
+        setshowPaymentRecievedPopup(false);
+        setPaymentRevcievedOrderId(null);
+        setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+      }
+    };
 
     const downloadPdf = async (data:any) => {
       try {
@@ -201,18 +238,19 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   </div>
                 </div>
               </div>
+              {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} /> : null}
               <div className="ebs-data-table ebs-order-table">
                 <div className="d-flex align-items-center ebs-table-header">
                   <div className="ebs-table-box ebs-box-1"><strong>Order #
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_up</em> 
-                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_down</em>
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'order_number')}}>keyboard_arrow_down</em>
                     </span>
                   </strong></div>
                   <div className="ebs-table-box ebs-box-1"><strong>Date 
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_date')}}>keyboard_arrow_up</em> 
-                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_date')}}>keyboard_arrow_down</em>
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'order_date')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
                   <div className="ebs-table-box ebs-box-2"><strong>Name 
@@ -265,7 +303,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.grand_total} DKK</p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
                       <li>
