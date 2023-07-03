@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import {RootState} from "@/redux/store/store";
-import { setLoading, userEvent, userEventOrderDelete, userEventOrders } from '@/redux/store/slices/EventSlice';
+import { setLoading, userEvent, userEventFormStats, userEventOrderDelete, userEventOrders } from '@/redux/store/slices/EventSlice';
 import Loader from '@/components/forms/Loader';
 import Countdown from '@/components/Countdown';
 import {authHeader, getSelectedLabel} from '@/helpers'; 
@@ -32,7 +32,7 @@ const ordersRequestDataStore =
 
 export default function OrderListing({ params }: { params: { event_id: string } }) {
   const dispatch = useAppDispatch();
-  const {loading, event, event_orders, fetching_orders, currentPage, totalPages} = useAppSelector((state: RootState) => state.event);
+  const {loading, event, event_orders, fetching_orders, currentPage, totalPages, form_stats} = useAppSelector((state: RootState) => state.event);
 
   const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
   const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
@@ -47,15 +47,22 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     let diff = event.eventsite_settings.registration_end_date !== "0000-00-00 00:00:00" ? currentDate.diff(endDate) < 0 : true;
     return diff;
   },[event]);
+
   useEffect(()=>{
     let promise:any = '';
+    let promise2:any = '';
+
     if(event !== null){
        promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type}));  
+       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type}));  
     
     }
     return () => {
       if(typeof promise === 'object' && typeof promise.then === 'function'){
         promise.abort();
+      }
+      if(typeof promise2 === 'object' && typeof promise2.then === 'function'){
+        promise2.abort();
       }
     }
   }, [event])
@@ -172,7 +179,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   </div>
               </div>
             </div>
-            {toggle && <TicketDetail handleClose={handlePopup} />}
+            {toggle && <TicketDetail handleClose={handlePopup} event_id={params.event_id} form_stats={form_stats} />}
             <div className="ebs-order-list-section">
               <div className="ebs-order-header">
                 <h4>Orders List</h4>

@@ -114,12 +114,41 @@ export const userEventOrderSend = createAsyncThunk(
   }
 )
 
+// send order
+export const userEventFormStats = createAsyncThunk(
+  'users/EventFormStats',
+  async (data:any , { signal, dispatch, rejectWithValue }) => {
+    const source = axios.CancelToken.source()
+    signal.addEventListener('abort', () => {
+      source.cancel()
+    })
+    try {
+      const response = await axios.post(`${AGENT_EVENTS_ENDPOINT}/${data.event_id}/form-stats`, {},  {
+        cancelToken: source.token,
+        headers: authHeader('GET'),
+      })
+      return response.data
+    } catch (err:any) {
+      if (!err.response) {
+        throw err
+      }
+      if(err.response.status !== 200){
+        handleErrorResponse(err.response.status, dispatch);
+      }
+        // Return the known error for future handling
+      return rejectWithValue(err.response.status);
+    }
+  }
+)
+
 // Define a type for the slice state
 interface EventState {
   event:any,
   event_orders:any
   loading:boolean,
   fetching_orders:boolean,
+  fetching_form_stats:boolean,
+  form_stats:any,
   error:any,
   totalPages:number,
   currentPage:number,
@@ -132,6 +161,8 @@ const initialState: EventState = {
   event_orders: null,
   loading:true,
   fetching_orders:true,
+  fetching_form_stats:true,
+  form_stats:null,
   error:null,
   totalPages:0,
   currentPage:1,
@@ -221,6 +252,23 @@ export const eventSlice = createSlice({
     builder.addCase(userEventOrderSend.rejected, (state, action) => {
       console.log("rejected", action.payload);
       state.fetching_orders = false;
+    })
+    // eventFormStats
+    builder.addCase(userEventFormStats.pending, (state, action) => {
+      state.fetching_form_stats = true;
+    }),
+    builder.addCase(userEventFormStats.fulfilled, (state, action) => {
+      let res = action.payload;
+      if(res.success){
+        state.form_stats = res.data;
+      }else{
+          state.error = res.message;
+      }
+      state.fetching_form_stats = false;
+    }),
+    builder.addCase(userEventFormStats.rejected, (state, action) => {
+      console.log("rejected", action.payload);
+      state.fetching_form_stats = false;
     })
   },
 })

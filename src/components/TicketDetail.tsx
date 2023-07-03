@@ -1,8 +1,23 @@
 "use client"
-import React from 'react'
+import moment from 'moment';
+import React, { useEffect, useState } from 'react'
+import Countdown from './CountDownSmall';
 
-const TicketDetail = ({handleClose}: any) => {
+const TicketDetail = ({handleClose, form_stats }: any) => {
   const _container = React.useRef<any>();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredFormStats, setFilteredFormStats] = useState(form_stats);
+
+  useEffect(() => {
+    if(searchQuery !== ''){
+        setFilteredFormStats(form_stats.filter((item:any)=>(item.attendee_type.attendee_type.toLowerCase().includes(searchQuery.toLowerCase()))))
+    }else{
+      setFilteredFormStats(form_stats);
+    }
+  
+    
+  }, [searchQuery])
+  
   return (
     <div ref={_container} style={{overflow: 'hidden'}} className="ebs-modal-wrapper">
       <div className="modal" role="dialog">
@@ -11,7 +26,7 @@ const TicketDetail = ({handleClose}: any) => {
             <div className="modal-body">
               <div className="d-flex align-items-center">
                 <h3 className='d-flex align-items-center' style={{marginRight: 'auto'}}> <span className='material-symbols-outlined pr-2' onClick={() => handleClose('close')}>arrow_back</span> Tickets details</h3>
-                <input style={{marginRight: 0}} type="text" className="ebs-search-area" placeholder="Search" />
+                <input style={{marginRight: 0}} type="text" className="ebs-search-area" placeholder="Search" value={searchQuery} onChange={(e)=> setSearchQuery(e.target.value)} />
               </div>
               <div className="ebs-grid-ticket-wrapper">
                 <div className="d-flex ebs-grid-ticket-row ebs-grid-ticket-header">
@@ -22,12 +37,14 @@ const TicketDetail = ({handleClose}: any) => {
                   <div className="ebs-box-2 text-center"><strong>Time left</strong></div>
                 </div>
                 <div style={{maxHeight: _container?.current?.offsetHeight - 300}} className="ebs-grid-ticket-scroll">
-                  {[...Array(100)].map((item) => <div key={item} className="d-flex ebs-grid-ticket-row">
-                    <div className="ebs-box-1"><p>Attendee form</p></div>
-                    <div className="ebs-box-2"><p>16</p></div>
-                    <div className="ebs-box-2"><p>25</p></div>
-                    <div className="ebs-box-2"><p>19</p></div>
-                    <div className="ebs-box-2 text-center"><p>00:00:00:00</p></div>
+                  {filteredFormStats.length > 0 && filteredFormStats.map((item:any, i:any) => <div key={i} className="d-flex ebs-grid-ticket-row">
+                    <div className="ebs-box-1"><p>{item.attendee_type.attendee_type}</p></div>
+                    <div className="ebs-box-2"><p>{item.tickets_sold}</p></div>
+                    <div className="ebs-box-2"><p>{item.tickets_left}</p></div>
+                    <div className="ebs-box-2"><p>{item.total_tickets}</p></div>
+                    <div className="ebs-box-2 text-center"><p>
+                        {item.eventsite_settings.registration_end_date !== "0000-00-00 00:00:00" ? <Countdown date={moment(item.eventsite_settings.registration_end_date)} /> : '00:00:00:00'}
+                      </p></div>
                   </div>)}
                 </div>
               </div>
