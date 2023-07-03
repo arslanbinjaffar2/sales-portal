@@ -1136,6 +1136,21 @@
   animation: widgetLoaderSpin 2s linear infinite;
 }
 
+.small-loader-wrapper {
+    display: flex;
+    // min-height: 300px;
+    justify-content: center;
+    align-items: center;
+}
+.small-loader {
+  border: 2px solid #dfdede; /* Light grey */
+  border-top: 2px solid rgb(126, 126, 126); /* Blue */
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: widgetLoaderSpin 2s linear infinite;
+}
+
 @keyframes widgetLoaderSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

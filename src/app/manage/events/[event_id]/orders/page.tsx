@@ -36,25 +36,21 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
   const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
   const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
+  const [sortCol, setSortCol] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sortCol : 'order_number');
+  const [sort, setSort] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sort : 'desc');
+
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
   const [toggle, setToggle] = useState(false)
-  
-  const registerDateEnd = useMemo(()=>{
-    let currentDate = moment();
-    let endDate = moment(event.eventsite_settings.registration_end_date);
-    let diff = event.eventsite_settings.registration_end_date !== "0000-00-00 00:00:00" ? currentDate.diff(endDate) < 0 : true;
-    return diff;
-  },[event]);
 
   useEffect(()=>{
     let promise:any = '';
     let promise2:any = '';
 
     if(event !== null){
-       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type}));  
-       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type}));  
+       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol}));  
+       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol}));  
     
     }
     return () => {
@@ -101,24 +97,24 @@ export default function OrderListing({ params }: { params: { event_id: string } 
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
-    storeEventRequestData({searchText:value, limit, type, page:1});
-    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1}));
+    storeEventRequestData({searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol});
+    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol}));
     setPage(1);
 
   }
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
-        storeEventRequestData({ searchText, limit, type:e.value, page:1});
-        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1}));
+        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol});
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol}));
         setPage(1);
     }
 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
-      storeEventRequestData({ searchText, limit:value, type, page:1});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1}));
+      storeEventRequestData({ searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol}));
       setPage(1);
     }
 
@@ -130,8 +126,15 @@ export default function OrderListing({ params }: { params: { event_id: string } 
 
     const handlePageChange = (page: number) => {
       setPage(page);
-      storeEventRequestData({ searchText, limit, type, page});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page}));
+      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
+    };
+    
+    const handleSortChange = (sort:string, sortCol: string) => {
+      setSort(sort);
+      setSortCol(sortCol);
+      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
     };
 
     const downloadPdf = async (data:any) => {
@@ -199,17 +202,59 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                 </div>
               </div>
               <div className="ebs-data-table ebs-order-table">
-                {event_orders !== null && event_orders.data.length > 0 && <div className="d-flex align-items-center ebs-table-header">
-                  <div className="ebs-table-box ebs-box-1"><strong>Order # <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-1"><strong>Date <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-2"><strong>Name <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-2"><strong>Email <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Company <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Revenue <em className="material-symbols-outlined">unfold_more</em></strong></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>Payment STATUS <em className="material-symbols-outlined">unfold_more</em></strong></div>
+                <div className="d-flex align-items-center ebs-table-header">
+                  <div className="ebs-table-box ebs-box-1"><strong>Order #
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_down</em>
+                    </span>
+                  </strong></div>
+                  <div className="ebs-table-box ebs-box-1"><strong>Date 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_date')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_date')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-2"><strong>Name 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'name' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'name')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'name' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'name')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-2"><strong>Email 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'email' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'email')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'email' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'email')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-4"><strong>Company 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'company' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'company')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'company' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'company')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'sold_tickets' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'sold_tickets')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'sold_tickets' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'sold_tickets')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-4"><strong>Revenue 
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>order status 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_status')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'order_status')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>Payment status 
+                    <span className='d-flex flex-column'>
+                      <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'payment_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'payment_status')}}>keyboard_arrow_up</em> 
+                      <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'payment_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'payment_status')}}>keyboard_arrow_down</em>
+                    </span>
+                    </strong></div>
                   <div className="ebs-table-box ebs-box-3"  />
-                </div>}
+                </div>
                 {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
                 <div key={order.id} className="d-flex align-items-center ebs-table-content">
                   <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
@@ -219,6 +264,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.grand_total} DKK</p></div>
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>

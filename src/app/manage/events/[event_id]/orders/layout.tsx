@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
 import { RootState } from '@/redux/store/store';
 import { useRouter } from 'next/navigation';
 import { logOutUser } from '@/redux/store/slices/AuthSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { userEvent, userEventOrderSend } from '@/redux/store/slices/EventSlice';
 import { usePathname } from 'next/navigation';
 import Loader from '@/components/forms/Loader';
@@ -19,6 +19,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
     const dispatch = useAppDispatch();
     const pathname = usePathname();
     const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
+    const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
       const promise = dispatch(userEvent({event_id:params.event_id}));  
@@ -29,6 +30,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
     }, []);
 
     const downloadPdf = async (data:any) => {
+        setDownloading(true);
         try {
             const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}`,  {
               headers: authHeader('GET'),
@@ -44,6 +46,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
           } catch (err:any) {
             
           }
+        setDownloading(false);
     }
     
   return (
@@ -84,8 +87,12 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                         : null}
                         {pathname.includes('invoice') ? 
                             <>
-                            <button className="btn btn-default" onClick={()=>{downloadPdf({id:pathname.split('/')[5]})}}>
-                                <i className="material-symbols-outlined">sim_card_download</i> PDF
+                            <button className="btn btn-default d-flex" onClick={()=>{downloadPdf({id:pathname.split('/')[5]})}}>
+                                <i className="material-symbols-outlined">sim_card_download</i> {downloading ? 
+                                <div className="small-loader-wrapper">
+                                    <div className="small-loader"></div>
+                                </div>
+                                : 'PDF'} 
                             </button>
                             <button className="btn btn-default btn-send-order" onClick={()=>dispatch(userEventOrderSend({id:pathname.split('/')[5]}))}>
                                 <i className="material-symbols-outlined">send</i> Send Order
