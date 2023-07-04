@@ -10,10 +10,12 @@ import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 import SuccessAlert from "@/components/forms/alerts/SuccessMessage";
 import Loading from "../loading";
 import ConfirmPopup from "@/components/ConfirmPopup";
+import { useTranslations } from "next-intl";
 
-export default function Login() {
-		const _email = useRef<any>(null);
-		const _password = useRef<any>(null);
+export default function Login({params:{locale}}:{params:{locale:string}}) {
+    const t = useTranslations('auth_login');
+    const _email = useRef<any>(null);
+    const _password = useRef<any>(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {user, loading, error, errors, successMessage} = useAppSelector((state: RootState) => state.authUser);
@@ -37,7 +39,7 @@ export default function Login() {
 			setEmail(_email.current?.value || '')
 			setPassword(_password.current?.value || '')
         if(user && user.access_token) {
-            router.push('/manage/events');
+            router.push(`/${locale}/manage/events`);
         }
     }, [user]);
 
@@ -52,7 +54,7 @@ export default function Login() {
 		}
     return (
         <>
-            <h2>Sign in</h2>
+            <h2>{t('page_title')}</h2>
             <p></p>
                 {errors && errors.length > 0 && <ErrorMessage 
                     icon= {"info"}
@@ -73,21 +75,21 @@ export default function Login() {
                 <div className="form-area-signup">
                     <div className='form-row-box'>
                         <input ref={_email} className={email ? 'ieHack': ''} value={email} type="email" name="email" id="email" onChange={(e) => setEmail(e.target.value)}  required/>
-                        <label className="title">Enter your email</label>
+                        <label className="title">{t('email_label')}</label>
                     </div>
                     <div className='form-row-box'>
                 <span className="icon-eye">
                     <Image onClick={handleShowPass} src={require(`@/assets/img/${passwordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
                 </span>
                         <input ref={_password} className={password ? 'ieHack': ''} type={passwordType ? 'password' : 'text'} value={password} id="password" required onChange={(e) => setPassword(e.target.value)}  />
-                        <label className="title">Password</label>
+                        <label className="title">{t('password_label')}</label>
                     </div>
                     <div className="login-others clearfix">
-                        <label onClick={() => setRemember(!remember)}><i className="material-icons">{remember ? 'check_box' : 'check_box_outline_blank'}</i>Remember me</label>
-                        <Link href="/auth/forgot-password/request">Forgot Password?</Link>
+                        <label onClick={() => setRemember(!remember)}><i className="material-icons">{remember ? 'check_box' : 'check_box_outline_blank'}</i>{t('remember_me_label')}</label>
+                        <Link href={`/${locale}/auth/forgot-password/request`}>{t('forgot_password_label')}</Link>
                     </div>
                     <div className="form-row-box button-panel">
-                        <button type="submit" disabled={loading} className="btn btn-primary">{loading ? "Processing...": "Sign in"}</button>
+                        <button type="submit" disabled={loading} className="btn btn-primary">{loading ? t('signin_button_processing_label') : t('signin_button_label')}</button>
                     </div>
                 </div>
             </form>

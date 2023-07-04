@@ -34,7 +34,7 @@ let eventsRequestDataStored =
 const eventsRequestDataStore =
     eventsRequestDataStored && eventsRequestDataStored !== undefined ? JSON.parse(eventsRequestDataStored) : null;
 
-export default function Dashboard() {
+export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
@@ -42,8 +42,7 @@ export default function Dashboard() {
     const [eventsRequestData, setEventsRequestData] = useState<any>(eventsRequestDataStore !== null ? eventsRequestDataStore : {search_text: '', event_action: 'active_future', sort_by: '', order_by: '', page:1, limit:10});
     const [toggoleLimited, settoggoleLimited] = useState(false)
     const [limit, setLimit] = useState(eventsRequestDataStore !== null ? eventsRequestDataStore.limit : 10);
-    console.log(eventsRequestData, '2');
-    console.log(eventsRequestDataStored, '3');
+
     useEffect(() => {
         const promise = dispatch(userEvents(eventsRequestData));
         return () =>{
@@ -174,7 +173,7 @@ export default function Dashboard() {
                         {
                             events.length > 0 ? (
                                 events.map((item: any, key: any) =>
-                                <Link key={key} style={{textDecoration:"none"}} href={`/manage/events/${item.id}/orders`}>
+                                <Link key={key} style={{textDecoration:"none"}} href={`/${locale}/manage/events/${item.id}/orders`}>
                                     <div 
                                             className="d-flex align-items-center ebs-table-content"
                                             >

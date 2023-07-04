@@ -6,25 +6,12 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { RootState } from "@/redux/store/store";
 import { forgotPasswordVerify, setForgetPasswordToken, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
 import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
-
+import { useTranslations } from "next-intl";
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
-// attempt sales-agent login using credentials
-// function verifyResetCodeAction(resetRequest:any) {
-//     return fetch(requestVerifyEndpoint, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json',
-//         },
-//         body: JSON.stringify(resetRequest)
-//     })
-//         .then(data => data.json())
-// }
-
-
-export default function verifyResetCode() {
+export default function verifyResetCode({params:{locale}}:{params:{locale:string}}) {
+    const t = useTranslations('auth_forgot_password_verify');
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {loading, redirect, error, errors, forgetPasswordEmail } = useAppSelector((state: RootState) => state.authUser);
@@ -35,7 +22,7 @@ export default function verifyResetCode() {
         if(forgetPasswordEmail !== null){
             setRender(true);
         }else{
-            router.push('/auth/forgot-password/request');
+            router.push(`/${locale}/auth/forgot-password/request`);
         }
     }, [])
 
@@ -43,7 +30,7 @@ export default function verifyResetCode() {
         if(redirect !== null) {
             dispatch(setRedirect(null));
             dispatch(setLoading(null));
-            router.push(redirect);
+            router.push(`/${locale}/${redirect}`);
         }
     }, [redirect]);
 
@@ -69,16 +56,16 @@ export default function verifyResetCode() {
                 title= {"Sorry! Something went wrong"}
                 error= {error}
             />}
-            <h2>Verify reset password code</h2>
-            <p>Please enter the reset password token that we have just sent to your registered email address.</p>
+            <h2>{t('page_title')}</h2>
+            <p>{t('page_subtitle')}</p>
             <form role="" onSubmit={handleSubmit}>
                 <div className="form-area-signup">
                     <div className='form-row-box'>
                         <input  pattern="^[0-9]+$" maxLength={6} className={token ? 'ieHack' : '' } value={token} type="text" name="token" id="token" onChange={(e) => setToken(e.target.value)} required />
-                        <label className="title">Enter reset code</label>
+                        <label className="title">{t('reset_code_label')}</label>
                     </div>
                     <div className="form-row-box button-panel">
-                        <button className="btn btn-primary" disabled={loading} type='submit'>{loading ? "VERIFYING" : "VERIFY"}</button>
+                        <button className="btn btn-primary" disabled={loading} type='submit'>{loading ? t('verify_button_verifying_label') : t('verify_button_label')}</button>
                     </div>
                 </div>
             </form>

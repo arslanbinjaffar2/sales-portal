@@ -32,7 +32,7 @@ const ordersRequestDataStore =
     ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
 
 
-export default function OrderListing({ params }: { params: { event_id: string } }) {
+export default function OrderListing({ params }: { params: { locale:string, event_id: string } }) {
   const dispatch = useAppDispatch();
   const {loading, event, event_orders, fetching_orders, currentPage, totalPages, form_stats} = useAppSelector((state: RootState) => state.event);
 
@@ -307,7 +307,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
                       <li>
-                      <Link href={`/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
+                      <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
                           <button className='ebs-btn-panel'>
                             <Image
                               src={require("@/assets/img/ico-edit.svg")}
@@ -335,7 +335,7 @@ export default function OrderListing({ params }: { params: { event_id: string } 
                             <i className="material-icons">more_horiz</i>
                           </button>
                           <div style={{minWidth: 130}} className="ebs-dropdown-menu">
-                          <Link href={`/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
+                          <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
                             <button className="dropdown-item">View</button>
                           </Link>
                             {/* <button className="dropdown-item">Print Badge</button> */}

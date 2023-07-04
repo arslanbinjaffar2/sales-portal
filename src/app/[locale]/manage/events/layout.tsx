@@ -6,11 +6,13 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
 import { RootState } from '@/redux/store/store';
 import { usePathname, useRouter } from 'next/navigation';
 import { logOutUser } from '@/redux/store/slices/AuthSlice';
-import { useEffect } from 'react';
+import { useEffect, useTransition } from 'react';
+import { useLocale } from 'next-intl';
 
-const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
+const languages = [{ id: 1, name: "English", locale:'en' }, { id: 2, name: "Danish", locale:'da' }];
 
-export default function RootLayout({ children, params}: { children: React.ReactNode, params: { event_id: string } }) {
+
+export default function RootLayout({ children, params}: { children: React.ReactNode, params: { locale:string, event_id: string } }) {
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const dispatch = useAppDispatch();
@@ -19,6 +21,19 @@ export default function RootLayout({ children, params}: { children: React.ReactN
     useEffect(() => {
          (user === null) ? router.push('auth/login') : null;
     }, [user]);
+
+    const [isPending, startTransition] = useTransition();
+    const locale = useLocale();
+
+    function onLanguageChange(value:string) {
+        console.log(`/${value}${pathname}`, 'selectchange');
+
+        let replaceUrl = value === 'en' ? pathname.replace('/da', '/en') :  `/${value}${pathname}`;
+
+        startTransition(() => {
+          router.replace(replaceUrl);
+        });
+    }
     
   return (
     <>
@@ -30,13 +45,13 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                         <a href="#!" onClick={(e)=>{e.preventDefault(); 
                             console.log('pathname', pathname);
                             if(pathname.includes('invoice') || pathname.includes('create') || pathname.includes('edit')){
-                                router.push(`/manage/events/${pathname.split('/')[3]}/orders`);
+                                router.push(`/${params.locale}/manage/events/${pathname.split('/')[3]}/orders`);
                             }
                             else if(pathname.includes('orders')){
-                                router.push(`/manage/events`);
+                                router.push(`/${params.locale}/manage/events`);
                             }
                             else{
-                                router.push(`/manage/events`);
+                                router.push(`/${params.locale}/manage/events`);
                             }
                         }}>
                             <i className="material-icons">arrow_back</i> Return to list
@@ -50,10 +65,15 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                                 <li><a href="" onClick={(e)=>{e.preventDefault(); dispatch(logOutUser({}));}}>Logout</a></li>
                             </ul>
                         </li>}
-                        <li>English <i className="material-icons">expand_more</i>
+                        <li>{locale === 'da' ? 'Danish' : 'English'} <i className="material-icons">expand_more</i>
                             <ul>
-                                <li><a href="">English</a></li>
-                                <li><a href=""> Danish</a></li>
+                                {languages.map((value, key) => {
+                                    return (
+                                        <li key={key}>
+                                            <a onClick={(e)=>{e.preventDefault(); onLanguageChange(value.locale)}}>{value.name}</a>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </li>
                     </ul>

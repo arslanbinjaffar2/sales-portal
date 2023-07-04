@@ -8,6 +8,7 @@ import AlertMessage from "@/components/forms/alerts/AlertMessage";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { forgotPasswordReset, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
 import { RootState } from "@/redux/store/store";
+import { useTranslations } from "next-intl";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -15,7 +16,9 @@ const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
 
 
-export default function requestReset() {
+export default function requestReset({params:{locale}}:{params:{locale:string}}) {
+    const t = useTranslations('auth_forgot_password_reset');
+    
     const [password, setPassword] = useState('');
     const [passwordType, setPasswordType] = useState(true)
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -30,7 +33,7 @@ export default function requestReset() {
         if(forgetPasswordEmail !== null){
             setRender(true);
         }else{
-            router.push('/auth/forgot-password/request');
+            router.push(`/${locale}/auth/forgot-password/request`);
         }
     }, [])
 
@@ -38,7 +41,7 @@ export default function requestReset() {
         if(redirect !== null) {
             dispatch(setRedirect(null));
             dispatch(setLoading(null));
-            router.push(redirect);
+            router.push(`/${locale}/${redirect}`);
         }
     }, [redirect]);
 
@@ -53,8 +56,8 @@ export default function requestReset() {
 
     return (
         <>
-            <h2>Reset password</h2>
-            <p>Enter new password and confirm new password to reset password.</p>
+            <h2>{t('page_title')}</h2>
+            <p>{t('page_subtitle')}</p>
             <form role="" onSubmit={handleSubmit}>
                 <div className="form-area-signup">
                     <div className='form-row-box'>
@@ -62,17 +65,17 @@ export default function requestReset() {
                             <Image onClick={() => setPasswordType(!passwordType)}  src={require(`@/assets/img/${passwordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
                         </span>
                         <input autoComplete="false" className={password ? 'ieHack' : ''} value={password} type={passwordType ? 'password' : 'text'} name="password" id="password" onChange={(e) => setPassword(e.target.value)} required  />
-                        <label className="title">Enter new password</label>
+                        <label className="title">{t('new_password_label')}</label>
                     </div>
                     <div className='form-row-box'>
                         <span className="icon-eye">
                             <Image  onClick={() => setConfirmPasswordType(!confirmpasswordType)} src={require(`@/assets/img/${confirmpasswordType ? 'close-eye':'icon-eye'}.svg`)} width="17" height="17" alt="" />
                         </span>
                         <input autoComplete="false" className={passwordConfirmation ? 'ieHack' : ''} value={passwordConfirmation} type={confirmpasswordType ? 'password' : 'text'} name="password_confirmation" id="password_confirmation" required onChange={(e) => setPasswordConfirmation(e.target.value)}  />
-                        <label className="title">Confirm new password</label>
+                        <label className="title">{t('confirm_password_label')}</label>
                     </div>
                     <div className="form-row-box button-panel">
-                        <button className="btn btn-primary" disabled={loading} type='submit'>{loading ? "Sending..." : "RESET PASSWORD"}</button>
+                        <button className="btn btn-primary" disabled={loading} type='submit'>{loading ? t('reset_button_reseting_label') : t('reset_button_label')}</button>
                     </div>
                 </div>
             </form>

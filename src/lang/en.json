@@ -1,0 +1,41 @@
+{
+    "auth_layout": {
+        "title": "WELCOME TO SALES PORTAL",
+        "subtitle": "Maximize your sales potential with our customizable portal solutions",
+        "feature_one": "Customization following easy steps",
+        "feature_two": "Sales forecasting and analytics",
+        "feature_three": "Sort out event registration in no time",
+        "feature_four": "Feel safe with our step by step navigation"
+    },
+    "auth_login":{
+        "page_title":"Sign in",
+        "email_label":"Enter your email",
+        "password_label":"Password",
+        "remember_me_label":"Remember me",
+        "forgot_password_label":"Forgot Password?",
+        "signin_button_label":"Sign in",
+        "signin_button_processing_label":"Signing in..."
+    },
+    "auth_forgot_password_request":{
+        "page_title":"Did you forget your password ?",
+        "page_subtitle":"Enter your email address you’re using for your account below and we will send you a password reset link.",
+        "email_label":"Enter your email",
+        "send_button_label":"SEND",
+        "send_button_sending_label":"SENDING..."
+    },
+    "auth_forgot_password_verify":{
+        "page_title":"Verify reset password code",
+        "page_subtitle":"Please enter the reset password token that we have just sent to your registered email address.",
+        "reset_code_label":"Enter reset code",
+        "verify_button_label":"Verify",
+        "verify_button_verifying_label":"Verifying..."
+    },
+    "auth_forgot_password_reset":{
+        "page_title":"Reset password",
+        "page_subtitle":"Enter new password and confirm new password to reset password.",
+        "new_password_label":"Enter new password",
+        "confirm_password_label":"Confirm new password",
+        "reset_button_label":"RESET",
+        "reset_button_reseting_label":"RESETING..."
+    }
+}

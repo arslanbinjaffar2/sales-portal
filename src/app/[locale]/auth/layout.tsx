@@ -1,8 +1,12 @@
+'use client';
 import '@/assets/css/app.scss'
 import Image from 'next/image';
 import Loading from './loading';
+import { useTransition } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 
-const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
+const languages = [{ id: 1, name: "English", locale:'en' }, { id: 2, name: "Danish", locale:'da' }];
 
 export const metadata = {
   title: 'Sign in - Sales agent portal',
@@ -10,6 +14,21 @@ export const metadata = {
 }
 
 export default function RootLayout({ children}: { children: React.ReactNode }) {
+    const t = useTranslations('auth_layout');
+    const [isPending, startTransition] = useTransition();
+    const router = useRouter();
+    const pathname = usePathname();
+    const locale = useLocale();
+    function onLanguageChange(value:string) {
+        console.log(`/${value}${pathname}`, 'selectchange');
+
+        let replaceUrl = value === 'en' ? pathname.replace('/da', '/en') :  `/${value}${pathname}`;
+
+        startTransition(() => {
+          router.replace(replaceUrl);
+        });
+    }
+
   return (
     <div className="signup-wrapper">
             <main className="main-section" role="main">
@@ -21,13 +40,13 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
                                     <div className="left-signup">
                                         <Image src={'/img/logo.svg'} alt="" width="150" height="32" className='logos' />
                                         <div className="text-block">
-                                            <h4>WELCOME TO SALES PORTAL</h4>
-                                            <p>Maximize your sales potential with our customizable portal solutions</p>
+                                            <h4>{t('title')}</h4>
+                                            <p>{t('subtitle')}</p>
                                             <ul>
-                                                <li>Customization following easy steps</li>
-                                                <li>Sales forecasting and analytics</li>
-                                                <li>Sort out event registration in no time</li>
-                                                <li>Feel safe with our step by step navigation</li>
+                                                <li>{t('feature_one')}</li>
+                                                <li>{t('feature_two')}</li>
+                                                <li>{t('feature_three')}</li>
+                                                <li>{t('feature_four')}</li>
                                             </ul>
                                         </div>
                                         <Image src={'/img/illustration.svg'} alt="" width="300" height="220" className='illustration' />
@@ -39,13 +58,13 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
                                             <li>
                                                 <a href="#!">
                                                     <i className="icons"><Image src={'/img/ico-globe.svg'} alt="" width="16" height="16" /></i>
-                                                    <span id="language-switch">English</span><i className="material-icons">keyboard_arrow_down</i>
+                                                    <span id="language-switch">{locale === 'da' ? 'Danish' : 'English'}</span><i className="material-icons">keyboard_arrow_down</i>
                                                 </a>
                                                 <ul>
                                                     {languages.map((value, key) => {
                                                         return (
                                                             <li key={key}>
-                                                                <a>{value.name}</a>
+                                                                <a onClick={(e)=>{e.preventDefault(); onLanguageChange(value.locale)}}>{value.name}</a>
                                                             </li>
                                                         );
                                                     })}

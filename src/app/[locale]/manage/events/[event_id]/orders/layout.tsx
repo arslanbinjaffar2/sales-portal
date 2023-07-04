@@ -15,7 +15,7 @@ import axios from 'axios';
 import { AGENT_ENDPOINT } from '@/constants/endpoints';
 import { authHeader } from '@/helpers';
 
-export default function RootLayout({ children, params}: { children: React.ReactNode, params: { event_id: string } }) {
+export default function RootLayout({ children, params}: { children: React.ReactNode, params: { locale:string, event_id: string } }) {
     const dispatch = useAppDispatch();
     const pathname = usePathname();
     const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
@@ -79,7 +79,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                     <div className="col-4">
                         <div className="right-top-header">
                         {(!pathname.includes('invoice') && !pathname.includes('edit') && !pathname.includes('create')) && (event?.payment_settings?.eventsite_billing === 1) ? 
-                            <Link href={`/manage/events/${params.event_id}/orders/create`}>
+                            <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/create`}>
                                 <button className="btn btn-default">
                                     <i className="material-symbols-outlined">add</i> Create Order
                                 </button> 

@@ -1,0 +1,41 @@
+{
+    "auth_layout": {
+        "title": "VELKOMMEN TIL SALGSPORTAL",
+        "subtitle": "Maksimer dit salgspotentiale med vores tilpassede portalløsninger",
+        "feature_one": "Tilpasning efter nemme trin",
+        "feature_two": "Salgsprognose og analyse",
+        "feature_three": "Ordne begivenhedsregistrering på ingen tid",
+        "feature_four": "Føl dig tryg med vores trinvise navigation"
+    },
+    "auth_login":{
+        "page_title":"Log ind",
+        "email_label":"Indtast din e-mail",
+        "password_label":"Adgangskode",
+        "remember_me_label":"Husk mig",
+        "forgot_password_label":"Glemt kodeord?",
+        "signin_button_label":"Log ind",
+        "signin_button_processing_label":"Logger ind..."
+    },
+    "auth_forgot_password_request":{
+        "page_title":"Har du glemt din adgangskode?",
+        "page_subtitle":"Indtast din e-mailadresse, du bruger til din konto nedenfor, og vi sender dig et link til nulstilling af adgangskode.",
+        "email_label":"Indtast din e-mail",
+        "send_button_label":"SENDE",
+        "send_button_sending_label":"SENDER..."
+    },
+    "auth_forgot_password_verify":{
+        "page_title":"Bekræft nulstil adgangskodekode",
+        "page_subtitle":"Indtast venligst det nulstillingskodeord, som vi lige har sendt til din registrerede e-mailadresse.",
+        "reset_code_label":"Indtast nulstillingskode",
+        "verify_button_label":"Verificere",
+        "verify_button_verifying_label":"Bekræfter..."
+    },
+    "auth_forgot_password_reset":{
+        "page_title":"Nulstille kodeord",
+        "page_subtitle":"Indtast ny adgangskode, og bekræft ny adgangskode for at nulstille adgangskoden.",
+        "new_password_label":"Indtast ny adgangskode",
+        "confirm_password_label":"Bekræft ny adgangskode",
+        "reset_button_label":"NULSTIL",
+        "reset_button_reseting_label":"NULSTILLER..."
+    }
+}
