@@ -37,5 +37,59 @@
         "confirm_password_label":"Confirm new password",
         "reset_button_label":"RESET",
         "reset_button_reseting_label":"RESETING..."
+    },
+    "manage-events-layout":{
+        "return_to_list_label":"Return to list"
+    },
+    "manage-events-page":{
+        "no_data_available":"No data available",
+        "event_table":{
+            "event_logo":"Event Logo",
+            "event_name":"Event Name ",
+            "event_date":"Event Date",
+            "created_by":"Created by",
+            "organized_by":"Organized by",
+            "tickets_left":"Tickets Left",
+            "sold_tickets":"Sold Tickets",
+            "total_tickets":"Total Tickets",
+            "my_sold_tickets":"My Sold Tickets",
+            "my_revenue":"My Revenue"
+        }
+    },
+    "manage-orders-layout":{
+        "create_order":"Create order",
+        "send_order":"Send order",
+        "download_pdf":"PDF",
+        "no_data_available":"No data available"
+    },
+    "manage-orders-page":{
+        "no_data_available":"No data available",
+        "stats_sold_tickets":"sold",
+        "stats_my_sold_tickets":"My Sold Tickets",
+        "stats_my_revenue":"My Revenue",
+        "order_list":"Order List",
+        "tickets_detail":"Tickets details",
+        "tickets_detail_table":{
+            "form":"Form",
+            "tickets_sold":"Tickets sold",
+            "tickets_left":"Tickets left",
+            "total_tickets":"Total tickets",
+            "time_left":"Time left"
+        },
+        "order_table":{
+            "number":"Order #",
+            "date":"Date",
+            "attendee_name":"Name",
+            "attendee_email":"Email",
+            "company":"Company",
+            "sold_tickets":"Sold Ticket",
+            "revenue":"Revenue",
+            "status":"Order Status",
+            "payment_status":"Payment Status"
+        },
+
+        "view":"View",
+        "download":"Download",
+        "download_as_invoice":"Download as invoice"
     }
 }

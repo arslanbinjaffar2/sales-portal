@@ -12,6 +12,7 @@ import { setCurrentPage, userEvents } from '@/redux/store/slices/EventsSlice';
 import Link from 'next/link';
 
 import {getSelectedLabel} from '@/helpers'; 
+import { useTranslations } from 'next-intl';
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
@@ -35,6 +36,8 @@ const eventsRequestDataStore =
     eventsRequestDataStored && eventsRequestDataStored !== undefined ? JSON.parse(eventsRequestDataStored) : null;
 
 export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
+    const t = useTranslations('manage-events-page');
+    
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
@@ -156,18 +159,17 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
             <div className="main-data-table" style={{minHeight:'calc(100vh - 272px)'}}>
                  <div className="ebs-data-table">
 								 {events.length > 0 && <div className="d-flex align-items-center ebs-table-header">
-                        <div className="ebs-table-box ebs-box-1"><strong>Event Logo</strong></div>
-                        <div className="ebs-table-box ebs-box-2"><strong>Event Name </strong></div>
-                        <div className="ebs-table-box ebs-box-3"><strong>Event Date</strong></div>
-                        <div className="ebs-table-box ebs-box-4"><strong>Created by</strong></div>
-                        <div className="ebs-table-box ebs-box-4"><strong>Organized by</strong></div>
-                        <div className="ebs-table-box ebs-box-4"><strong>Tickets Left</strong></div>
-                        <div className="ebs-table-box ebs-box-5"><strong>Sold Tickets</strong></div>
-                        <div className="ebs-table-box ebs-box-5"><strong>Total Tickets</strong></div>
-                        <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-5"><strong>My Sold
-                            Tickets</strong></div>
+                        <div className="ebs-table-box ebs-box-1"><strong>{t('event_table.event_logo')}</strong></div>
+                        <div className="ebs-table-box ebs-box-2"><strong>{t('event_table.event_name')} </strong></div>
+                        <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_date')}</strong></div>
+                        <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.created_by')}</strong></div>
+                        <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.organized_by')}</strong></div>
+                        <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.tickets_left')}</strong></div>
+                        <div className="ebs-table-box ebs-box-5"><strong>{t('event_table.sold_tickets')}</strong></div>
+                        <div className="ebs-table-box ebs-box-5"><strong>{t('event_table.total_tickets')}</strong></div>
+                        <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-5"><strong>{t('event_table.my_sold_tickets')}</strong></div>
                         <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><strong
-                            style={{justifyContent: 'flex-end'}}>My Revenue</strong></div>
+                            style={{justifyContent: 'flex-end'}}>{t('event_table.my_revenue')}</strong></div>
                     </div>}
                     <>
                         {
@@ -210,15 +212,15 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                                 )
                             ) : (
                                 !loading ? (
-																	<div style={{minHeight: '450px', backgroundColor: '#fff', borderRadius: '8px'}} className='d-flex align-items-center justify-content-center h-100 w-100'>
-																					<div className="text-center">
-																									<Image
-																											src={require('@/assets/img/no_record_found.svg')} alt="" width="100" height="100"
-																									/>
-																									<p className='pt-3 m-0'>No data available</p>
-																					</div>
-																		</div>
-																) : <Loader className='' fixed='' />
+                                        <div style={{minHeight: '450px', backgroundColor: '#fff', borderRadius: '8px'}} className='d-flex align-items-center justify-content-center h-100 w-100'>
+                                            <div className="text-center">
+                                                <Image
+                                                        src={require('@/assets/img/no_record_found.svg')} alt="" width="100" height="100"
+                                                />
+                                                <p className='pt-3 m-0'>{t('no_data_available')}</p>
+                                            </div>
+                                        </div>
+                                ) : <Loader className='' fixed='' />
                             )
                         }
                     </>

@@ -37,5 +37,59 @@
         "confirm_password_label":"Bekræft ny adgangskode",
         "reset_button_label":"NULSTIL",
         "reset_button_reseting_label":"NULSTILLER..."
+    },
+    "manage-events-layout":{
+        "return_to_list_label":"Vend tilbage til listen"
+    },
+    "manage-events-page":{
+        "no_data_available":"Ingen tilgængelig data",
+        "event_table":{
+            "event_logo":"Event Logo",
+            "event_name":"Event Name ",
+            "event_date":"Event Date",
+            "created_by":"Lavet af",
+            "organized_by":"Organized by",
+            "tickets_left":"Organiseret af",
+            "sold_tickets":"Solgte billetter",
+            "total_tickets":"Samlet antal billetter",
+            "my_sold_tickets":"Mine solgte billetter",
+            "my_revenue":"Min indtægt"
+        }
+    },
+    "manage-orders-layout":{
+        "create_order":"Opret ordre",
+        "send_order":"Send ordre",
+        "download_pdf":"PDF",
+        "no_data_available":"Ingen tilgængelig data"
+    },
+    "manage-orders-page":{
+        "no_data_available":"Ingen tilgængelig data",
+        "stats_sold_tickets":"solgt",
+        "stats_my_sold_tickets":"Mine solgte billetter",
+        "stats_my_revenue":"Min indtægt",
+        "order_list":"Ordreliste",
+        "tickets_detail":"Billetter detaljer",
+        "tickets_detail_table":{
+            "form":"Form",
+            "tickets_sold":"Billetter solgt",
+            "tickets_left":"Billetter tilbage",
+            "total_tickets":"Samlet antal billetter",
+            "time_left":"Tid tilbage"
+        },
+        "order_table":{
+            "number":"Bestille#",
+            "date":"Dato",
+            "attendee_name":"Navn",
+            "attendee_email":"E-mail",
+            "company":"Selskab",
+            "sold_tickets":"Solgt billet",
+            "revenue":"Indtægter",
+            "status":"Ordre status",
+            "payment_status":"Betalingsstatus"
+        },
+
+        "view":"Udsigt",
+        "download":"Hent",
+        "download_as_invoice":"Download som faktura"
     }
 }

@@ -16,6 +16,7 @@ import moment from 'moment'
 import TicketDetail from '@/components/TicketDetail';
 import ConfirmPopup from "@/components/ConfirmPopup";
 import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlice';
+import { useTranslations } from 'next-intl';
 
 const orderFilters = [
   { id: "all", name: "All orders" },
@@ -33,6 +34,8 @@ const ordersRequestDataStore =
 
 
 export default function OrderListing({ params }: { params: { locale:string, event_id: string } }) {
+  const t = useTranslations('manage-orders-page');
+
   const dispatch = useAppDispatch();
   const {loading, event, event_orders, fetching_orders, currentPage, totalPages, form_stats} = useAppSelector((state: RootState) => state.event);
 
@@ -205,16 +208,16 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   </div>
                   <div className="ebs-ticket-box">
                     <strong>{event?.event_stats?.tickets_sold}</strong>
-                    <span>sold</span>
+                    <span>{t('stats_sold_tickets')}</span>
                   </div>
                   <div className="ebs-ticket-box">
                         <strong>{event?.sales_agent_stats?.tickets_sold}</strong>
-                        <span>My Sold Tickets</span>
+                        <span>{t('stats_my_sold_tickets')}</span>
                     </div>
                   <div className="ebs-ticket-box">
                     <strong>{event?.sales_agent_stats?.revenue}</strong>
                     <span>
-                      My Revenue <small>(DKK)</small>
+                    {t('stats_my_revenue')} <small>(DKK)</small>
                     </span>
                   </div>
               </div>
@@ -222,7 +225,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
             {toggle && <TicketDetail handleClose={handlePopup} event_id={params.event_id} form_stats={form_stats} />}
             <div className="ebs-order-list-section">
               <div className="ebs-order-header">
-                <h4>Orders List</h4>
+                <h4>{t('order_list')}</h4>
                 <div className="row">
                   <div className="col-12 d-flex">
                     <input type="text" className="ebs-search-area" placeholder="Search" onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} value={searchText} onChange={(e)=>{setSearchText(e.target.value)}} />
@@ -241,51 +244,51 @@ export default function OrderListing({ params }: { params: { locale:string, even
               {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} /> : null}
               <div className="ebs-data-table ebs-order-table">
                 <div className="d-flex align-items-center ebs-table-header">
-                  <div className="ebs-table-box ebs-box-1"><strong>Order #
+                  <div className="ebs-table-box ebs-box-1"><strong>{t('order_table.number')}
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'order_number')}}>keyboard_arrow_down</em>
                     </span>
                   </strong></div>
-                  <div className="ebs-table-box ebs-box-1"><strong>Date 
+                  <div className="ebs-table-box ebs-box-1"><strong>{t('order_table.date')} 
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_date')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_date' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'order_date')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-2"><strong>Name 
+                  <div className="ebs-table-box ebs-box-2"><strong>{t('order_table.attendee_name')} 
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'name' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'name')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'name' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'name')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-2"><strong>Email 
+                  <div className="ebs-table-box ebs-box-2"><strong>{t('order_table.attendee_email')} 
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'email' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'email')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'email' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'email')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Company 
+                  <div className="ebs-table-box ebs-box-4"><strong>{t('order_table.company')} 
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'company' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'company')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'company' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'company')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Sold Ticket 
+                  <div className="ebs-table-box ebs-box-4"><strong>{t('order_table.sold_tickets')}
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'sold_tickets' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'sold_tickets')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'sold_tickets' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'sold_tickets')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-4"><strong>Revenue 
+                  <div className="ebs-table-box ebs-box-4"><strong>{t('order_table.revenue')} 
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>order status 
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>{t('order_table.status')}
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_status')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'order_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'order_status')}}>keyboard_arrow_down</em>
                     </span>
                     </strong></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>Payment status 
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><strong>{t('order_table.payment_status')} 
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'payment_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'payment_status')}}>keyboard_arrow_up</em> 
                       <em className={`material-symbols-outlined ${sort === 'desc' && sortCol === 'payment_status' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('desc', 'payment_status')}}>keyboard_arrow_down</em>
@@ -336,11 +339,11 @@ export default function OrderListing({ params }: { params: { locale:string, even
                           </button>
                           <div style={{minWidth: 130}} className="ebs-dropdown-menu">
                           <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
-                            <button className="dropdown-item">View</button>
+                            <button className="dropdown-item">{t('view')}</button>
                           </Link>
                             {/* <button className="dropdown-item">Print Badge</button> */}
-                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id})}}>Download </button>
-                            <button onClick={()=> { downloadPdf({id:order.id})}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">Download as Invoice</button>
+                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id})}}>{t('download')} </button>
+                            <button onClick={()=> { downloadPdf({id:order.id})}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
                           </div>
                         </div>
                       </li>
@@ -355,7 +358,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                             <Image
                                 src={require('@/assets/img/no_record_found.svg')} alt="" width="100" height="100"
                             />
-                            <p className='pt-3 m-0'>No data available</p>
+                            <p className='pt-3 m-0'>{t('no_data_available')}</p>
                       </div>
                    </div>)
               }

@@ -7,12 +7,14 @@ import { RootState } from '@/redux/store/store';
 import { usePathname, useRouter } from 'next/navigation';
 import { logOutUser } from '@/redux/store/slices/AuthSlice';
 import { useEffect, useTransition } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 const languages = [{ id: 1, name: "English", locale:'en' }, { id: 2, name: "Danish", locale:'da' }];
 
 
 export default function RootLayout({ children, params}: { children: React.ReactNode, params: { locale:string, event_id: string } }) {
+    const t = useTranslations('manage-events-layout');
+    
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const dispatch = useAppDispatch();
@@ -54,7 +56,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                                 router.push(`/${params.locale}/manage/events`);
                             }
                         }}>
-                            <i className="material-icons">arrow_back</i> Return to list
+                            <i className="material-icons">arrow_back</i> {t('return_to_list_label')}
                         </a>
                     </p>: null}
                 </div>

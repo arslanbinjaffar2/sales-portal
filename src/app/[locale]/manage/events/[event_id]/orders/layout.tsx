@@ -14,8 +14,11 @@ import Link from 'next/link';
 import axios from 'axios';
 import { AGENT_ENDPOINT } from '@/constants/endpoints';
 import { authHeader } from '@/helpers';
+import { useTranslations } from 'next-intl';
 
 export default function RootLayout({ children, params}: { children: React.ReactNode, params: { locale:string, event_id: string } }) {
+    const t = useTranslations('manage-orders-layout');
+    
     const dispatch = useAppDispatch();
     const pathname = usePathname();
     const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
@@ -81,7 +84,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                         {(!pathname.includes('invoice') && !pathname.includes('edit') && !pathname.includes('create')) && (event?.payment_settings?.eventsite_billing === 1) ? 
                             <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/create`}>
                                 <button className="btn btn-default">
-                                    <i className="material-symbols-outlined">add</i> Create Order
+                                    <i className="material-symbols-outlined">add</i> {t('create_order')}
                                 </button> 
                             </Link>
                         : null}
@@ -92,10 +95,10 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                                 <div className="small-loader-wrapper">
                                     <div className="small-loader"></div>
                                 </div>
-                                : 'PDF'} 
+                                : t('download_pdf')} 
                             </button>
                             <button className="btn btn-default btn-send-order" onClick={()=>dispatch(userEventOrderSend({id:pathname.split('/')[5]}))}>
-                                <i className="material-symbols-outlined">send</i> Send Order
+                                <i className="material-symbols-outlined">send</i> {t('send_order')}
                             </button> 
                             </>
                         : null}
@@ -110,7 +113,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
       {loading === true && event === null ? <Loader className=''fixed='' /> : null}
       {loading === false && event === null ? 
         <div className='d-flex justify-content-center align-items-center' style={{fontSize:"32px", textAlign:"center", fontStyle:"italic",  minHeight:"350px"}}>
-            No event found
+            {t('no_data_available')}
         </div> 
       : null }
     </>

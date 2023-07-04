@@ -1,4 +1,5 @@
 "use client"
+import { useTranslations } from 'next-intl';
 import React from 'react'
 
 const ConfirmPopup = ({handleClose, processing}: any) => {
