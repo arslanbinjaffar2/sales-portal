@@ -181,7 +181,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                                             >
                                         <div className="ebs-table-box ebs-box-1">
                                             <Image
-                                                src={item.header_logo ? (`${process.env.serverImageHost + '/assets/event/branding/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}
+                                                src={item.header_logo ? (`${process.env.serverImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}
                                                 alt="" width={100} height={34}/>
                                         </div>
                                         <div className="ebs-table-box ebs-box-2"><p>{item.name}</p>
