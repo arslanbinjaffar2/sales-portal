@@ -1,95 +1,96 @@
 {
     "auth_layout": {
-        "title": "VELKOMMEN TIL SALGSPORTAL",
-        "subtitle": "Maksimer dit salgspotentiale med vores tilpassede portalløsninger",
-        "feature_one": "Tilpasning efter nemme trin",
+        "title": "Velkommen til salgsportalen",
+        "subtitle": "Maximere dit salgspoteniale med vores skræddersyet portal løsninger.", 
+        "feature_one": "Tilpasset til at følge enkele trin.",   
         "feature_two": "Salgsprognose og analyse",
-        "feature_three": "Ordne begivenhedsregistrering på ingen tid",
-        "feature_four": "Føl dig tryg med vores trinvise navigation"
+        "feature_three": "Få styr på begivenhedsregistreringen på ingen tid",
+        "feature_four": "Følg dig tryg med vores trin for trin navigation", 
     },
     "auth_login":{
         "page_title":"Log ind",
-        "email_label":"Indtast din e-mail",
-        "password_label":"Adgangskode",
+        "email_label":"Indtast din e-mail", 
+        "password_label":"Adgangskode", 
         "remember_me_label":"Husk mig",
-        "forgot_password_label":"Glemt kodeord?",
-        "signin_button_label":"Log ind",
-        "signin_button_processing_label":"Logger ind..."
+        "forgot_password_label":"Glemt din adgangskode?",
+        "signin_button_label":"Log ind", 
+        "signin_button_processing_label":"Logger ind..." 
     },
     "auth_forgot_password_request":{
         "page_title":"Har du glemt din adgangskode?",
-        "page_subtitle":"Indtast din e-mailadresse, du bruger til din konto nedenfor, og vi sender dig et link til nulstilling af adgangskode.",
-        "email_label":"Indtast din e-mail",
-        "send_button_label":"SENDE",
-        "send_button_sending_label":"SENDER..."
+        "page_subtitle":"Indtast din e-mailadresse som du anvender til din konto nedenfor og vi vil sende dig et link med en nulstillingskode.",
+        "email_label":"Indtast din e-mail.",  
+        "send_button_label":"SEND",
+        "send_button_sending_label":"SENDER..." 
     },
     "auth_forgot_password_verify":{
-        "page_title":"Bekræft nulstil adgangskodekode",
-        "page_subtitle":"Indtast venligst det nulstillingskodeord, som vi lige har sendt til din registrerede e-mailadresse.",
-        "reset_code_label":"Indtast nulstillingskode",
-        "verify_button_label":"Verificere",
-        "verify_button_verifying_label":"Bekræfter..."
+        "page_title":"Bekræft din nye adgangskode.",
+        "page_subtitle":"Indtast venligst din nulstillingskode, som vi lige har sendt til din registrerede e-mailadresse.",
+        "reset_code_label":"Indsæt din nustillingskode.",
+        "verify_button_label":"Bekræft", 
+        "verify_button_verifying_label":"Bekræfter..." 
     },
     "auth_forgot_password_reset":{
-        "page_title":"Nulstille kodeord",
-        "page_subtitle":"Indtast ny adgangskode, og bekræft ny adgangskode for at nulstille adgangskoden.",
-        "new_password_label":"Indtast ny adgangskode",
-        "confirm_password_label":"Bekræft ny adgangskode",
-        "reset_button_label":"NULSTIL",
+        "page_title":"Nulstil adgangskode", 
+        "page_subtitle":"Indtast ny adgangskode og bekræft ny adgangskode for at nulstille adgangskoden",
+        "new_password_label":"Indsæt den nye adgangskode",
+        "confirm_password_label":"Bekræft den nye adgangskode",
+        "reset_button_label":"NUSTIL",
         "reset_button_reseting_label":"NULSTILLER..."
     },
     "manage-events-layout":{
-        "return_to_list_label":"Vend tilbage til listen"
+        "return_to_list_label":"Tillage til listen"
     },
     "manage-events-page":{
-        "no_data_available":"Ingen tilgængelig data",
+        "no_data_available":"Ingen data er tilgængelig",
         "event_table":{
             "event_logo":"Event Logo",
-            "event_name":"Event Name ",
-            "event_date":"Event Date",
-            "created_by":"Lavet af",
-            "organized_by":"Organized by",
-            "tickets_left":"Organiseret af",
-            "sold_tickets":"Solgte billetter",
-            "total_tickets":"Samlet antal billetter",
-            "my_sold_tickets":"Mine solgte billetter",
-            "my_revenue":"Min indtægt"
+            "event_name":"Eventnavn ", 
+            "event_date":"Eventdato", 
+            "created_by":"Oprettet af", 
+            "organized_by":"Organiseret af",
+            "tickets_left":"Ledige billetter", 
+            "sold_tickets":"Solgte billletter", 
+            "total_tickets":"Totale billetter",
+            "my_sold_tickets":"Mine solgte billetter", 
+            "my_revenue":"Mine indtægter."   
         }
     },
     "manage-orders-layout":{
-        "create_order":"Opret ordre",
-        "send_order":"Send ordre",
-        "download_pdf":"PDF",
-        "no_data_available":"Ingen tilgængelig data"
+        "create_order":"Opret ordre",  
+        "send_order":"Send ordre",  
+        "download_pdf":"PDF", 
+        "no_data_available":"Ingen data er tilgængelig" 
     },
     "manage-orders-page":{
-        "no_data_available":"Ingen tilgængelig data",
-        "stats_sold_tickets":"solgt",
-        "stats_my_sold_tickets":"Mine solgte billetter",
-        "stats_my_revenue":"Min indtægt",
-        "order_list":"Ordreliste",
-        "tickets_detail":"Billetter detaljer",
+        "no_data_available":"Ingen data er tilgængelig", 
+        "stats_sold_tickets":"Solgt", 
+        "stats_my_sold_tickets":"Mine solgte billetter", 
+        "stats_my_revenue":"Mine indtægter.", 
+        "order_list":"Ordreliste", 
+        "tickets_detail":"Billetoversigt", 
         "tickets_detail_table":{
-            "form":"Form",
-            "tickets_sold":"Billetter solgt",
-            "tickets_left":"Billetter tilbage",
-            "total_tickets":"Samlet antal billetter",
-            "time_left":"Tid tilbage"
+            "form":"Figure",  
+            "tickets_sold":"Solgte billetter", 
+            "tickets_left":"Ledige billetter", 
+            "total_tickets":"Totale billetter",
+            "time_left":"Tid tilbage" 
         },
         "order_table":{
-            "number":"Bestille#",
-            "date":"Dato",
-            "attendee_name":"Navn",
-            "attendee_email":"E-mail",
-            "company":"Selskab",
-            "sold_tickets":"Solgt billet",
-            "revenue":"Indtægter",
-            "status":"Ordre status",
-            "payment_status":"Betalingsstatus"
+            "number":"Ordre #",  
+            "date":"Dato", 
+            "attendee_name":"Navn", 
+            "attendee_email":"Email",
+            "company":"Virksomhed", 
+            "sold_tickets":"Solgte billetter", 
+            "revenue":"Indtægter", 
+            "status":"Ordre status", 
+            "payment_status":"Betalingsstatus" 
         },
 
-        "view":"Udsigt",
-        "download":"Hent",
-        "download_as_invoice":"Download som faktura"
+        "view":"Oversigt", 
+        "download":"Download", 
+        "download_as_invoice":"Downnload som en faktura."  
     }
+
 }
