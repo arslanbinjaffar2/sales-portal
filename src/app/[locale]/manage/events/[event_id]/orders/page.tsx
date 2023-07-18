@@ -179,7 +179,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
     const downloadPdf = async (data:any) => {
       try {
-          const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}`,  {
+          const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}/${data.type}`,  {
             headers: authHeader('GET'),
             responseType: 'blob'
           });
@@ -342,8 +342,8 @@ export default function OrderListing({ params }: { params: { locale:string, even
                             <button className="dropdown-item">{t('view')}</button>
                           </Link>
                             {/* <button className="dropdown-item">Print Badge</button> */}
-                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id})}}>{t('download')} </button>
-                            <button onClick={()=> { downloadPdf({id:order.id})}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
+                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id, type:'order'})}}>{t('download')} </button>
+                            <button onClick={()=> { downloadPdf({id:order.id, type:'invoice' })}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
                           </div>
                         </div>
                       </li>

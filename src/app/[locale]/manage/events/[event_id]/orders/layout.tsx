@@ -35,7 +35,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
     const downloadPdf = async (data:any) => {
         setDownloading(true);
         try {
-            const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}`,  {
+            const response = await axios.get(`${AGENT_ENDPOINT}/billing/send-order-pdf/${data.id}/invoice`,  {
               headers: authHeader('GET'),
               responseType: 'blob'
             });
