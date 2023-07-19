@@ -91,5 +91,14 @@
         "view":"View",
         "download":"Download",
         "download_as_invoice":"Download as invoice"
+    },
+    "messages":{
+        "errors":{
+            "invalid_data":"Invalid data!",
+            "someting_went_wrong":"Sorry! something went wrong"
+        },
+        "success":{
+            "password_changed":"Password changed successfully"
+        }
     }
 }

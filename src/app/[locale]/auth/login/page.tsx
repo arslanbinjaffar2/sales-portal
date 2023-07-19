@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 
 export default function Login({params:{locale}}:{params:{locale:string}}) {
     const t = useTranslations('auth_login');
+    const et = useTranslations('messages');
     const _email = useRef<any>(null);
     const _password = useRef<any>(null);
     const dispatch = useAppDispatch();
@@ -58,17 +59,17 @@ export default function Login({params:{locale}}:{params:{locale:string}}) {
             <p></p>
                 {errors && errors.length > 0 && <ErrorMessage 
                     icon= {"info"}
-                    title= {"Invalid data"}
+                    title= {et('errors.invalid_data')}
                     errors= {errors}
                 />}
                 {error && <ErrorMessage 
                     icon= {"info"}
-                    title= {"Sorry! Something went wrong"}
+                    title= {et('errors.someting_went_wrong')}
                     error= {error}
                 />}
                 {successMessage && <SuccessAlert 
                     icon= {"check"}
-                    title= {"Success"}
+                    title= {et('password_changed')}
                     message= {successMessage}
                 />}
             <form name="form" role="" onSubmit={handleSubmit}>

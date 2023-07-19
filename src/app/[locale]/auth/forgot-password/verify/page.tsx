@@ -12,6 +12,8 @@ const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
 export default function verifyResetCode({params:{locale}}:{params:{locale:string}}) {
     const t = useTranslations('auth_forgot_password_verify');
+    const et = useTranslations('messages');
+
     const dispatch = useAppDispatch();
     const router = useRouter();
     const {loading, redirect, error, errors, forgetPasswordEmail } = useAppSelector((state: RootState) => state.authUser);
@@ -48,12 +50,12 @@ export default function verifyResetCode({params:{locale}}:{params:{locale:string
         <>
             {errors && errors.length > 0 && <ErrorMessage 
                 icon= {"info"}
-                title= {"Invalid data"}
+                title= {et('errors.invalid_data')}
                 errors= {errors}
             />}
             {error && <ErrorMessage 
                 icon= {"info"}
-                title= {"Sorry! Something went wrong"}
+                title= {et('errors.someting_went_wrong')}
                 error= {error}
             />}
             <h2>{t('page_title')}</h2>

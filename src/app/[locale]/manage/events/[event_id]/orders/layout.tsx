@@ -21,7 +21,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
     
     const dispatch = useAppDispatch();
     const pathname = usePathname();
-    const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
+    const {loading, event, event_orders, sending_order} = useAppSelector((state: RootState) => state.event);
     const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
@@ -91,14 +91,21 @@ export default function RootLayout({ children, params}: { children: React.ReactN
                         {pathname.includes('invoice') ? 
                             <>
                             <button className="btn btn-default d-flex" onClick={()=>{downloadPdf({id:pathname.split('/')[5]})}}>
-                                <i className="material-symbols-outlined">sim_card_download</i> {downloading ? 
-                                <div className="small-loader-wrapper">
+                                 {downloading ? 
+                                <div className="small-loader-wrapper" style={{marginRight:'8px'}}>
                                     <div className="small-loader"></div>
                                 </div>
-                                : t('download_pdf')} 
+                                : <i className="material-symbols-outlined">sim_card_download</i>} 
+                                {t('download_pdf')}
                             </button>
-                            <button className="btn btn-default btn-send-order" onClick={()=>dispatch(userEventOrderSend({id:pathname.split('/')[5]}))}>
-                                <i className="material-symbols-outlined">send</i> {t('send_order')}
+                            <button className="btn btn-default btn-send-order d-flex" onClick={()=>dispatch(userEventOrderSend({id:pathname.split('/')[5]}))}>
+                                {sending_order ? 
+                                <div className="small-loader-wrapper" style={{marginRight:'8px'}}>
+                                    <div className="small-loader"></div>
+                                </div>:
+                                    <i className="material-symbols-outlined">send</i> 
+                                }
+                                {t('send_order')}
                             </button> 
                             </>
                         : null}

@@ -91,6 +91,15 @@
         "view":"Oversigt", 
         "download":"Download", 
         "download_as_invoice":"Downnload som en faktura."  
+    },
+    "messages":{
+        "errors":{
+            "invalid_data":"Ugyldige data!",
+            "someting_went_wrong":"Undskyld! noget gik galt"
+        },
+        "success":{
+            "password_changed":"Adgangskoden blev ændret"
+        }
     }
 
 }

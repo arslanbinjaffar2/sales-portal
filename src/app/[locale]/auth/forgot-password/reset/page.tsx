@@ -18,6 +18,7 @@ const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
 export default function requestReset({params:{locale}}:{params:{locale:string}}) {
     const t = useTranslations('auth_forgot_password_reset');
+    const et = useTranslations('messages');
     
     const [password, setPassword] = useState('');
     const [passwordType, setPasswordType] = useState(true)

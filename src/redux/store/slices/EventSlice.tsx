@@ -147,6 +147,7 @@ interface EventState {
   event_orders:any
   loading:boolean,
   fetching_orders:boolean,
+  sending_order:boolean,
   fetching_form_stats:boolean,
   form_stats:any,
   error:any,
@@ -161,6 +162,7 @@ const initialState: EventState = {
   event_orders: null,
   loading:true,
   fetching_orders:true,
+  sending_order:false,
   fetching_form_stats:true,
   form_stats:null,
   error:null,
@@ -239,7 +241,7 @@ export const eventSlice = createSlice({
     }),
     
     builder.addCase(userEventOrderSend.pending, (state, action) => {
-      // state.fetching_orders = true;
+      state.sending_order = true;
     }),
     builder.addCase(userEventOrderSend.fulfilled, (state, action) => {
       let res = action.payload;
@@ -247,11 +249,11 @@ export const eventSlice = createSlice({
       }else{
           state.error = res.message;
       }
-      // state.fetching_orders = false;
+      state.sending_order = false;
     }),
     builder.addCase(userEventOrderSend.rejected, (state, action) => {
       console.log("rejected", action.payload);
-      state.fetching_orders = false;
+      state.sending_order = false;
     })
     // eventFormStats
     builder.addCase(userEventFormStats.pending, (state, action) => {
