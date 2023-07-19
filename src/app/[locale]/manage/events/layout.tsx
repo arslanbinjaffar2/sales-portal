@@ -19,7 +19,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const dispatch = useAppDispatch();
     const pathname = usePathname();
-
+    
     useEffect(() => {
          (user === null) ? router.push('auth/login') : null;
     }, [user]);
@@ -43,7 +43,7 @@ export default function RootLayout({ children, params}: { children: React.ReactN
         <div className="container">
             <div className="row bottom-header-elements">
                 <div className="col-8">
-                    {pathname !== "/manage/events" ?<p>
+                    {pathname !== `${params.locale === 'da' ? '/da' : '' }/manage/events` ? <p>
                         <a href="#!" onClick={(e)=>{e.preventDefault(); 
                             console.log('pathname', pathname);
                             if(pathname.includes('invoice') || pathname.includes('create') || pathname.includes('edit')){
