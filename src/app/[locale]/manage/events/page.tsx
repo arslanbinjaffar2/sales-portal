@@ -1,6 +1,6 @@
 "use client"; // this is a client component
 import Dropdown from '@/components/DropDown';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from 'next/image';
 import AlertMessage from '@/components/forms/alerts/AlertMessage';
 import Loader from '@/components/forms/Loader';
@@ -16,19 +16,19 @@ import { useTranslations } from 'next-intl';
 
 // const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
 
-const eventFilters = [
-    {id: 'active_future', name: "Active and future events"},
-    {id: 'active', name: "Active events"},
-    {id: 'future', name: "Future events"},
-    {id: 'expired', name: "Expired events"},
-    {id: 'name', name: "All events"}
-];
-const sortFilters = [
-    {id: 'name', name: "Event name"},
-    {id: 'organizer_name', name: "Organizer name"},
-    {id: 'start_date', name: "Start date"},
-    {id: 'end_date', name: "End date"}
-];
+// const eventFilters = [
+//     {id: 'active_future', name: "Active and future events"},
+//     {id: 'active', name: "Active events"},
+//     {id: 'future', name: "Future events"},
+//     {id: 'expired', name: "Expired events"},
+//     {id: 'name', name: "All events"}
+// ];
+// const sortFilters = [
+//     {id: 'name', name: "Event name"},
+//     {id: 'organizer_name', name: "Organizer name"},
+//     {id: 'start_date', name: "Start date"},
+//     {id: 'end_date', name: "End date"}
+// ];
 
 let eventsRequestDataStored =
     typeof window !== "undefined" && localStorage.getItem("eventsRequestData");
@@ -52,6 +52,21 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
             promise.abort();
         }
     }, []);
+
+    const eventFilters = useMemo(() => [
+        {id: 'active_future', name: t('event_filters.active_future')},
+        {id: 'active', name: t('event_filters.active')},
+        {id: 'future', name: t('event_filters.future')},
+        {id: 'expired', name: t('event_filters.expired')},
+        {id: 'name', name: t('event_filters.name')}
+    ], [locale])
+
+    const sortFilters = useMemo(() => [
+        {id: 'name', name: t('sort_filters.name')},
+        {id: 'organizer_name', name: t('sort_filters.organizer_name')},
+        {id: 'start_date', name: t('sort_filters.start_date')},
+        {id: 'end_date', name: t('sort_filters.end_date')}
+    ], [locale])
 
     const storeEventRequestData = (eventsRequestDataStored:any) => {
         if(window !== undefined){
@@ -133,13 +148,13 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     </div>
                     <div className="col-8">
                         <div className="right-top-header">
-                            <input className="search-field" name="search_text" type="text" placeholder="Search" value={eventsRequestData.search_text} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} onChange={(e)=>{setEventsRequestData((prev:any)=> ({...prev, search_text:e.target.value}))}} />
+                            <input className="search-field" name="search_text" type="text" placeholder={t('search')} value={eventsRequestData.search_text} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} onChange={(e)=>{setEventsRequestData((prev:any)=> ({...prev, search_text:e.target.value}))}} />
                             <label className="label-select-alt">
                                 <Dropdown
                                     selected={eventsRequestData.event_action} 
                                     onChange={handleFilterByFilter}
                                     selectedlabel={getSelectedLabel(eventFilters,eventsRequestData.event_action)}
-                                    label="Filter by"
+                                    label={t('event_filter_label')}
                                     listitems={eventFilters}
                                 />
                             </label>
@@ -148,7 +163,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                                     selected={eventsRequestData.sort_by}
                                     onChange={handleSortByFilter}
                                     selectedlabel={getSelectedLabel(sortFilters,eventsRequestData.sort_by)}
-                                    label="Sort by"
+                                    label={t('sort_filter_label')}
                                     listitems={sortFilters}
                                 />
                             </label>

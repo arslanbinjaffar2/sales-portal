@@ -18,14 +18,14 @@ import ConfirmPopup from "@/components/ConfirmPopup";
 import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlice';
 import { useTranslations } from 'next-intl';
 
-const orderFilters = [
-  { id: "all", name: "All orders" },
-  { id: "completed", name: "Completed" },
-  { id: "cancelled", name: "Cancelled" },
-  { id: "pending", name: "Pending" },
-  { id: "payment_received", name: "Payment received" },
-  { id: "payment_pending", name: "Payment pending" },
-];
+// const orderFilters = [
+//   { id: "all", name: "All orders" },
+//   { id: "completed", name: "Completed" },
+//   { id: "cancelled", name: "Cancelled" },
+//   { id: "pending", name: "Pending" },
+//   { id: "payment_received", name: "Payment received" },
+//   { id: "payment_pending", name: "Payment pending" },
+// ];
 
 let ordersRequestDataStored =
     typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
@@ -71,6 +71,15 @@ export default function OrderListing({ params }: { params: { locale:string, even
       }
     }
   }, [event])
+
+  const orderFilters = useMemo(() => [
+    { id: "all", name: t('order_filters.all') },
+    { id: "completed", name: t('order_filters.completed') },
+    { id: "cancelled", name: t('order_filters.cancelled') },
+    { id: "pending", name: t('order_filters.pending') },
+    { id: "payment_received", name: t('order_filters.payment_received') },
+    { id: "payment_pending", name: t('order_filters.payment_received') },
+], [params.locale])
   
 
   useEffect(() => {
@@ -228,7 +237,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                 <h4>{t('order_list')}</h4>
                 <div className="row">
                   <div className="col-12 d-flex">
-                    <input type="text" className="ebs-search-area" placeholder="Search" onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} value={searchText} onChange={(e)=>{setSearchText(e.target.value)}} />
+                    <input type="text" className="ebs-search-area" placeholder={t('search')} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} value={searchText} onChange={(e)=>{setSearchText(e.target.value)}} />
                     <label style={{ width: "210px" }} className="label-select-alt">
                       <Dropdown
                         label="Select type"

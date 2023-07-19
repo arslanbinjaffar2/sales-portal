@@ -54,7 +54,23 @@
             "total_tickets":"Total Tickets",
             "my_sold_tickets":"My Sold Tickets",
             "my_revenue":"My Revenue"
-        }
+        },
+        "event_filters":{
+            "active_future":"Active and future events",
+            "active":"Active events",
+            "future":"Future events",
+            "expired":"Expired events",
+            "name":"All events"
+        },
+        "sort_filters":{
+             "name": "Event name",
+             "organizer_name": "Organizer name",
+             "start_date": "Start date",
+             "end_date": "End date"
+        },
+        "search":"Search",
+        "event_filter_label":"Filter By",
+        "sort_filter_label":"Sort By"
     },
     "manage-orders-layout":{
         "create_order":"Create order",
@@ -90,7 +106,16 @@
 
         "view":"View",
         "download":"Download",
-        "download_as_invoice":"Download as invoice"
+        "download_as_invoice":"Download as invoice",
+        "search":"Search",
+        "order_filters":{
+             "all": "All orders",
+             "completed": "Completed",
+             "cancelled": "Cancelled",
+             "pending": "Pending",
+             "payment_received": "Payment received",
+             "payment_pending": "Payment pending"
+        }
     },
     "messages":{
         "errors":{

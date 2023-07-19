@@ -54,7 +54,24 @@
             "total_tickets":"Totale billetter",
             "my_sold_tickets":"Mine solgte billetter", 
             "my_revenue":"Mine indtægter."   
-        }
+        },
+        "event_filters":{
+            "active_future":"Aktive og fremtidige events",
+            "active":"Aktive events",
+            "future":"Fremtid events",
+            "expired":"Udløbet events",
+            "name":"Alle events"
+        },
+        "sort_filters":{
+            "name": "Event navn",
+            "organizer_name": "Organizer navn",
+            "start_date": "Start dato",
+            "end_date": "Ende dato"
+       },
+       "search":"Søg",
+       "event_filter_label":"Filter ved",
+       "sort_filter_label":"Sort ved"
+       
     },
     "manage-orders-layout":{
         "create_order":"Opret ordre",  
@@ -90,7 +107,16 @@
 
         "view":"Oversigt", 
         "download":"Download", 
-        "download_as_invoice":"Downnload som en faktura."  
+        "download_as_invoice":"Downnload som en faktura.", 
+        "search":"Søg",
+        "order_filters":{
+             "all": "Alle orders",
+             "completed": "Afsluttet",
+             "cancelled": "Aflyst",
+             "pending": "Verserende",
+             "payment_received": "Betaling modtaget",
+             "payment_pending": "Betaling venter"
+        } 
     },
     "messages":{
         "errors":{
