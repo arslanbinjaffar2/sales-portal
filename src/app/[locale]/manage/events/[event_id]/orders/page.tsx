@@ -18,14 +18,6 @@ import ConfirmPopup from "@/components/ConfirmPopup";
 import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlice';
 import { useTranslations } from 'next-intl';
 
-// const orderFilters = [
-//   { id: "all", name: "All orders" },
-//   { id: "completed", name: "Completed" },
-//   { id: "cancelled", name: "Cancelled" },
-//   { id: "pending", name: "Pending" },
-//   { id: "payment_received", name: "Payment received" },
-//   { id: "payment_pending", name: "Payment pending" },
-// ];
 
 let ordersRequestDataStored =
     typeof window !== "undefined" && localStorage.getItem("ordersRequestData");

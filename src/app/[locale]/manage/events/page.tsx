@@ -14,22 +14,6 @@ import Link from 'next/link';
 import {getSelectedLabel} from '@/helpers'; 
 import { useTranslations } from 'next-intl';
 
-// const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
-
-// const eventFilters = [
-//     {id: 'active_future', name: "Active and future events"},
-//     {id: 'active', name: "Active events"},
-//     {id: 'future', name: "Future events"},
-//     {id: 'expired', name: "Expired events"},
-//     {id: 'name', name: "All events"}
-// ];
-// const sortFilters = [
-//     {id: 'name', name: "Event name"},
-//     {id: 'organizer_name', name: "Organizer name"},
-//     {id: 'start_date', name: "Start date"},
-//     {id: 'end_date', name: "End date"}
-// ];
-
 let eventsRequestDataStored =
     typeof window !== "undefined" && localStorage.getItem("eventsRequestData");
 const eventsRequestDataStore =
