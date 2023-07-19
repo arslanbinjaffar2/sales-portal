@@ -105,7 +105,7 @@
         },
 
         "view":"View",
-        "download":"Download",
+        "download":"Download as order",
         "download_as_invoice":"Download as invoice",
         "search":"Search",
         "order_filters":{

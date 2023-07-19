@@ -106,7 +106,7 @@
         },
 
         "view":"Oversigt", 
-        "download":"Download", 
+        "download":"Download som ordre", 
         "download_as_invoice":"Downnload som en faktura.", 
         "search":"Søg",
         "order_filters":{
