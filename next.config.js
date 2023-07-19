@@ -17,6 +17,11 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
+                hostname: 'my.eventbuizz.com',
+                port: '',
+            },
+            {
+                protocol: 'https',
                 hostname: 'stage.eventbuizz.com',
                 port: '',
             },
@@ -31,7 +36,7 @@ const nextConfig = {
                 port: '8200',
             },
         ],
-        domains: ['https://stage.eventbuizz.com', 'https://dev.eventbuizz.com', 'http:/localhost:8200']
+        domains: ['https://my.eventbuizz.com','https://stage.eventbuizz.com', 'https://dev.eventbuizz.com', 'http:/localhost:8200']
     },
 }
 
