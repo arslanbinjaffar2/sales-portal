@@ -8,11 +8,6 @@ import { useLocale, useTranslations } from 'next-intl';
 
 const languages = [{ id: 1, name: "English", locale:'en' }, { id: 2, name: "Danish", locale:'da' }];
 
-export const metadata = {
-  title: 'Sign in - Sales agent portal',
-  description: 'Sign in to eventbuizz sales agent portal.',
-}
-
 export default function RootLayout({ children}: { children: React.ReactNode }) {
     const t = useTranslations('auth_layout');
     const [isPending, startTransition] = useTransition();
