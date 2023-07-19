@@ -1,19 +1,15 @@
 import '/public/fonts/fonts.css'
 import '@/assets/css/app.scss'
+import {ReactNode} from 'react';
 import {NextIntlClientProvider} from 'next-intl';
 import {notFound} from 'next/navigation';
- 
-import { Providers } from "@/redux/providers/provider";
 
-export const metadata = {
-  title: 'Eventcenter - Sales agent',
-  description: 'Eventbuizz sales agent portal.',
-}
+type Props = {
+  children: ReactNode;
+};
 
-// export function generateStaticParams() {
-//   return [{locale: 'en'}, {locale: 'de'}];
-// }
-
+// Since we have a `not-found.tsx` page on the root, a layout file
+// is required, even if it's just passing children through.
 export default async function RootLayout({ children, params: {locale}}: { children: React.ReactNode, params: {locale:string} }) {
   let lang;
   try {
@@ -22,14 +18,9 @@ export default async function RootLayout({ children, params: {locale}}: { childr
     notFound();
   }
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={lang}>
-          <Providers>
-            {children}
-          </Providers>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={lang}>
+      {children}
+    </NextIntlClientProvider>
+
   )
 }
