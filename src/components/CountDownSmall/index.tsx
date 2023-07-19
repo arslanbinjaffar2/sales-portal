@@ -5,7 +5,7 @@ import Countdown, { zeroPad } from "react-countdown";
 
 const Completionist = () =>  
   <div className="col-12">
-    <h2>This event is going on.</h2>
+    <p>Date ended</p>
   </div>
 ;
 

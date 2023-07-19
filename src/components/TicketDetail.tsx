@@ -28,7 +28,7 @@ const TicketDetail = ({handleClose, form_stats }: any) => {
             <div className="modal-body">
               <div className="d-flex align-items-center">
                 <h3 className='d-flex align-items-center' style={{marginRight: 'auto'}}> <span className='material-symbols-outlined pr-2' onClick={() => handleClose('close')}>arrow_back</span> {t('tickets_detail')}</h3>
-                <input style={{marginRight: 0}} type="text" className="ebs-search-area" placeholder="Search" value={searchQuery} onChange={(e)=> setSearchQuery(e.target.value)} />
+                <input style={{marginRight: 0}} type="text" className="ebs-search-area" placeholder={t('search')} value={searchQuery} onChange={(e)=> setSearchQuery(e.target.value)} />
               </div>
               <div className="ebs-grid-ticket-wrapper">
                 <div className="d-flex ebs-grid-ticket-row ebs-grid-ticket-header">

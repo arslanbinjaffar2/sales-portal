@@ -236,7 +236,6 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         {limit} <i className="material-symbols-outlined">expand_more</i>
                       </button>
                       <div className={`ebs-dropdown-menu`}>
-                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 2) }}>2</button>
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
