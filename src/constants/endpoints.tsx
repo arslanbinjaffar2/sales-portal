@@ -1,4 +1,4 @@
-const BASE_URL = process.env.serverHost;
+export const BASE_URL = process.env.serverHost;
 export const LOGIN_ENDPOINT = `${BASE_URL}/api/v1/sales/auth/login`;
 export const LOGOUT_ENDPOINT = `${BASE_URL}/api/v1/sales/agent/logout`;
 export const PASSWORD_REQUEST_ENDPOINT = `${BASE_URL}/api/v1/sales/auth/password/reset-request`;
