@@ -22,7 +22,7 @@ export default function page({ params }: { params: { locale:string, event_id: st
   }, []);
   return (
     <div>
-        {window !== undefined && <iframe width="100%" height={window.innerHeight - 280} src={`${process.env.regSiteHost}/${event.event_url}/sale/order-summary/${params.order_id}?=sale_id=${user.id}`} />}
+        {window !== undefined && <iframe width="100%" height={window.innerHeight - 280} src={`${process.env.regSiteHost}/${event.event_url}/sale/order-summary/${params.order_id}?sale_id=${user.id}`} />}
     </div>
   )
 }

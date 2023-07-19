@@ -23,7 +23,7 @@ export default function page({ params }: { params: { locale:string, event_id: st
   
   return (
     <div>
-        {window !== undefined && <iframe width="100%" height={window.innerHeight - 280} src={event.eventsite_settings.evensite_additional_attendee === 1 ? `${process.env.regSiteHost}/${event.event_url}/sale/?=sale_id=${user.id}` :  `${process.env.regSiteHost}/${event.event_url}/sale/manage-attendee?=sale_id=${user.id}`  } />}
+        {window !== undefined && <iframe width="100%" height={window.innerHeight - 280} src={event.eventsite_settings.evensite_additional_attendee === 1 ? `${process.env.regSiteHost}/${event.event_url}/sale/?sale_id=${user.id}` :  `${process.env.regSiteHost}/${event.event_url}/sale/manage-attendee?sale_id=${user.id}`  } />}
     </div>
   )
 }
