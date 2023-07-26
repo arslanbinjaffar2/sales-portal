@@ -158,16 +158,16 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
             <div className="main-data-table" style={{minHeight:'calc(100vh - 272px)'}}>
                  <div className="ebs-data-table">
 								 {events.length > 0 && <div className="d-flex align-items-center ebs-table-header">
-                        <div className="ebs-table-box ebs-box-1"><strong>{t('event_table.event_logo')}</strong></div>
-                        <div className="ebs-table-box ebs-box-2"><strong>{t('event_table.event_name')} </strong></div>
+                        <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_logo')}</strong></div>
+                        <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_name')} </strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_date')}</strong></div>
-                        <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.created_by')}</strong></div>
-                        <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.organized_by')}</strong></div>
-                        <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.tickets_left')}</strong></div>
-                        <div className="ebs-table-box ebs-box-5"><strong>{t('event_table.sold_tickets')}</strong></div>
-                        <div className="ebs-table-box ebs-box-5"><strong>{t('event_table.total_tickets')}</strong></div>
-                        <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-5"><strong>{t('event_table.my_sold_tickets')}</strong></div>
-                        <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-4 text-right"><strong
+                        <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.created_by')}</strong></div>
+                        <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.organized_by')}</strong></div>
+                        {/* <div className="ebs-table-box ebs-box-4"><strong>{t('event_table.tickets_left')}</strong></div> */}
+                        <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.sold_tickets')}</strong></div>
+                        {/* <div className="ebs-table-box ebs-box-5"><strong>{t('event_table.total_tickets')}</strong></div> */}
+                        <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-3"><strong>{t('event_table.my_sold_tickets')}</strong></div>
+                        <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-3 text-right"><strong
                             style={{justifyContent: 'flex-end'}}>{t('event_table.my_revenue')}</strong></div>
                     </div>}
                     <>
@@ -178,33 +178,33 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                                     <div 
                                             className="d-flex align-items-center ebs-table-content"
                                             >
-                                        <div className="ebs-table-box ebs-box-1">
+                                        <div className="ebs-table-box ebs-box-3">
                                             <Image
                                                 src={item.header_logo ? (`${process.env.serverImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}
                                                 alt="" width={100} height={34}/>
                                         </div>
-                                        <div className="ebs-table-box ebs-box-2"><p>{item.name}</p>
+                                        <div className="ebs-table-box ebs-box-3"><p>{item.name}</p>
                                         </div>
                                         <div className="ebs-table-box ebs-box-3">
                                             <p>{item.start_date}</p>
                                             <p>{item.end_date}</p>
 																					</div>
-                                        <div className="ebs-table-box ebs-box-4">
+                                        <div className="ebs-table-box ebs-box-3">
                                             <p>{item.organizer_name}</p></div>
-                                        <div className="ebs-table-box ebs-box-4">
+                                        <div className="ebs-table-box ebs-box-3">
                                             <p>{item.organizer_name}</p></div>
-                                        <div className="ebs-table-box ebs-box-4">
-                                            <p>{item.event_stats.tickets_left}</p></div>
-                                        <div className="ebs-table-box ebs-box-5">
-                                            <p>{item.event_stats.total_tickets}</p></div>
-                                        <div className="ebs-table-box ebs-box-5">
-                                            <p>{item.sale_agent_stats.tickets_sold}</p></div>
+                                        {/* <div className="ebs-table-box ebs-box-3">
+                                            <p>{item.event_stats.tickets_left}</p></div> */}
+                                        <div className="ebs-table-box ebs-box-3">
+                                            <p>{item.event_stats.tickets_sold}</p></div>
+                                        {/* <div className="ebs-table-box ebs-box-5">
+                                            <p>{item.event_stats.total_tickets}</p></div> */}
                                         <div style={{paddingRight: 0}}
-                                                className="ebs-table-box ebs-box-5">
-                                            <p>{item.sale_agent_stats.revenue}</p></div>
+                                                className="ebs-table-box ebs-box-3">
+                                            <p>{item.sale_agent_stats.tickets_sold}</p></div>
                                         <div style={{textAlign: 'right'}}
-                                                className="ebs-table-box ebs-box-4 text-right">
-                                            <p>{item.sale_agent_stats.revenue}{(item.currency) ? item.currency : 'DKK'}</p>
+                                                className="ebs-table-box ebs-box-3 text-right">
+                                            <p>{item.sale_agent_stats.revenue} {" "} {(item.currency) ? item.currency : 'DKK'}</p>
                                         </div>
                                     </div>
                                 </Link>
