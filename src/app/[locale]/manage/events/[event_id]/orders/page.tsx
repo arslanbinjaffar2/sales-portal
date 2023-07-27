@@ -216,9 +216,9 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         <span>{t('stats_my_sold_tickets')}</span>
                     </div>
                   <div className="ebs-ticket-box">
-                    <strong>{event?.sales_agent_stats?.revenue}</strong>
+                    <strong>{event?.sales_agent_stats?.revenue_text}</strong>
                     <span>
-                    {t('stats_my_revenue')} <small>(DKK)</small>
+                    {t('stats_my_revenue')} 
                     </span>
                   </div>
               </div>
@@ -305,7 +305,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.grand_total} DKK</p></div>
+                  <div className="ebs-table-box ebs-box-4"><p>{order.grand_total_text} </p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
