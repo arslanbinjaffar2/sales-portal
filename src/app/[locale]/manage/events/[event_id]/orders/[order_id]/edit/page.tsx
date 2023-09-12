@@ -13,7 +13,6 @@ export default function page({ params }: { params: { locale:string, event_id: st
   const router = useRouter();
   const [cloneOrderId, setCloneOrderId] = useState<any>(null);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 280);
-
   useEffect(() => {
     const source = axios.CancelToken.source();
     axios.post(`${BASE_URL}/registration/event/${event['event_url']}/registration/clone-order/${params.order_id}`,{}, {
@@ -39,6 +38,9 @@ export default function page({ params }: { params: { locale:string, event_id: st
         if(event.data.order_id !== undefined) {
             router.push(`/${params.locale}/manage/events/${params.event_id}/orders`);
         } 
+        if(event.data.contentHeight !== undefined){
+            setIframeHeight(event.data.contentHeight > 950 ? (event.data.contentHeight + 135) : (event.data.contentHeight + 950 + 135));
+        }
     }
     window.addEventListener("message", listener);
     return () => {
@@ -46,40 +48,9 @@ export default function page({ params }: { params: { locale:string, event_id: st
     }
   }, []);
 
-
   return (
     <div>
-        {(window !== undefined && cloneOrderId !== null) && <iframe width="100%" height={iframeHeight} src={`${process.env.regSiteHost}/${event.event_url}/sale/order-summary/${cloneOrderId}?sale_id=${user.id}`} 
-        
-        onLoad={(event:any) => {
-          const { contentWindow } = event.target;
-          const main = contentWindow.document.body.querySelector('main');
-
-          // Because the login form has a dynamic height, observe any size changes and update the iframe height
-          const resizeObserver = new ResizeObserver((entries) => {
-            entries.forEach((entry) => {
-              setIframeHeight(entry.contentRect.height);
-            });
-          });
-
-          resizeObserver.observe(main);
-
-          // When the iframe is hiden (i.e. modal is closed), remove any listeners
-          const onVisibilityChange = () => {
-            resizeObserver.disconnect();
-            contentWindow.addEventListener(
-              'visibilitychange',
-              onVisibilityChange
-            );
-          };
-
-          // Add listener for when iframe is hiden (i.e. modal is closed)
-          contentWindow.addEventListener(
-            'visibilitychange',
-            onVisibilityChange
-          );
-        }}
-        />}
+        {(window !== undefined && cloneOrderId !== null) && <iframe width="100%" height={iframeHeight} src={`${process.env.regSiteHost}/${event.event_url}/sale/order-summary/${cloneOrderId}?sale_id=${user.id}`} />}
     </div>
   )
 }
