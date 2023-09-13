@@ -17,7 +17,7 @@ export default function page({ params }: { params: { locale:string, event_id: st
             router.push(`/${params.locale}/manage/events/${params.event_id}/orders`);
         } 
         if(event.data.contentHeight !== undefined){
-          setIframeHeight(event.data.contentHeight > 950 ? (event.data.contentHeight + 135) : (event.data.contentHeight + 950 + 135));
+          setIframeHeight(event.data.contentHeight  + 135);
       }
     }
     window.addEventListener("message", listener);
