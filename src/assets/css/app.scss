@@ -1358,3 +1358,22 @@
   scrollbar-color: $border #F2F2F2;
   scrollbar-gutter: stable;
 }
+#ebs-master-wrapper-iframe {
+  position: relative;
+  .ebs-button-expand {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 9;
+  }
+  &.ebs-expanded-iframe {
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    line-height: 0;
+  }
+}
