@@ -54,15 +54,20 @@ export default function page({ params }: { params: { locale:string, event_id: st
     } else {
       document.body.style.overflowY = 'auto'
     }
+     return () => {
+      document.body.style.overflowY = 'auto'
+    }
   }, [expandIframe])
   
   const handleClickexpand = () => {
     setexpandIframe(!expandIframe);
   }
   return (
-    <div className={expandIframe && 'ebs-expanded-iframe'} id="ebs-master-wrapper-iframe">
-       <button onClick={handleClickexpand} className='btn p-1 btn-primary rounded-circle ebs-button-expand'><span className="material-icons">{!expandIframe ? 'fullscreen' : 'close_fullscreen'}</span></button> 
-        {(window !== undefined && cloneOrderId !== null) && <iframe width="100%" style={{minHeight: '100vh'}} height={iframeHeight} src={`${process.env.regSiteHost}/${event.event_url}/sale/order-summary/${cloneOrderId}?sale_id=${user.id}`} />}
+    <div>
+      {(window !== undefined && cloneOrderId !== null) && <div className={expandIframe && 'ebs-expanded-iframe'} id="ebs-master-wrapper-iframe">
+        <button onClick={handleClickexpand} className='btn p-1 btn-primary rounded-circle ebs-button-expand'><span className="material-icons">{!expandIframe ? 'fullscreen' : 'close_fullscreen'}</span></button> 
+          <iframe width="100%" style={{minHeight: '100vh'}}  src={`${process.env.regSiteHost}/${event.event_url}/sale/order-summary/${cloneOrderId}?sale_id=${user.id}`} />
+      </div>}
     </div>
   )
 }
