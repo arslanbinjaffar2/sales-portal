@@ -9,6 +9,7 @@ export default function page({ params }: { params: { locale:string, event_id: st
   const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
   const {user} = useAppSelector((state: RootState) => state.authUser);
   const router = useRouter();
+  const [expandIframe, setexpandIframe] = useState<any>(false);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 280);
 
   useEffect(() => {
@@ -25,10 +26,20 @@ export default function page({ params }: { params: { locale:string, event_id: st
       window.removeEventListener('message', listener);
     }
   }, []);
-  
+  useEffect(() => {
+    if (expandIframe) {
+      document.body.style.overflowY = 'hidden'
+    } else {
+      document.body.style.overflowY = 'auto'
+    }
+  }, [expandIframe])
+  const handleClickexpand = () => {
+    setexpandIframe(!expandIframe);
+  }
   return (
-    <div>
-        {window !== undefined && <iframe width="100%" height={iframeHeight} src={event.eventsite_settings.evensite_additional_attendee === 1 ? `${process.env.regSiteHost}/${event.event_url}/sale/?sale_id=${user.id}` :  `${process.env.regSiteHost}/${event.event_url}/sale/manage-attendee?sale_id=${user.id}`  } />}
+    <div className={expandIframe && 'ebs-expanded-iframe'} id="ebs-master-wrapper-iframe">
+       <button onClick={handleClickexpand} className='btn p-1 btn-primary rounded-circle ebs-button-expand'><span className="material-icons">{!expandIframe ? 'fullscreen' : 'close_fullscreen'}</span></button> 
+        {window !== undefined && <iframe width="100%" style={{minHeight: '100vh'}}  height={iframeHeight} src={event.eventsite_settings.evensite_additional_attendee === 1 ? `${process.env.regSiteHost}/${event.event_url}/sale/?sale_id=${user.id}` :  `${process.env.regSiteHost}/${event.event_url}/sale/manage-attendee?sale_id=${user.id}`  } />}
     </div>
   )
 }
