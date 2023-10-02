@@ -310,7 +310,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
-                      <li>
+                      {order.status !== 'cancelled' && <li>
                       <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
                           <button className='ebs-btn-panel'>
                             <Image
@@ -321,7 +321,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                             />
                           </button>
                           </Link>
-                      </li>
+                      </li>}
                       <li>
 
                         <button className='ebs-btn-panel' onClick={(e)=>{ if(confirm(t('delete_order_alert_label'))){ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id})) }}}>

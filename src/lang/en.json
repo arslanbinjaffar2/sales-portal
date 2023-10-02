@@ -104,7 +104,7 @@
             "status":"Order Status",
             "payment_status":"Payment Status"
         },
-
+        "date_ended":"Date ended",
         "view":"View",
         "download":"Download as order",
         "download_as_invoice":"Download as invoice",

@@ -105,7 +105,8 @@
             "status":"Ordre status", 
             "payment_status":"Betalingsstatus" 
         },
-
+        
+        "date_ended":"Dato sluttet",
         "view":"Oversigt", 
         "download":"Download som ordre", 
         "download_as_invoice":"Downnload som en faktura.", 
@@ -118,7 +119,8 @@
              "pending": "Verserende",
              "payment_received": "Betaling modtaget",
              "payment_pending": "Betaling venter"
-        } 
+        }
+
     },
     "messages":{
         "errors":{
