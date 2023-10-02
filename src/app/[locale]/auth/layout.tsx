@@ -15,10 +15,9 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
     const pathname = usePathname();
     const locale = useLocale();
     function onLanguageChange(value:string) {
-        console.log(`/${value}${pathname}`, 'selectchange');
-
-        let replaceUrl = value === 'en' ? pathname.replace('/da', '/en') :  `/${value}${pathname}`;
-
+        let newPathname = pathname.replace('/da', '').replace('/en', '');
+        let replaceUrl = `/${value}${newPathname}`;
+        console.log(replaceUrl);
         startTransition(() => {
           router.replace(replaceUrl);
         });

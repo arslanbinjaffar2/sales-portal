@@ -157,7 +157,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
             </div>
             <div className="main-data-table" style={{minHeight:'calc(100vh - 272px)'}}>
                  <div className="ebs-data-table">
-								 {events.length > 0 && <div className="d-flex align-items-center ebs-table-header">
+								 <div className="d-flex align-items-center ebs-table-header">
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_logo')}</strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_name')} </strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_date')}</strong></div>
@@ -169,7 +169,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-3"><strong>{t('event_table.my_sold_tickets')}</strong></div>
                         <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-3 text-right"><strong
                             style={{justifyContent: 'flex-end'}}>{t('event_table.my_revenue')}</strong></div>
-                    </div>}
+                    </div>
                     <>
                         {
                             events.length > 0 ? (

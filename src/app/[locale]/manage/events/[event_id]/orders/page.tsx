@@ -307,7 +307,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.grand_total_text} </p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
+                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                     <ul className='d-flex ebs-panel-list m-0'>
                       <li>
@@ -324,7 +324,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                       </li>
                       <li>
 
-                        <button className='ebs-btn-panel' onClick={(e)=>{ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id}))}}>
+                        <button className='ebs-btn-panel' onClick={(e)=>{ if(confirm(t('delete_order_alert_label'))){ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id})) }}}>
                           <Image
                             src={require("@/assets/img/ico-trash.svg")}
                             alt=""
