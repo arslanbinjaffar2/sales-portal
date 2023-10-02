@@ -88,6 +88,7 @@
         "tickets_detail":"Tickets details",
         "tickets_detail_table":{
             "form":"Form",
+            "waiting":"Waiting",
             "tickets_sold":"Tickets sold",
             "tickets_left":"Tickets left",
             "total_tickets":"Total tickets",

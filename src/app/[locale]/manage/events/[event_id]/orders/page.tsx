@@ -305,7 +305,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
                   <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.grand_total_text} </p></div>
+                  <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
                   <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
                   <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">

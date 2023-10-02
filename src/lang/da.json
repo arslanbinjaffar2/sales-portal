@@ -89,6 +89,7 @@
         "tickets_detail":"Billetoversigt", 
         "tickets_detail_table":{
             "form":"Figure",  
+            "waiting":"Venter",
             "tickets_sold":"Solgte billetter", 
             "tickets_left":"Ledige billetter", 
             "total_tickets":"Totale billetter",
