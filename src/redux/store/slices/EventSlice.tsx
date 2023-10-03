@@ -69,7 +69,7 @@ export const userEventOrderDelete = createAsyncThunk(
       source.cancel()
     })
     try {
-      const response = await axios.get(`${AGENT_ENDPOINT}/billing/delete-order/${data.id}`, {
+      const response = await axios.get(`${AGENT_ENDPOINT}/billing/${data.event_id}/delete-order/${data.id}`, {
         cancelToken: source.token,
         headers: authHeader('GET'),
       })

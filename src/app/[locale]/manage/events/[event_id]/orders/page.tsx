@@ -19,7 +19,41 @@ import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlic
 import { useTranslations } from 'next-intl';
 
 
-
+const MoreAttendees = ({data}: any) => {
+  const [toggle, setToggle] = useState(false)
+  return (
+    <div style={{background: '#EEF2F4'}} className='rounded-4'>
+      <div style={{background: '#EEF2F4'}} className="d-flex align-items-center ebs-table-content">
+          <div className="ebs-table-box ebs-box-1" />
+          <div className="ebs-table-box ebs-box-1" />
+        <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}>{data.length - 1} more attendees <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'close' : 'add' }</i></strong></p></div>
+        <div className="ebs-table-box ebs-box-2" />
+        <div className="ebs-table-box  ebs-box-4" />
+       <div className="ebs-table-box ebs-box-4" />
+       <div className="ebs-table-box ebs-box-4" />
+       <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+       <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+       <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+      </div>
+      {toggle && <React.Fragment>
+        {data.map((attendee:any,k:any) =>
+         k === 0 ? null : (<div style={{background: '#EEF2F4'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
+          <div className="ebs-table-box ebs-box-1" />
+          <div className="ebs-table-box ebs-box-1" />
+          <div className="ebs-table-box ebs-box-2"><p>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</p></div>
+          <div className="ebs-table-box ebs-box-2"><p>{attendee?.attendee_detail?.email} </p></div>
+          <div className="ebs-table-box  ebs-box-4" />
+        <div className="ebs-table-box ebs-box-4" />
+        <div className="ebs-table-box ebs-box-4" />
+        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+        <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+        </div>)
+      )}
+      </React.Fragment>}
+    </div>
+  )
+}
 
 
 export default function OrderListing({ params }: { params: { locale:string, event_id: string } }) {
@@ -316,59 +350,63 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   <div className="ebs-table-box ebs-box-3"  />
                 </div>
                 {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
-                <div key={order.id} className="d-flex align-items-center ebs-table-content">
-                  <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
-                  <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MM-YYYY')}</p></div>
-                  <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
-                  <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
-                  <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
-                    <ul className='d-flex ebs-panel-list m-0'>
-                      {order.status !== 'cancelled' && <li>
-                      <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
-                          <button className='ebs-btn-panel'>
+                <div key={order.id}>
+                  <div className="d-flex align-items-center ebs-table-content">
+                    <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
+                    <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MM-YYYY')}</p></div>
+                    <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
+                    <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
+                    <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
+                      <ul className='d-flex ebs-panel-list m-0'>
+                        {order.status !== 'cancelled' && <li>
+                        <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
+                            <button className='ebs-btn-panel'>
+                              <Image
+                                src={require("@/assets/img/ico-edit.svg")}
+                                alt=""
+                                width="12"
+                                height="12"
+                              />
+                            </button>
+                            </Link>
+                        </li>}
+                        <li>
+
+                          <button className='ebs-btn-panel' onClick={(e)=>{ if(confirm(t('delete_order_alert_label'))){ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id})) }}}>
                             <Image
-                              src={require("@/assets/img/ico-edit.svg")}
+                              src={require("@/assets/img/ico-trash.svg")}
                               alt=""
                               width="12"
-                              height="12"
+                              height="14"
                             />
                           </button>
-                          </Link>
-                      </li>}
-                      <li>
-
-                        <button className='ebs-btn-panel' onClick={(e)=>{ if(confirm(t('delete_order_alert_label'))){ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id})) }}}>
-                          <Image
-                            src={require("@/assets/img/ico-trash.svg")}
-                            alt=""
-                            width="12"
-                            height="14"
-                          />
-                        </button>
-                      </li>
-                      <li>
-                        <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                          <button onClick={handleRowControlsToggle} className='ebs-btn-panel ebs-btn-dropdown'>
-                            <i className="material-icons">more_horiz</i>
-                          </button>
-                          <div style={{minWidth: 130}} className="ebs-dropdown-menu">
-                          <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
-                            <button className="dropdown-item">{t('view')}</button>
-                          </Link>
-                            {/* <button className="dropdown-item">Print Badge</button> */}
-                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id, type:'order'})}}>{t('download')} </button>
-                            <button onClick={()=> { downloadPdf({id:order.id, type:'invoice' })}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
+                        </li>
+                        <li>
+                          <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                            <button onClick={handleRowControlsToggle} className='ebs-btn-panel ebs-btn-dropdown'>
+                              <i className="material-icons">more_horiz</i>
+                            </button>
+                            <div style={{minWidth: 130}} className="ebs-dropdown-menu">
+                            <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
+                              <button className="dropdown-item">{t('view')}</button>
+                            </Link>
+                              {/* <button className="dropdown-item">Print Badge</button> */}
+                              <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id, type:'order'})}}>{t('download')} </button>
+                              <button onClick={()=> { downloadPdf({id:order.id, type:'invoice' })}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    </ul>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>) :
+                  {order.order_attendees.length > 0 && <MoreAttendees data={order.order_attendees} />}
+                </div>
+                ) :
                 (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
                   <Loader className=''fixed='' />
                 </div> : 
