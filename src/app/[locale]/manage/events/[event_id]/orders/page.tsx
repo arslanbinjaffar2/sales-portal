@@ -19,10 +19,7 @@ import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlic
 import { useTranslations } from 'next-intl';
 
 
-let ordersRequestDataStored =
-    typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
-const ordersRequestDataStore =
-    ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
+
 
 
 export default function OrderListing({ params }: { params: { locale:string, event_id: string } }) {
@@ -30,6 +27,9 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
   const dispatch = useAppDispatch();
   const {loading, event, event_orders, fetching_orders, currentPage, totalPages, form_stats} = useAppSelector((state: RootState) => state.event);
+
+  let ordersRequestDataStored = typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
+  const ordersRequestDataStore = ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
 
   const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
   const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
