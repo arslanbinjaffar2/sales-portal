@@ -36,6 +36,8 @@ export default function OrderListing({ params }: { params: { locale:string, even
   const [sortCol, setSortCol] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sortCol : 'order_number');
   const [sort, setSort] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sort : 'desc');
 
+  const [regFormId, setRegFromId] = useState(0);
+
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
@@ -50,8 +52,8 @@ export default function OrderListing({ params }: { params: { locale:string, even
     let promise2:any = '';
 
     if(event !== null){
-       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol}));  
-       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol}));  
+       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol,regFormId}));  
+       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol, regFormId}));  
     
     }
     return () => {
@@ -107,24 +109,31 @@ export default function OrderListing({ params }: { params: { locale:string, even
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
-    storeEventRequestData({searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol});
-    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol}));
+    storeEventRequestData({searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol, regFormId});
+    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol, regFormId}));
     setPage(1);
 
   }
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
-        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol});
-        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol}));
+        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId});
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId}));
+        setPage(1);
+    }
+
+    const handleRegFormByFilter = (e:any) => {
+        setRegFromId(e.value);
+        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId:e.value});
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId:e.value}));
         setPage(1);
     }
 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
-      storeEventRequestData({ searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol}));
+      storeEventRequestData({ searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol, regFormId});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol, regFormId}));
       setPage(1);
     }
 
@@ -136,15 +145,15 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
     const handlePageChange = (page: number) => {
       setPage(page);
-      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
+      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId}));
     };
     
     const handleSortChange = (sort:string, sortCol: string) => {
       setSort(sort);
       setSortCol(sortCol);
-      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
+      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId}));
     };
     
     const handleShowPaymentChangePopup = (order_id:number, payment_status:boolean) => {
@@ -161,13 +170,13 @@ export default function OrderListing({ params }: { params: { locale:string, even
           setshowPaymentRecievedPopup(false);
           setPaymentRevcievedOrderId(null);
           setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
-          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol}));
+          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol, regFormId}));
           
         } catch (error) {
           setshowPaymentRecievedPopup(false);
           setPaymentRevcievedOrderId(null);
           setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
-          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol}));
+          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol, regFormId}));
         }
         setProcessingPaymentChange(false);
 
@@ -239,6 +248,15 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         listitems={orderFilters}
                       />
                     </label>
+                    {form_stats && form_stats.length > 0 && <label style={{ width: "210px" }} className="label-select-alt">
+                      <Dropdown
+                        label="Registration forms"
+                        selected={regFormId} 
+                        onChange={handleRegFormByFilter}
+                        selectedlabel={getSelectedLabel([{id:0,name:"Registration forms"},...form_stats.map((item:any)=>({id:item.id, name:item.attendee_type.attendee_type}))],regFormId)}
+                        listitems={[{id:0,name:"Registration forms"},...form_stats.map((item:any)=>({id:item.id, name:item.attendee_type.attendee_type}))]}
+                      />
+                    </label>}
                   </div>
                 </div>
               </div>
