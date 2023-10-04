@@ -78,7 +78,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
   const [toggle, setToggle] = useState(false)
   const [showPaymentRecievedPopup, setshowPaymentRecievedPopup] = useState(false)
   const [paymentRevcievedOrderId, setPaymentRevcievedOrderId] = useState<null| number>(null)
-  const [paymentRevcievedStatusToSet, setPaymentRevcievedStatusToSet] = useState(false)
+  const [paymentRevcievedStatus, setPaymentRevcievedStatus] = useState(false)
   const [processingPaymentchange, setProcessingPaymentChange] = useState(false);
 
   useEffect(()=>{
@@ -193,23 +193,23 @@ export default function OrderListing({ params }: { params: { locale:string, even
     const handleShowPaymentChangePopup = (order_id:number, payment_status:boolean) => {
       setshowPaymentRecievedPopup(true);
       setPaymentRevcievedOrderId(order_id);
-      setPaymentRevcievedStatusToSet(payment_status);
+      setPaymentRevcievedStatus(payment_status);
     };
     
-    const closeShowPaymentChangePopup = async (type:string) => {
+    const closeShowPaymentChangePopup = async (type:string, option:{date:string,paymentStatus:boolean}) => {
       if(paymentRevcievedOrderId !== null && type === 'continue'){
         setProcessingPaymentChange(true);
         try {
-          const res = await dispatch(userEventOrderChangePymentStatus({order_id:paymentRevcievedOrderId, payment_status:paymentRevcievedStatusToSet ? 1 : 0 })).unwrap();
+          const res = await dispatch(userEventOrderChangePymentStatus({order_id:paymentRevcievedOrderId, payment_status:option.paymentStatus, date:option.date })).unwrap();
           setshowPaymentRecievedPopup(false);
           setPaymentRevcievedOrderId(null);
-          setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+          setPaymentRevcievedStatus(false);
           dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol, regFormId}));
           
         } catch (error) {
           setshowPaymentRecievedPopup(false);
           setPaymentRevcievedOrderId(null);
-          setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+          setPaymentRevcievedStatus(false);
           dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol, regFormId}));
         }
         setProcessingPaymentChange(false);
@@ -217,7 +217,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
       }else{
         setshowPaymentRecievedPopup(false);
         setPaymentRevcievedOrderId(null);
-        setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+        setPaymentRevcievedStatus(false);
       }
     };
 
@@ -294,7 +294,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   </div>
                 </div>
               </div>
-              {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} /> : null}
+              {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} currentPaymentStatus={paymentRevcievedStatus}  /> : null}
               <div className="ebs-data-table ebs-order-table">
                 <div className="d-flex align-items-center ebs-table-header">
                   <div className="ebs-table-box ebs-box-1"><strong>{t('order_table.number')}
@@ -360,7 +360,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                     <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
                     <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
                     <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
-                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, order.is_payment_received)}}>{order.is_payment_received ? 'Received' : 'Pending'}</p></div>
                     <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                       <ul className='d-flex ebs-panel-list m-0'>
                         {order.status !== 'cancelled' && <li>
@@ -404,7 +404,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                       </ul>
                     </div>
                   </div>
-                  {order.order_attendees.length > 0 && <MoreAttendees data={order.order_attendees} />}
+                  {order.order_attendees.length > 1 && <MoreAttendees data={order.order_attendees} />}
                 </div>
                 ) :
                 (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
