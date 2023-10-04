@@ -22,11 +22,11 @@ import { useTranslations } from 'next-intl';
 const MoreAttendees = ({data}: any) => {
   const [toggle, setToggle] = useState(false)
   return (
-    <div style={{background: '#EEF2F4'}} className='rounded-4'>
-      <div style={{background: '#EEF2F4'}} className="d-flex align-items-center ebs-table-content">
+    <div style={{background: '#EEF2F4',}} className='rounded-4'>
+      <div style={{background: '#EEF2F4', cursor:'default'}} className="d-flex align-items-center ebs-table-content" >
           <div className="ebs-table-box ebs-box-1" />
           <div className="ebs-table-box ebs-box-1" />
-        <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}>{data.length - 1} more attendees <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'close' : 'add' }</i></strong></p></div>
+        <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}> <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'expand_more' : 'chevron_right' }</i>  <span style={{marginRight:'5px'}}>{data.length - 1}</span> {"more attendees"}  </strong></p></div>
         <div className="ebs-table-box ebs-box-2" />
         <div className="ebs-table-box  ebs-box-4" />
        <div className="ebs-table-box ebs-box-4" />
@@ -37,11 +37,14 @@ const MoreAttendees = ({data}: any) => {
       </div>
       {toggle && <React.Fragment>
         {data.map((attendee:any,k:any) =>
-         k === 0 ? null : (<div style={{background: '#EEF2F4'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
+         k === 0 ? null : (<div style={{background: '#EEF2F4', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
           <div className="ebs-table-box ebs-box-1" />
           <div className="ebs-table-box ebs-box-1" />
-          <div className="ebs-table-box ebs-box-2"><p>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</p></div>
-          <div className="ebs-table-box ebs-box-2"><p>{attendee?.attendee_detail?.email} </p></div>
+          <div className="ebs-table-box ebs-box-2">
+            <p><strong>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</strong></p>
+            <p>{attendee?.attendee_detail?.email} </p>
+            </div>
+          <div className="ebs-table-box ebs-box-2"></div>
           <div className="ebs-table-box  ebs-box-4" />
         <div className="ebs-table-box ebs-box-4" />
         <div className="ebs-table-box ebs-box-4" />
@@ -351,7 +354,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                 </div>
                 {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
                 <div key={order.id}>
-                  <div className="d-flex align-items-center ebs-table-content">
+                  <div className="d-flex align-items-center ebs-table-content" style={{cursor:'default'}}>
                     <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
                     <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MM-YYYY')}</p></div>
                     <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
