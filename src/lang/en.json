@@ -109,15 +109,17 @@
         "view":"View",
         "download":"Download as order",
         "download_as_invoice":"Download as invoice",
-        "delete_order_alert_label":"Are you sure you want to delete this order",
+        "delete_order_alert_label":"Are you sure you want to delete this order?",
         "search":"Search",
         "order_filters":{
-             "all": "All orders",
-             "completed": "Completed",
-             "cancelled": "Cancelled",
-             "pending": "Pending",
-             "payment_received": "Payment received",
-             "payment_pending": "Payment pending"
+            "all": "All orders",
+            "completed": "Completed",
+            "cancelled": "Cancelled",
+            "pending": "Pending",
+            "payment_received": "Received",
+            "payment_pending": "Pending",
+            "payment_status":"Payment Status",
+            "order_status":"Order Status"
         }
     },
     "messages":{

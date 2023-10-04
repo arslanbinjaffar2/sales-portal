@@ -105,11 +105,22 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
   const orderFilters = useMemo(() => [
     { id: "all", name: t('order_filters.all') },
-    { id: "completed", name: t('order_filters.completed') },
-    { id: "cancelled", name: t('order_filters.cancelled') },
-    { id: "pending", name: t('order_filters.pending') },
-    { id: "payment_received", name: t('order_filters.payment_received') },
-    { id: "payment_pending", name: t('order_filters.payment_received') },
+    {
+      name:t('order_filters.order_status'),
+      options:[
+        { id: "completed", name: t('order_filters.completed') },
+        { id: "cancelled", name: t('order_filters.cancelled') },
+        { id: "pending", name: t('order_filters.pending') },
+      ]
+    },
+    {
+      name:t('order_filters.payment_status'),
+      options:[
+        { id: "payment_received", name: t('order_filters.payment_received') },
+        { id: "payment_pending", name: t('order_filters.payment_pending') },
+      ]
+    },
+    
 ], [params.locale])
   
 
@@ -281,6 +292,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         label="Select type"
                         selected={type} 
                         onChange={handleFilterByFilter}
+                        isGroup
                         selectedlabel={getSelectedLabel(orderFilters,type)}
                         listitems={orderFilters}
                       />

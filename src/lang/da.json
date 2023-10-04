@@ -111,7 +111,7 @@
         "view":"Oversigt", 
         "download":"Download som ordre", 
         "download_as_invoice":"Downnload som en faktura.", 
-        "delete_order_alert_label":"Er du sikker på, at du vil slette denne ordre",
+        "delete_order_alert_label":"Er du sikker på, at du vil slette denne ordre?",
         "search":"Søg",
         "order_filters":{
              "all": "Alle orders",
@@ -119,7 +119,9 @@
              "cancelled": "Aflyst",
              "pending": "Verserende",
              "payment_received": "Betaling modtaget",
-             "payment_pending": "Betaling venter"
+             "payment_pending": "Betaling venter",
+             "payment_status":"Betalingsstatus",
+            "order_status":"Ordre status"
         }
 
     },
