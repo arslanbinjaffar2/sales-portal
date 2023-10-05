@@ -17,10 +17,7 @@ export default function RootLayout({ children}: { children: React.ReactNode }) {
     function onLanguageChange(value:string) {
         let newPathname = pathname.replace('/da', '').replace('/en', '');
         let replaceUrl = `/${value}${newPathname}`;
-        console.log(replaceUrl);
-        startTransition(() => {
-          router.replace(replaceUrl);
-        });
+        window.location.href = replaceUrl;
     }
 
   return (

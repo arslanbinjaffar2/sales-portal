@@ -40,7 +40,7 @@ const MoreAttendees = ({data}: any) => {
          k === 0 ? null : (<div style={{background: '#EEF2F4', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
           <div className="ebs-table-box ebs-box-1" />
           <div className="ebs-table-box ebs-box-1" />
-          <div className="ebs-table-box ebs-box-2">
+          <div className="ebs-table-box ebs-box-2" style={{paddingLeft:'32px'}}>
             <p><strong>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</strong></p>
             <p>{attendee?.attendee_detail?.email} </p>
             </div>
@@ -366,18 +366,18 @@ export default function OrderListing({ params }: { params: { locale:string, even
                 </div>
                 {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
                 <div key={order.id}>
-                  <div className="d-flex align-items-center ebs-table-content" style={{cursor:'default'}}>
+                  <div className="d-flex align-items-center ebs-table-content" style={{cursor:'text'}}>
                     <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
-                    <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MM-YYYY')}</p></div>
+                    <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MMM-YYYY')}</p></div>
                     <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
                     <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
                     <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
                     <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
                     <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
-                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.status === 'completed' ? '#41a54f' : '#ff002e'}}><p>{order.status}</p></div>
-                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.is_payment_received ? '#41a54f' : '#019aeb'}}>
-                      <p onClick={()=>{handleShowPaymentChangePopup(order.id, order.is_payment_received)}}>{order.is_payment_received ? 'Received': 'Pending'}</p>
-                      {order.is_payment_received === 1 && <p>{moment(new Date(order.payment_received_date)).format('DD-MM-YYYY')}</p>}
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.status === 'completed' ? '#41a54f' : '#ff002e', cursor:'text'}}><p>{order.status}</p></div>
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.is_payment_received ? '#41a54f' : '#019aeb', cursor:'pointer'}}>
+                      <p onClick={()=>{handleShowPaymentChangePopup(order.id, order.is_payment_received)}} >{order.is_payment_received ? 'Received': 'Pending'}</p>
+                      {order.is_payment_received === 1 && <p>{moment(new Date(order.payment_received_date)).format('DD-MMM-YYYY')}</p>}
                       </div>
                     <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
                       <ul className='d-flex ebs-panel-list m-0'>
