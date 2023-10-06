@@ -1,16 +1,18 @@
 'use client';
 import { authHeader } from '@/helpers';
-import { useAppSelector } from '@/redux/hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
 import { RootState } from '@/redux/store/store';
 import axios from 'axios';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BASE_URL} from '@/constants/endpoints'
+import { userEvent } from '@/redux/store/slices/EventSlice';
 export default function page({ params }: { params: { locale:string, event_id: string, order_id:string } }) {
   const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
   const {user} = useAppSelector((state: RootState) => state.authUser);
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [cloneOrderId, setCloneOrderId] = useState<any>(null);
   const [expandIframe, setexpandIframe] = useState<any>(false);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 280);
@@ -37,6 +39,7 @@ export default function page({ params }: { params: { locale:string, event_id: st
   useEffect(() => {
     const listener = (event:any) =>{
         if(event.data.order_id !== undefined) {
+            dispatch(userEvent({event_id:params.event_id}));
             router.push(`/${params.locale}/manage/events/${params.event_id}/orders`);
         } 
         if(event.data.contentHeight !== undefined){

@@ -1,5 +1,6 @@
 'use client';
-import { useAppSelector } from '@/redux/hooks/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
+import { userEvent } from '@/redux/store/slices/EventSlice';
 import { RootState } from '@/redux/store/store';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
@@ -9,12 +10,15 @@ export default function page({ params }: { params: { locale:string, event_id: st
   const {loading, event, event_orders} = useAppSelector((state: RootState) => state.event);
   const {user} = useAppSelector((state: RootState) => state.authUser);
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [expandIframe, setexpandIframe] = useState<any>(false);
   const [iframeHeight, setIframeHeight] = useState(window.innerHeight - 280);
 
   useEffect(() => {
     const listener = (event:any) =>{
         if(event.data.order_id !== undefined) {
+          dispatch(userEvent({event_id:params.event_id}));
+
             router.push(`/${params.locale}/manage/events/${params.event_id}/orders`);
         } 
         if(event.data.contentHeight !== undefined){
