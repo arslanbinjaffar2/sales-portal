@@ -70,7 +70,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
   const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
   const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
-  const [sortCol, setSortCol] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sortCol : 'order_number');
+  const [sortCol, setSortCol] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sort_col : 'order_number');
   const [sort, setSort] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sort : 'desc');
 
   const [regFormId, setRegFromId] = useState(0);
