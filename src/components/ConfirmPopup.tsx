@@ -2,14 +2,15 @@
 import { useTranslations } from 'next-intl';
 import React, { useState } from 'react'
 import DateTime from '@/components/DateTimePicker';
+import moment from 'moment';
 
 
 const ConfirmPopup = ({handleClose, processing, currentPaymentStatus}: any) => {
   const [changeType, setChangeType] = useState('pending');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(moment().format('YYYY-MM-DD HH:mm'));
 
   const handleContinue = () => {
-    if(!currentPaymentStatus){
+    if(!currentPaymentStatus ){
       handleClose('continue', { date, paymentStatus:!currentPaymentStatus})
     }
     if(currentPaymentStatus){

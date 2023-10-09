@@ -1417,3 +1417,27 @@
     }
   }
 }
+.rdtPicker .rdtTimeToggle {
+  background: $color-danger;
+  color: $white;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  border-radius: 3px;
+  display: none;
+}
+
+.rdtPicker td.rdtSwitch {
+  cursor: pointer;
+  display: none;
+}
+
+.ebs-date-wrapper .ebs-top-caption label span {
+  &:hover {
+    color: #86A4AE;
+    border-bottom-color: #86A4AE;
+  }
+}
+.ebs-date-wrapper .ebs-top-caption label input:checked ~ span {
+  color: #86A4AE;
+  border-bottom-color: #86A4AE;
+}

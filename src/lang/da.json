@@ -82,6 +82,7 @@
     },
     "manage-orders-page":{
         "no_data_available":"Ingen data er tilgængelig", 
+        "stats_waiting_tickets":"venter",
         "stats_sold_tickets":"Solgt", 
         "stats_my_sold_tickets":"Mine solgte billetter", 
         "stats_my_revenue":"Mine indtægter.", 

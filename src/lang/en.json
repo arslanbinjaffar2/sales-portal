@@ -82,6 +82,7 @@
     "manage-orders-page":{
         "no_data_available":"No data available",
         "stats_sold_tickets":"sold",
+        "stats_waiting_tickets":"waiting",
         "stats_my_sold_tickets":"My Sold Tickets",
         "stats_my_revenue":"My Revenue",
         "order_list":"Order List",
