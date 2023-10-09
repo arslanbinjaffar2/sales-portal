@@ -380,7 +380,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                     <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
                     <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.status === 'completed' ? '#41a54f' : '#ff002e', cursor:'text'}}><p>{order.status}</p></div>
                     <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.is_payment_received ? '#41a54f' : '#019aeb', cursor:'pointer'}}>
-                      <p onClick={()=>{handleShowPaymentChangePopup(order.id, order.is_payment_received)}} >{order.is_payment_received ? 'Received': 'Pending'}</p>
+                      <p onClick={()=>{ if(order.status !== 'cancelled') {handleShowPaymentChangePopup(order.id, order.is_payment_received) } }} >{order.is_payment_received ? 'Received': 'Pending'}</p>
                       {order.is_payment_received === 1 && <p>{moment(new Date(order.payment_received_date)).format('DD-MMM-YYYY')}</p>}
                       </div>
                     <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
