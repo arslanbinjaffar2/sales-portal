@@ -69,7 +69,7 @@ export default function Login({params:{locale}}:{params:{locale:string}}) {
                 />}
                 {successMessage && <SuccessAlert 
                     icon= {"check"}
-                    title= {et('password_changed')}
+                    title= {et('success.password_changed')}
                     message= {successMessage}
                 />}
             <form name="form" role="" onSubmit={handleSubmit}>

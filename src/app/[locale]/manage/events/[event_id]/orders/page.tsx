@@ -19,10 +19,44 @@ import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlic
 import { useTranslations } from 'next-intl';
 
 
-let ordersRequestDataStored =
-    typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
-const ordersRequestDataStore =
-    ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
+const MoreAttendees = ({data}: any) => {
+  const [toggle, setToggle] = useState(false)
+  return (
+    <div style={{background: '#EEF2F4',}} className='rounded-4'>
+      <div style={{background: '#EEF2F4', cursor:'default'}} className="d-flex align-items-center ebs-table-content" >
+          <div className="ebs-table-box ebs-box-1" />
+          <div className="ebs-table-box ebs-box-1" />
+        <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}> <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'expand_more' : 'chevron_right' }</i>  <span style={{marginRight:'5px'}}>{data?.length - 1}</span> {"more attendees"}  </strong></p></div>
+        <div className="ebs-table-box ebs-box-2" />
+        <div className="ebs-table-box  ebs-box-4" />
+       <div className="ebs-table-box ebs-box-4" />
+       <div className="ebs-table-box ebs-box-4" />
+       <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+       <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+       <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+      </div>
+      {toggle && <React.Fragment>
+        {data.map((attendee:any,k:any) =>
+         k === 0 ? null : (<div style={{background: '#EEF2F4', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
+          <div className="ebs-table-box ebs-box-1" />
+          <div className="ebs-table-box ebs-box-1" />
+          <div className="ebs-table-box ebs-box-2" style={{paddingLeft:'32px'}}>
+            <p><strong>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</strong></p>
+            <p>{attendee?.attendee_detail?.email} </p>
+            </div>
+          <div className="ebs-table-box ebs-box-2"></div>
+          <div className="ebs-table-box  ebs-box-4" />
+        <div className="ebs-table-box ebs-box-4" />
+        <div className="ebs-table-box ebs-box-4" />
+        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+        <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+        </div>)
+      )}
+      </React.Fragment>}
+    </div>
+  )
+}
 
 
 export default function OrderListing({ params }: { params: { locale:string, event_id: string } }) {
@@ -31,10 +65,15 @@ export default function OrderListing({ params }: { params: { locale:string, even
   const dispatch = useAppDispatch();
   const {loading, event, event_orders, fetching_orders, currentPage, totalPages, form_stats} = useAppSelector((state: RootState) => state.event);
 
+  let ordersRequestDataStored = typeof window !== "undefined" && localStorage.getItem("ordersRequestData");
+  const ordersRequestDataStore = ordersRequestDataStored && ordersRequestDataStored !== undefined ? JSON.parse(ordersRequestDataStored) : null;
+
   const [limit, setLimit] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.limit :10);
   const [type, setType] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.type :'all');
-  const [sortCol, setSortCol] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sortCol : 'order_number');
+  const [sortCol, setSortCol] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sort_col : 'order_number');
   const [sort, setSort] = useState(ordersRequestDataStore!== null ? ordersRequestDataStore.sort : 'desc');
+
+  const [regFormId, setRegFromId] = useState(0);
 
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
@@ -42,7 +81,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
   const [toggle, setToggle] = useState(false)
   const [showPaymentRecievedPopup, setshowPaymentRecievedPopup] = useState(false)
   const [paymentRevcievedOrderId, setPaymentRevcievedOrderId] = useState<null| number>(null)
-  const [paymentRevcievedStatusToSet, setPaymentRevcievedStatusToSet] = useState(false)
+  const [paymentRevcievedStatus, setPaymentRevcievedStatus] = useState(false)
   const [processingPaymentchange, setProcessingPaymentChange] = useState(false);
 
   useEffect(()=>{
@@ -50,8 +89,8 @@ export default function OrderListing({ params }: { params: { locale:string, even
     let promise2:any = '';
 
     if(event !== null){
-       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol}));  
-       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol}));  
+       promise = dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol,regFormId}));  
+       promise2 = dispatch(userEventFormStats({event_id:params.event_id, searchText, limit, type, sort:sort, sort_col:sortCol, regFormId}));  
     
     }
     return () => {
@@ -66,11 +105,22 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
   const orderFilters = useMemo(() => [
     { id: "all", name: t('order_filters.all') },
-    { id: "completed", name: t('order_filters.completed') },
-    { id: "cancelled", name: t('order_filters.cancelled') },
-    { id: "pending", name: t('order_filters.pending') },
-    { id: "payment_received", name: t('order_filters.payment_received') },
-    { id: "payment_pending", name: t('order_filters.payment_received') },
+    {
+      name:t('order_filters.order_status'),
+      options:[
+        { id: "completed", name: t('order_filters.completed') },
+        { id: "cancelled", name: t('order_filters.cancelled') },
+        { id: "pending", name: t('order_filters.pending') },
+      ]
+    },
+    {
+      name:t('order_filters.payment_status'),
+      options:[
+        { id: "payment_received", name: t('order_filters.payment_received') },
+        { id: "payment_pending", name: t('order_filters.payment_pending') },
+      ]
+    },
+    
 ], [params.locale])
   
 
@@ -107,24 +157,31 @@ export default function OrderListing({ params }: { params: { locale:string, even
     const {value} = e.target;
     setSearchText(value);
     // Update the requestData state with the modified array
-    storeEventRequestData({searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol});
-    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol}));
+    storeEventRequestData({searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol, regFormId});
+    dispatch(userEventOrders({event_id:params.event_id, searchText:value, limit, type, page:1, sort:sort, sort_col:sortCol, regFormId}));
     setPage(1);
 
   }
 
     const handleFilterByFilter = (e:any) => {
         setType(e.value);
-        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol});
-        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol}));
+        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId});
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId}));
+        setPage(1);
+    }
+
+    const handleRegFormByFilter = (e:any) => {
+        setRegFromId(e.value);
+        storeEventRequestData({ searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId:e.value});
+        dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type:e.value, page:1, sort:sort, sort_col:sortCol, regFormId:e.value}));
         setPage(1);
     }
 
     const handleLimitChange = (e:any, value:any) => {
       setLimit(value); 
       handleToggle(e);
-      storeEventRequestData({ searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol}));
+      storeEventRequestData({ searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol, regFormId});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit:value, type, page:1, sort:sort, sort_col:sortCol, regFormId}));
       setPage(1);
     }
 
@@ -136,45 +193,45 @@ export default function OrderListing({ params }: { params: { locale:string, even
 
     const handlePageChange = (page: number) => {
       setPage(page);
-      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
+      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId}));
     };
     
     const handleSortChange = (sort:string, sortCol: string) => {
       setSort(sort);
       setSortCol(sortCol);
-      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol});
-      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol}));
+      storeEventRequestData({ searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId});
+      dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort:sort, sort_col:sortCol, regFormId}));
     };
     
     const handleShowPaymentChangePopup = (order_id:number, payment_status:boolean) => {
       setshowPaymentRecievedPopup(true);
       setPaymentRevcievedOrderId(order_id);
-      setPaymentRevcievedStatusToSet(payment_status);
+      setPaymentRevcievedStatus(payment_status);
     };
     
-    const closeShowPaymentChangePopup = async (type:string) => {
+    const closeShowPaymentChangePopup = async (type:string, option:{date:string,paymentStatus:boolean}) => {
       if(paymentRevcievedOrderId !== null && type === 'continue'){
         setProcessingPaymentChange(true);
         try {
-          const res = await dispatch(userEventOrderChangePymentStatus({order_id:paymentRevcievedOrderId, payment_status:paymentRevcievedStatusToSet ? 1 : 0 })).unwrap();
+          const res = await dispatch(userEventOrderChangePymentStatus({order_id:paymentRevcievedOrderId, payment_status:option.paymentStatus, date:option.date })).unwrap();
           setshowPaymentRecievedPopup(false);
           setPaymentRevcievedOrderId(null);
-          setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
-          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol}));
+          setPaymentRevcievedStatus(false);
+          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol, regFormId}));
           
         } catch (error) {
           setshowPaymentRecievedPopup(false);
           setPaymentRevcievedOrderId(null);
-          setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
-          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol}));
+          setPaymentRevcievedStatus(false);
+          dispatch(userEventOrders({event_id:params.event_id, searchText, limit, type, page, sort, sort_col:sortCol, regFormId}));
         }
         setProcessingPaymentChange(false);
 
       }else{
         setshowPaymentRecievedPopup(false);
         setPaymentRevcievedOrderId(null);
-        setPaymentRevcievedStatusToSet(paymentRevcievedStatusToSet);
+        setPaymentRevcievedStatus(false);
       }
     };
 
@@ -204,9 +261,13 @@ export default function OrderListing({ params }: { params: { locale:string, even
      <>     
             <div className="ebs-ticket-section">
               <div className="ebs-ticket-section-inner">
-                  <div className="ebs-ticket-box">
+                  {form_stats && <div className="ebs-ticket-box">
                     <button onClick={() => setToggle(true)} className='btn'><em className="material-symbols-outlined">local_activity</em></button>
-                  </div>
+                  </div>}
+                  {event?.event_stats?.waiting_tickets > 0 && <div className="ebs-ticket-box">
+                    <strong>{event?.event_stats?.waiting_tickets}</strong>
+                    <span>{t('stats_waiting_tickets')}</span>
+                  </div>}
                   <div className="ebs-ticket-box">
                     <strong>{event?.event_stats?.tickets_sold}</strong>
                     <span>{t('stats_sold_tickets')}</span>
@@ -235,14 +296,24 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         label="Select type"
                         selected={type} 
                         onChange={handleFilterByFilter}
+                        isGroup
                         selectedlabel={getSelectedLabel(orderFilters,type)}
                         listitems={orderFilters}
                       />
                     </label>
+                    {form_stats && form_stats?.length > 0 && <label style={{ width: "210px" }} className="label-select-alt">
+                      <Dropdown
+                        label="Registration forms"
+                        selected={regFormId} 
+                        onChange={handleRegFormByFilter}
+                        selectedlabel={getSelectedLabel([{id:0,name:"Registration forms"},...form_stats.map((item:any)=>({id:item.id, name:item.attendee_type.attendee_type}))],regFormId)}
+                        listitems={[{id:0,name:"Registration forms"},...form_stats.map((item:any)=>({id:item.id, name:item.attendee_type.attendee_type}))]}
+                      />
+                    </label>}
                   </div>
                 </div>
               </div>
-              {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} /> : null}
+              {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} currentPaymentStatus={paymentRevcievedStatus}  /> : null}
               <div className="ebs-data-table ebs-order-table">
                 <div className="d-flex align-items-center ebs-table-header">
                   <div className="ebs-table-box ebs-box-1"><strong>{t('order_table.number')}
@@ -297,60 +368,67 @@ export default function OrderListing({ params }: { params: { locale:string, even
                     </strong></div>
                   <div className="ebs-table-box ebs-box-3"  />
                 </div>
-                {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
-                <div key={order.id} className="d-flex align-items-center ebs-table-content">
-                  <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
-                  <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MM-YYYY')}</p></div>
-                  <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
-                  <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
-                  <div className="ebs-table-box ebs-box-4"><p>{order.grand_total_text} </p></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p>{order.status}</p></div>
-                  <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}}><p onClick={()=>{handleShowPaymentChangePopup(order.id, !order.is_payment_received)}}>{order.is_payment_received ? 'Completed' : 'Pending'}</p></div>
-                  <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
-                    <ul className='d-flex ebs-panel-list m-0'>
-                      <li>
-                      <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
-                          <button className='ebs-btn-panel'>
+                {event_orders !== null && event_orders?.data?.length > 0 ? event_orders.data.map((order:any, key:number) =>
+                <div key={order.id}>
+                  <div className="d-flex align-items-center ebs-table-content" style={{cursor:'text'}}>
+                    <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
+                    <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MMM-YYYY')}</p></div>
+                    <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.first_name} {order.order_attendee.last_name}</p></div>
+                    <div className="ebs-table-box ebs-box-2"><p>{order.order_attendee.email}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.detail.company_name}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.reporting_panel_total_text} </p></div>
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.status === 'completed' ? '#41a54f' : '#ff002e', cursor:'text'}}><p>{order.status}</p></div>
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.is_payment_received ? '#41a54f' : '#019aeb', cursor: order.status !== 'cancelled' ? 'pointer' : 'text'}}>
+                      <p onClick={()=>{ if(order.status !== 'cancelled') {handleShowPaymentChangePopup(order.id, order.is_payment_received) } }} >{order.is_payment_received ? 'Received': 'Pending'}</p>
+                      {order.is_payment_received === 1 && <p>{moment(new Date(order.payment_received_date)).format('DD-MMM-YYYY')}</p>}
+                      </div>
+                    <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
+                      <ul className='d-flex ebs-panel-list m-0'>
+                        {order.status !== 'cancelled' && <li>
+                        <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
+                            <button className='ebs-btn-panel'>
+                              <Image
+                                src={require("@/assets/img/ico-edit.svg")}
+                                alt=""
+                                width="12"
+                                height="12"
+                              />
+                            </button>
+                            </Link>
+                        </li>}
+                        <li>
+
+                          <button className='ebs-btn-panel' onClick={(e)=>{ if(confirm(t('delete_order_alert_label'))){ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id})) }}}>
                             <Image
-                              src={require("@/assets/img/ico-edit.svg")}
+                              src={require("@/assets/img/ico-trash.svg")}
                               alt=""
                               width="12"
-                              height="12"
+                              height="14"
                             />
                           </button>
-                          </Link>
-                      </li>
-                      <li>
-
-                        <button className='ebs-btn-panel' onClick={(e)=>{ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id}))}}>
-                          <Image
-                            src={require("@/assets/img/ico-trash.svg")}
-                            alt=""
-                            width="12"
-                            height="14"
-                          />
-                        </button>
-                      </li>
-                      <li>
-                        <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                          <button onClick={handleRowControlsToggle} className='ebs-btn-panel ebs-btn-dropdown'>
-                            <i className="material-icons">more_horiz</i>
-                          </button>
-                          <div style={{minWidth: 130}} className="ebs-dropdown-menu">
-                          <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
-                            <button className="dropdown-item">{t('view')}</button>
-                          </Link>
-                            {/* <button className="dropdown-item">Print Badge</button> */}
-                            <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id, type:'order'})}}>{t('download')} </button>
-                            <button onClick={()=> { downloadPdf({id:order.id, type:'invoice' })}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
+                        </li>
+                        <li>
+                          <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                            <button onClick={handleRowControlsToggle} className='ebs-btn-panel ebs-btn-dropdown'>
+                              <i className="material-icons">more_horiz</i>
+                            </button>
+                            <div style={{minWidth: 130}} className="ebs-dropdown-menu">
+                            <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
+                              <button className="dropdown-item">{t('view')}</button>
+                            </Link>
+                              {/* <button className="dropdown-item">Print Badge</button> */}
+                              <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id, type:'order'})}}>{t('download')} </button>
+                              <button onClick={()=> { downloadPdf({id:order.id, type:'invoice' })}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
+                            </div>
                           </div>
-                        </div>
-                      </li>
-                    </ul>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>) :
+                  {order?.order_attendees?.length > 1 && <MoreAttendees data={order.order_attendees} />}
+                </div>
+                ) :
                 (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
                   <Loader className=''fixed='' />
                 </div> : 
@@ -366,7 +444,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
               
               </div>
             </div>
-            {event_orders !== null && event_orders.data.length > 0  && <div className='d-flex justify-content-end align-items-center pt-3'>
+            {event_orders !== null && event_orders?.data?.length > 0  && <div className='d-flex justify-content-end align-items-center pt-3'>
               <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}

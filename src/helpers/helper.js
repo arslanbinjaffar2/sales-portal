@@ -23,7 +23,18 @@ export function scrollToTop() {
 
 export const getSelectedLabel = (item, id) => {
     if (item && item.length > 0 && id) {
-      let obj = item.find((o) => o.id.toString() === id.toString());
+      let obj = item.reduce((ack, sub)=>( sub.options !== undefined ?  [...ack, ...sub.options] : [ ...ack, sub] ),[]).find((o) => o.id.toString() === id.toString());
       return (obj ? obj.name : '');
+    }
+}
+
+
+
+export function getCookieValue(name) 
+{
+    const regex = new RegExp(`(^| )${name}=([^;]+)`)
+    const match = document.cookie.match(regex)
+    if (match) {
+    return match[2]
     }
 }

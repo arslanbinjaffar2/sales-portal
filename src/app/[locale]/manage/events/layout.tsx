@@ -29,12 +29,8 @@ export default function RootLayout({ children, params}: { children: React.ReactN
 
     function onLanguageChange(value:string) {
         console.log(`/${value}${pathname}`, 'selectchange');
-
         let replaceUrl = value === 'en' ? pathname.replace('/da', '/en') :  `/${value}${pathname}`;
-
-        startTransition(() => {
-          router.replace(replaceUrl);
-        });
+        window.location.href = replaceUrl;
     }
     
   return (

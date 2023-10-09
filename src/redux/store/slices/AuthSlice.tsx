@@ -139,6 +139,8 @@ export const authUserSlice = createSlice({
     },
     removeAuthUser: (state, action: PayloadAction<any>) => {
       localStorage.removeItem('agent');
+      localStorage.removeItem('eventsRequestData');
+      localStorage.removeItem('ordersRequestData');
       state.user = null;
     },
     setRedirect: (state, action: PayloadAction<any>) => {
@@ -204,6 +206,8 @@ export const authUserSlice = createSlice({
     builder.addCase(logOutUser.fulfilled, (state, action) => {
       state.loading = false;
       localStorage.removeItem('agent');
+      localStorage.removeItem('eventsRequestData');
+      localStorage.removeItem('ordersRequestData');
     }),
     builder.addCase(logOutUser.rejected, (state, action) => {
       console.log("rejected", action.payload);
@@ -287,7 +291,7 @@ export const authUserSlice = createSlice({
         state.forgetPasswordTokenSuccess = false;
         state.user = null;
         state.error = null;
-        state.successMessage = 'Password successfully updated';
+        state.successMessage = res.message;
       }else{
         state.user = null;
         state.errors = res.message ? res.message : ['Something went wrong'];

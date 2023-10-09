@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
 import { forgotPasswordReset, setLoading, setRedirect } from "@/redux/store/slices/AuthSlice";
 import { RootState } from "@/redux/store/store";
 import { useTranslations } from "next-intl";
+import ErrorMessage from "@/components/forms/alerts/ErrorMessage";
 
 
 const languages = [{ id: 1, name: "English" }, { id: 2, name: "Danish" }];
@@ -27,8 +28,9 @@ export default function requestReset({params:{locale}}:{params:{locale:string}})
     
     const dispatch = useAppDispatch();
     const router = useRouter();
-    const {loading, redirect, error, errors, forgetPasswordEmail, forgetPasswordToken } = useAppSelector((state: RootState) => state.authUser);
+    const {loading, redirect,  forgetPasswordEmail, forgetPasswordToken } = useAppSelector((state: RootState) => state.authUser);
     const [render, setRender] = useState(false)
+    const [error, setError] = useState(false);
     
     useEffect(() => {
         if(forgetPasswordEmail !== null){
@@ -49,6 +51,12 @@ export default function requestReset({params:{locale}}:{params:{locale:string}})
     const handleSubmit = (e:any) => {
         e.preventDefault();
         e.stopPropagation();
+        setError(false);
+        
+        if(password === '' || passwordConfirmation === '' || (password !== passwordConfirmation)){
+            setError(true);
+        }
+
         if(password !== '' && passwordConfirmation !== '' && (password === passwordConfirmation)){
             dispatch(forgotPasswordReset({reset_code: forgetPasswordToken, email: forgetPasswordEmail, password: password, password_confirmation: passwordConfirmation}))
         }
@@ -57,6 +65,11 @@ export default function requestReset({params:{locale}}:{params:{locale:string}})
 
     return (
         <>
+            {error && <ErrorMessage 
+                icon= {"info"}
+                title= {et('errors.invalid_data')}
+                error= {t('confirm_password_mismatch_label')}
+            />}
             <h2>{t('page_title')}</h2>
             <p>{t('page_subtitle')}</p>
             <form role="" onSubmit={handleSubmit}>

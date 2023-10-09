@@ -36,7 +36,8 @@
         "new_password_label":"Enter new password",
         "confirm_password_label":"Confirm new password",
         "reset_button_label":"RESET",
-        "reset_button_reseting_label":"RESETING..."
+        "reset_button_reseting_label":"RESETING...",
+        "confirm_password_mismatch_label":"Password and confirm password do not match"
     },
     "manage-events-layout":{
         "return_to_list_label":"Return to list"
@@ -81,12 +82,14 @@
     "manage-orders-page":{
         "no_data_available":"No data available",
         "stats_sold_tickets":"sold",
+        "stats_waiting_tickets":"waiting",
         "stats_my_sold_tickets":"My Sold Tickets",
         "stats_my_revenue":"My Revenue",
         "order_list":"Order List",
         "tickets_detail":"Tickets details",
         "tickets_detail_table":{
             "form":"Form",
+            "waiting":"Waiting",
             "tickets_sold":"Tickets sold",
             "tickets_left":"Tickets left",
             "total_tickets":"Total tickets",
@@ -103,18 +106,21 @@
             "status":"Order Status",
             "payment_status":"Payment Status"
         },
-
+        "date_ended":"Date ended",
         "view":"View",
         "download":"Download as order",
         "download_as_invoice":"Download as invoice",
+        "delete_order_alert_label":"Are you sure you want to delete this order?",
         "search":"Search",
         "order_filters":{
-             "all": "All orders",
-             "completed": "Completed",
-             "cancelled": "Cancelled",
-             "pending": "Pending",
-             "payment_received": "Payment received",
-             "payment_pending": "Payment pending"
+            "all": "All orders",
+            "completed": "Completed",
+            "cancelled": "Cancelled",
+            "pending": "Pending",
+            "payment_received": "Received",
+            "payment_pending": "Pending",
+            "payment_status":"Payment Status",
+            "order_status":"Order Status"
         }
     },
     "messages":{

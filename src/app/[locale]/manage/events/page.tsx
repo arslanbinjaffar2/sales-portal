@@ -14,10 +14,7 @@ import Link from 'next/link';
 import {getSelectedLabel} from '@/helpers'; 
 import { useTranslations } from 'next-intl';
 
-let eventsRequestDataStored =
-    typeof window !== "undefined" && localStorage.getItem("eventsRequestData");
-const eventsRequestDataStore =
-    eventsRequestDataStored && eventsRequestDataStored !== undefined ? JSON.parse(eventsRequestDataStored) : null;
+
 
 export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
     const t = useTranslations('manage-events-page');
@@ -26,6 +23,10 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
     const router = useRouter();
     const {user} = useAppSelector((state: RootState) => state.authUser);
     const {events, loading, totalPages, currentPage} = useAppSelector((state: RootState) => state.events);
+
+    let eventsRequestDataStored = typeof window !== "undefined" && localStorage.getItem("eventsRequestData");
+    const eventsRequestDataStore = eventsRequestDataStored && eventsRequestDataStored !== undefined ? JSON.parse(eventsRequestDataStored) : null;
+
     const [eventsRequestData, setEventsRequestData] = useState<any>(eventsRequestDataStore !== null ? eventsRequestDataStore : {search_text: '', event_action: 'active_future', sort_by: '', order_by: '', page:1, limit:10});
     const [toggoleLimited, settoggoleLimited] = useState(false)
     const [limit, setLimit] = useState(eventsRequestDataStore !== null ? eventsRequestDataStore.limit : 10);
@@ -157,7 +158,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
             </div>
             <div className="main-data-table" style={{minHeight:'calc(100vh - 272px)'}}>
                  <div className="ebs-data-table">
-								 {events.length > 0 && <div className="d-flex align-items-center ebs-table-header">
+                    <div className="d-flex align-items-center ebs-table-header">
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_logo')}</strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_name')} </strong></div>
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_date')}</strong></div>
@@ -169,11 +170,11 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         <div style={{paddingRight: 0}} className="ebs-table-box ebs-box-3"><strong>{t('event_table.my_sold_tickets')}</strong></div>
                         <div style={{textAlign: 'right'}} className="ebs-table-box ebs-box-3 text-right"><strong
                             style={{justifyContent: 'flex-end'}}>{t('event_table.my_revenue')}</strong></div>
-                    </div>}
+                    </div>
                     <>
                         {
-                            events.length > 0 ? (
-                                events.map((item: any, key: any) =>
+                            events?.length > 0 ? (
+                                events?.map((item: any, key: any) =>
                                 <Link key={key} style={{textDecoration:"none"}} href={`/${locale}/manage/events/${item.id}/orders`}>
                                     <div 
                                             className="d-flex align-items-center ebs-table-content"
@@ -225,7 +226,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     </>
                 </div>
                 {/* Render the pagination component */}
-                {events.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
+                {events?.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}

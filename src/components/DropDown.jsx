@@ -44,7 +44,26 @@ class DropDown extends React.Component {
         });
     options =
       this.props.isGroup !== undefined
-        ? listitems
+        ? listitems.map((item, index) => {
+          if(item.options !== undefined && item.options.length > 0){
+           return  {
+              label: item.name,
+              options: item.options.map((subOption, index) => {
+                return {
+                  label: subOption.name?subOption.name:subOption.attendee_type?subOption.attendee_type:'',
+                  value: subOption.id,
+                  key: index
+                }
+              })
+            }
+          }else{
+            return {
+              label: item.name?item.name:item.attendee_type?item.attendee_type:'',
+              value: item.id,
+              key: index
+            }
+          }
+        })
         : listitems.map((item, index) => {
           return {
             label: item.name?item.name:item.attendee_type?item.attendee_type:'',
@@ -65,16 +84,23 @@ class DropDown extends React.Component {
     const style = {
       option: (base, { data, isDisabled, isFocused, isSelected }) => ({
           ...base,
-          backgroundColor: isSelected ? "#86A4AE" : "",
+          backgroundColor: isSelected  ? "#86A4AE" : isFocused ? "#EEF2F4" : "",
           ":hover": {
-            backgroundColor: "rgb(200, 200, 200)",
-            color: '#fff'
+            backgroundColor: "#EEF2F4",
+          },
+          ":focus": {
+            backgroundColor: "#EEF2F4",
           },
         }),
       control: base => ({
         ...base,
         border: 0,
-        boxShadow: 'none'
+        boxShadow: 'none',
+      }),
+      groupHeading: base => ({
+        ...base,
+        color: 'black',
+        fontWeight: '600'
       })
     };
     const Blanket = props => (
