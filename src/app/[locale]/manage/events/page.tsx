@@ -173,8 +173,8 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     </div>
                     <>
                         {
-                            events.length > 0 ? (
-                                events.map((item: any, key: any) =>
+                            events?.length > 0 ? (
+                                events?.map((item: any, key: any) =>
                                 <Link key={key} style={{textDecoration:"none"}} href={`/${locale}/manage/events/${item.id}/orders`}>
                                     <div 
                                             className="d-flex align-items-center ebs-table-content"
@@ -226,7 +226,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     </>
                 </div>
                 {/* Render the pagination component */}
-                {events.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
+                {events?.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}

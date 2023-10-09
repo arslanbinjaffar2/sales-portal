@@ -26,7 +26,7 @@ const MoreAttendees = ({data}: any) => {
       <div style={{background: '#EEF2F4', cursor:'default'}} className="d-flex align-items-center ebs-table-content" >
           <div className="ebs-table-box ebs-box-1" />
           <div className="ebs-table-box ebs-box-1" />
-        <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}> <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'expand_more' : 'chevron_right' }</i>  <span style={{marginRight:'5px'}}>{data.length - 1}</span> {"more attendees"}  </strong></p></div>
+        <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}> <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'expand_more' : 'chevron_right' }</i>  <span style={{marginRight:'5px'}}>{data?.length - 1}</span> {"more attendees"}  </strong></p></div>
         <div className="ebs-table-box ebs-box-2" />
         <div className="ebs-table-box  ebs-box-4" />
        <div className="ebs-table-box ebs-box-4" />
@@ -301,7 +301,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         listitems={orderFilters}
                       />
                     </label>
-                    {form_stats && form_stats.length > 0 && <label style={{ width: "210px" }} className="label-select-alt">
+                    {form_stats && form_stats?.length > 0 && <label style={{ width: "210px" }} className="label-select-alt">
                       <Dropdown
                         label="Registration forms"
                         selected={regFormId} 
@@ -368,7 +368,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                     </strong></div>
                   <div className="ebs-table-box ebs-box-3"  />
                 </div>
-                {event_orders !== null && event_orders.data.length > 0 ? event_orders.data.map((order:any, key:number) =>
+                {event_orders !== null && event_orders?.data?.length > 0 ? event_orders.data.map((order:any, key:number) =>
                 <div key={order.id}>
                   <div className="d-flex align-items-center ebs-table-content" style={{cursor:'text'}}>
                     <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
@@ -426,7 +426,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                       </ul>
                     </div>
                   </div>
-                  {order.order_attendees.length > 1 && <MoreAttendees data={order.order_attendees} />}
+                  {order?.order_attendees?.length > 1 && <MoreAttendees data={order.order_attendees} />}
                 </div>
                 ) :
                 (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
@@ -444,7 +444,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
               
               </div>
             </div>
-            {event_orders !== null && event_orders.data.length > 0  && <div className='d-flex justify-content-end align-items-center pt-3'>
+            {event_orders !== null && event_orders?.data?.length > 0  && <div className='d-flex justify-content-end align-items-center pt-3'>
               <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
