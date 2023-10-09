@@ -261,9 +261,9 @@ export default function OrderListing({ params }: { params: { locale:string, even
      <>     
             <div className="ebs-ticket-section">
               <div className="ebs-ticket-section-inner">
-                  <div className="ebs-ticket-box">
+                  {form_stats && <div className="ebs-ticket-box">
                     <button onClick={() => setToggle(true)} className='btn'><em className="material-symbols-outlined">local_activity</em></button>
-                  </div>
+                  </div>}
                   {event?.event_stats?.waiting_tickets > 0 && <div className="ebs-ticket-box">
                     <strong>{event?.event_stats?.waiting_tickets}</strong>
                     <span>{t('stats_waiting_tickets')}</span>
