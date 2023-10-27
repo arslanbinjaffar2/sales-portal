@@ -125,7 +125,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         <div className="logo">
                             <a href="">
                                 <Image
-                                    src={require('@/assets/img/logo-old.png')} alt="" width="150" height="32"
+                                    src={require('@/assets/img/logo.svg')} alt="" width="150" height="32"
                                     className='logos'
                                 />
                             </a>
