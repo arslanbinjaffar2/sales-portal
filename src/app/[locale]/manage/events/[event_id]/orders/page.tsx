@@ -315,7 +315,8 @@ export default function OrderListing({ params }: { params: { locale:string, even
               </div>
               {showPaymentRecievedPopup ? <ConfirmPopup handleClose={closeShowPaymentChangePopup} processing={processingPaymentchange} currentPaymentStatus={paymentRevcievedStatus}  /> : null}
               <div className="ebs-data-table ebs-order-table">
-                <div className="d-flex align-items-center ebs-table-header">
+                {/* old design  */}
+                <div className="d-flex align-items-center ebs-table-header d-none">
                   <div className="ebs-table-box ebs-box-1"><strong>{t('order_table.number')}
                     <span className='d-flex flex-column'>
                       <em className={`material-symbols-outlined ${sort === 'asc' && sortCol === 'order_number' ? 'fw-bolder' : ''}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_up</em> 
@@ -368,8 +369,96 @@ export default function OrderListing({ params }: { params: { locale:string, even
                     </strong></div>
                   <div className="ebs-table-box ebs-box-3"  />
                 </div>
+                  {/* new design */}
+                  <div className="d-flex align-items-center ebs-table-header bg-dark-grey">
+                      <div className="ebs-table-box ebs-box-1 ">
+                        <strong className='fs-12 fw-600'>
+                        {t('order_table.number')}
+                          {/* <span className='d-flex flex-column line-height-0 ms-6'>
+                            <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined  ${sort === 'asc' && sortCol === 'order_number' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'order_number')}}>keyboard_arrow_up</em> 
+                            <em className={`text-innertext fs-12 line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'order_number')}}>keyboard_arrow_down</em>
+                          </span> */}
+                        </strong>
+                      </div>
+                      <div className="ebs-table-box ebs-box-1">
+                        <strong className='fs-12 fw-600'>                          
+                        {t('order_table.date')} 
+                      <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'order_date' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'order_date')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_date' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'order_date')}}>keyboard_arrow_down</em>
+                    </span>
+                      </strong></div>
+                      <div className="ebs-table-box ebs-box-2">
+                        <strong className='fs-12 fw-600'>
+                      {t('order_table.attendee_name')}
+                      <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'name' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'name')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'name' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'name')}}>keyboard_arrow_down</em>
+                    </span>
+                      </strong></div>
+                      <div className="ebs-table-box ebs-box-2">
+                        <strong className='fs-12 fw-600'>
+                      {t('order_table.attendee_email')}
+                      <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'email' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'email')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'email' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'email')}}>keyboard_arrow_down</em>
+                    </span>
+                      </strong></div>
+                
+                      <div className="ebs-table-box ebs-box-4">
+                        <strong className='fs-12 fw-600'>
+                      {t('order_table.company')}
+                      <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'company' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'company')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'company' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'company')}}>keyboard_arrow_down</em>
+                    </span>
+                      </strong></div>
+                      <div className="ebs-table-box ebs-box-4">
+                        <strong className='fs-12 fw-600'>
+                        {t('order_table.sold_tickets')}
+                       
+                      <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'amount' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'amount')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'amount' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'amount')}}>keyboard_arrow_down</em>
+                    </span></strong></div>
+                      <div className="ebs-table-box ebs-box-4">
+                        <strong className='fs-12 fw-600'>
+                        {t('order_table.revenue')} 
+                      <span className='d-flex flex-column  line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'sales_agent' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'sales_agent')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'sales_agent' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'sales_agent')}}>keyboard_arrow_down</em>
+                    </span>
+                      </strong></div>
+                      <div className="ebs-table-box ebs-box-4">
+                        <strong className='fs-12 fw-600'>
+                        {t('order_table.status')}
+                      <span className='d-flex flex-column  line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'sales_agent' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'sales_agent')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'sales_agent' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'sales_agent')}}>keyboard_arrow_down</em>
+                    </span>
+                      </strong></div>
+                      <div className="ebs-table-box ebs-box-4" style={{width: 150}}>
+                        <strong className='fs-12 fw-600'>
+                        {t('order_table.payment_status')} 
+                      <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'order_status' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'order_status')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_status' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'order_status')}}>keyboard_arrow_down</em>
+                    </span>
+                        </strong></div>
+                        <div className="ebs-table-box ebs-box-4" style={{width: 150}}>
+                        <strong className='fs-12 fw-600'>
+                        {/* {t('order_table.payment_status')}  */}
+                        Actions
+                      {/* <span className='d-flex flex-column line-height-0 ms-6'>
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'asc' && sortCol === 'order_status' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('asc', 'order_status')}}>keyboard_arrow_up</em> 
+                      <em className={`text-innertext fs-12  line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_status' ? 'fw-bolder' : 'cursor-pointer'}`} onClick={()=>{handleSortChange('desc', 'order_status')}}>keyboard_arrow_down</em>
+                    </span> */}
+                        </strong></div>
+                    </div>
                 {event_orders !== null && event_orders?.data?.length > 0 ? event_orders.data.map((order:any, key:number) =>
-                <div key={order.id}>
+                <>
+                {/* old design */}
+                <div key={order.id} className='d-none'>
                   <div className="d-flex align-items-center ebs-table-content" style={{cursor:'text'}}>
                     <div className="ebs-table-box ebs-box-1"><p>{order.order_number}</p></div>
                     <div className="ebs-table-box ebs-box-1"><p>{moment(new Date(order.order_date)).format('DD-MMM-YYYY')}</p></div>
@@ -428,6 +517,112 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   </div>
                   {order?.order_attendees?.length > 1 && <MoreAttendees data={order.order_attendees} />}
                 </div>
+                {/* // new design */}
+                <div key={order.id} className={`${
+                        key !== event_orders.data.length - 1 ? "border-down-grey" : ""
+                    }`}>
+                        <div key={key} className="d-flex align-items-center ebs-table-content" style={{cursor:'text'}}>
+                          <div className="ebs-table-box ebs-box-1"><p title={order.order_number} className='text-dove-grey fs-12'>{order.order_number}</p></div>
+                          <div className="ebs-table-box ebs-box-1"><p className='text-dove-grey fs-12'>{moment(new Date(order.order_date)).format('DD-MMM-YYYY')}</p></div>
+                          <div className="ebs-table-box ebs-box-2 ebs-attendee-name-list d-flex align-items-center gap-2 ">
+                            <strong  title={`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}
+                            className='fs-12 text-dove-grey fw-600'
+                            >{`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}</strong>
+                            {order?.order_attendees?.length > 1 && 
+                            <span className='bg-dark-grey d-flex justify-content-center align-items-center rounded_2 cursor-pointer position-relative' style={{ width:"14px",height:"14px" }}>
+                             <em className={`text-innertext fs-12 line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : 'cursor-pointer'}`} 
+                            // onClick={()=>setToggleMoreAttendees(!toggleMoreAttendees)}
+                            >
+                              keyboard_arrow_down</em>
+                            </span>
+                              }
+
+                            {/* {order.order_attendees.length <= 1 ? <p>{`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}</p> : (
+                              <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                              <div className="d-flex align-items-center">
+                                  <p>{`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}</p>  
+                                  <button onClick={handleToggle} className='ebs-btn-panel ebs-btn-dropdown'>
+                                  <i className="material-icons">expand_more</i>
+                                  </button>
+                                  <div style={{minWidth: 180}} className="ebs-dropdown-menu">
+                                    <h5>attendees ({order.order_attendees.length})</h5>
+                                    {order?.order_attendees?.map((attendee:any, k:number)=>(
+                                      <div className="ebs-dropdown-list" key={k}>
+                                      <p className="name">{`${attendee.attendee_detail?.first_name} ${attendee.attendee_detail?.last_name}`}</p>
+                                      <p className="email">{attendee.attendee_detail?.email}</p>
+                                      </div>
+                                    ))}
+                                    
+                                    </div>
+                                </div>
+                                </div>
+                              )} */}
+                          </div>
+                          <div className="ebs-table-box ebs-box-2"><strong   className='fs-12 fw-600 text-dove-grey' title={order?.order_attendee?.email}>{order?.order_attendee?.email}</strong></div>
+                          {/* <div style={{width: 150}} className="ebs-table-box ebs-box-2"><p className='text-dove-grey' title={order?.order_attendee?.detail?.title}>{order?.order_attendee?.detail?.title}</p></div> */}
+                          <div className="ebs-table-box ebs-box-4"><p className='text-dove-grey fs-12 ' title={order.detail.company_name}>{order.detail.company_name}asasas</p></div>
+                          <div className="ebs-table-box ebs-box-4"><p className='text-dove-grey fs-12 ' title={order?.reporting_panel_total_text}>{order?.reporting_panel_total_text}</p></div>
+                    <div className="ebs-table-box ebs-box-4"><p>{order.tickets_sold}</p></div>
+
+                    <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0, color:order.status === 'completed' ? '#41a54f' : '#ff002e', cursor:'text'}}><p>{order.status}</p></div>
+                          {/* <div className="ebs-table-box ebs-box-4"><p className='text-dove-grey fs-12 ' title={order?.sales_agent_name}>{order?.sales_agent_name}</p></div> */}
+                          {/* <div className="ebs-table-box ebs-box-4" style={{width: 150}}><p className='text-dove-grey' style={{fontWeight: 500, color: order.billing_order_status == 'completed' ? '#60A259' : '#AB8D2E'}}>{order.billing_order_status}</p></div> */}
+                          {/*  */}
+                          <div className="ebs-table-box ebs-box-4" style={{paddingRight: 0, color:order.status === 'completed' ? '#41a54f' : '#ff002e', cursor:'text'}}>
+                          <p onClick={()=>{ if(order.status !== 'cancelled') {handleShowPaymentChangePopup(order.id, order.is_payment_received) } }} >{order.is_payment_received ? 'Received': 'Pending'}</p>
+                            {/* {order.is_payment_received === 1 && <p>{moment(new Date(order.payment_received_date)).format('DD-MMM-YYYY')}
+                            </p>} */}
+                            </div>
+
+                          <div className="ebs-table-box ebs-box-3 d-flex justify-content-end">
+                      <ul className='d-flex ebs-panel-list m-0'>
+                        {order.status !== 'cancelled' && <li>
+                        <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/edit`} style={{textDecoration:'none'}}>
+                            <button className='ebs-btn-panel'>
+                              <Image
+                                src={require("@/assets/img/ico-edit.svg")}
+                                alt=""
+                                width="12"
+                                height="12"
+                              />
+                            </button>
+                            </Link>
+                        </li>}
+                        <li>
+
+                          <button className='ebs-btn-panel' onClick={(e)=>{ if(confirm(t('delete_order_alert_label'))){ dispatch(userEventOrderDelete({event_id:params.event_id, searchText, limit, type, page, id:order.id})) }}}>
+                            <Image
+                              src={require("@/assets/img/ico-trash.svg")}
+                              alt=""
+                              width="12"
+                              height="14"
+                            />
+                          </button>
+                        </li>
+                        <li>
+                          <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                            <button onClick={handleRowControlsToggle} className='ebs-btn-panel ebs-btn-dropdown'>
+                              <i className="material-icons">more_horiz</i>
+                            </button>
+                            <div style={{minWidth: 130}} className="ebs-dropdown-menu">
+                            <Link href={`/${params.locale}/manage/events/${params.event_id}/orders/${order.id}/invoice`} style={{textDecoration:'none'}}>
+                              <button className="dropdown-item">{t('view')}</button>
+                            </Link>
+                              {/* <button className="dropdown-item">Print Badge</button> */}
+                              <button className="dropdown-item" onClick={()=> { downloadPdf({id:order.id, type:'order'})}}>{t('download')} </button>
+                              <button onClick={()=> { downloadPdf({id:order.id, type:'invoice' })}} style={{borderTop: '1px solid #F2F2F2'}} className="dropdown-item">{t('download_as_invoice')}</button>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                        </div>
+                            {order?.order_attendees?.length > 1 && <MoreAttendees classes={"position-absolute "} data={order.order_attendees} 
+                            // toggle={toggleMoreAttendees}
+                            />}
+                      </div>
+                </>
+
                 ) :
                 (fetching_orders ? <div style={{position:"relative", minHeight:"350px"}}>
                   <Loader className=''fixed='' />
