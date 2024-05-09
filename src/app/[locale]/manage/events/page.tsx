@@ -238,7 +238,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         {events.length > 0 && !loading  ? events.map((event,k) => 
                  <Link key={k} href={'/manage/events/'+event.id +'/orders'} className="dropdown-item">
                 <div className='bg-white d-flex align-items-center  p-20 w-100 rounded_4'   style={{ height:"84px" }}>
-                   <figure className={`${event.header_logo ?"border":""} mb-0  rounded-1 h-100 d-flex align-items-center justify-content-center`} style={{ width:"120px" }}>
+                   <figure className={`${event.header_logo ?"":"border"} mb-0  rounded-1 h-100 d-flex align-items-center justify-content-center`} style={{ width:"120px" }}>
                  
                     <Image 
                                
