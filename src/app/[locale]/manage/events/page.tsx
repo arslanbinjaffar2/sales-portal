@@ -268,7 +268,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                       </div>
                     </div>
                    </div>
-                   <article className='d-flex justify-content-between ms-auto'>
+                   <article className='d-flex justify-content-between ms-auto align-items-center'>
                    {/*  */}
                    <div className='border w-100 d-flex justify-content-between px-3 py-2 rounded_4'>
                     
@@ -293,8 +293,8 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                    </div>
                    </div>
                {/*  */}
-               <span>
-               <em className="material-icons fs-48 text-borderhover">chevron_right</em>
+               <span className='ms-4 text-border-hover'>
+               <Image src={"/left_arrow.svg"} alt='arrow icon' width={9} height={16}/>
                </span>
 
                    </article>
