@@ -61,7 +61,7 @@ import { useTranslations } from 'next-intl';
 const MoreAttendees = ({data,toggle,classes}: any) => {
   return (
     <>
-  {toggle && 
+    {toggle && 
     <div style={{background: 'white',maxWidth:"150px",width:"100%",height: "221px",overflowX:"hidden",overflowY:"auto",
     zIndex:"9999",left:"20%",top:"70%"}} 
     className={ `text-start rounded_4  box-shadow-white mt-1 ${classes}` }>
@@ -79,10 +79,10 @@ const MoreAttendees = ({data,toggle,classes}: any) => {
        <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
       </div> */}
       <div className='mt-2 p-2 border-down-grey fw-bold '>
-          <strong className='text-charcoal-grey fs-12 fw-600'>ATTENDEES ({data.length})</strong>
+          <strong className='text-charcoal-grey fs-12 fw-600'>ATTENDEES ({data.slice(1,data.length).length})</strong>
       </div>
      <div className='flex flex-column align-items-start'>
-        {data.length>0 && data.map((attendee:any,k:any) =>   
+        {data.length>0 && data.slice(1,data.length).map((attendee:any,k:any) =>   
 
           <div style={{background: 'white', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content w-100"> 
           <div className="border-down-grey p-2 d-flex flex-column w-100" >
@@ -625,7 +625,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                     }`}>
                         <div key={key} className="d-flex align-items-center ebs-table-content flex-wrap" style={{cursor:'text'}}>
                           <div className="ebs-table-box ebs-box-1" style={{ width:"80px" }}><Link
-                          href={`/manage/events/${order?.event_id}/orders/${order?.id}/edit`}
+                          href={`/manage/events/${order?.event_id}/orders/${order?.id}/invoice`}
                           title={order.order_number} className='text-dove-grey fs-12'>{order.order_number}</Link></div>
                           <div className="ebs-table-box ebs-box-1" style={{ width:"100px" }}><p className='text-dove-grey fs-12 '>{moment(new Date(order.order_date)).format('DD-MMM-YYYY')}</p></div>
                           <div className="ebs-table-box ebs-box-2 ebs-attendee-name-list d-flex align-items-center gap-2 word-break position-relative" >
