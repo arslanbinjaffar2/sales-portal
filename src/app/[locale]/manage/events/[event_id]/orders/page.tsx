@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import Image from 'next/image'
 import Dropdown from '@/components/DropDown';
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
@@ -19,11 +19,54 @@ import { userEventOrderChangePymentStatus } from '@/redux/store/slices/OrderSlic
 import { useTranslations } from 'next-intl';
 
 
-const MoreAttendees = ({data}: any) => {
-  const [toggle, setToggle] = useState(false)
+// const MoreAttendees = ({data}: any) => {
+//   const [toggle, setToggle] = useState(false)
+//   return (
+//     <div style={{background: '#EEF2F4',}} className='rounded-4'>
+//       <div style={{background: '#EEF2F4', cursor:'default'}} className="d-flex align-items-center ebs-table-content" >
+//           <div className="ebs-table-box ebs-box-1" />
+//           <div className="ebs-table-box ebs-box-1" />
+//         <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}> <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'expand_more' : 'chevron_right' }</i>  <span style={{marginRight:'5px'}}>{data?.length - 1}</span> {"more attendees"}  </strong></p></div>
+//         <div className="ebs-table-box ebs-box-2" />
+//         <div className="ebs-table-box  ebs-box-4" />
+//        <div className="ebs-table-box ebs-box-4" />
+//        <div className="ebs-table-box ebs-box-4" />
+//        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+//        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+//        <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+//       </div>
+//       {toggle && <React.Fragment>
+//         {data.map((attendee:any,k:any) =>
+//          k === 0 ? null : (<div style={{background: '#EEF2F4', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
+//           <div className="ebs-table-box ebs-box-1" />
+//           <div className="ebs-table-box ebs-box-1" />
+//           <div className="ebs-table-box ebs-box-2" style={{paddingLeft:'32px'}}>
+//             <p><strong>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</strong></p>
+//             <p>{attendee?.attendee_detail?.email} </p>
+//             </div>
+//           <div className="ebs-table-box ebs-box-2"></div>
+//           <div className="ebs-table-box  ebs-box-4" />
+//         <div className="ebs-table-box ebs-box-4" />
+//         <div className="ebs-table-box ebs-box-4" />
+//         <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+//         <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
+//         <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+//         </div>)
+//       )}
+//       </React.Fragment>}
+//     </div>
+//   )
+// }
+
+const MoreAttendees = ({data,toggle,classes}: any) => {
   return (
-    <div style={{background: '#EEF2F4',}} className='rounded-4'>
-      <div style={{background: '#EEF2F4', cursor:'default'}} className="d-flex align-items-center ebs-table-content" >
+    <>
+  {toggle && 
+    <div style={{background: 'white',maxWidth:"150px",width:"100%",height: "221px",overflowX:"hidden",overflowY:"auto",
+    zIndex:"9999",left:"20%",top:"70%"}} 
+    className={ `text-start rounded_4  box-shadow-white mt-1 ${classes}` }>
+
+      {/* <div style={{background: '#EEF2F4', cursor:'default'}} className="d-flex align-items-center ebs-table-content" >
           <div className="ebs-table-box ebs-box-1" />
           <div className="ebs-table-box ebs-box-1" />
         <div className="ebs-table-box ebs-box-2"><p><strong onClick={() => setToggle(!toggle)}> <i  style={{fontSize: 18}} className="material-icons">{toggle ? 'expand_more' : 'chevron_right' }</i>  <span style={{marginRight:'5px'}}>{data?.length - 1}</span> {"more attendees"}  </strong></p></div>
@@ -34,30 +77,80 @@ const MoreAttendees = ({data}: any) => {
        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
        <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
+      </div> */}
+      <div className='mt-2 p-2 border-down-grey fw-bold '>
+          <strong className='text-charcoal-grey fs-12 fw-600'>ATTENDEES ({data.length})</strong>
       </div>
-      {toggle && <React.Fragment>
-        {data.map((attendee:any,k:any) =>
-         k === 0 ? null : (<div style={{background: '#EEF2F4', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content">
-          <div className="ebs-table-box ebs-box-1" />
-          <div className="ebs-table-box ebs-box-1" />
-          <div className="ebs-table-box ebs-box-2" style={{paddingLeft:'32px'}}>
-            <p><strong>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</strong></p>
-            <p>{attendee?.attendee_detail?.email} </p>
-            </div>
-          <div className="ebs-table-box ebs-box-2"></div>
-          <div className="ebs-table-box  ebs-box-4" />
-        <div className="ebs-table-box ebs-box-4" />
-        <div className="ebs-table-box ebs-box-4" />
-        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
-        <div className="ebs-table-box ebs-box-3" style={{paddingRight: 0}} />
-        <div className="ebs-table-box ebs-box-3 d-flex justify-content-end" />
-        </div>)
-      )}
-      </React.Fragment>}
+     <div className='flex flex-column align-items-start'>
+        {data.length>0 && data.map((attendee:any,k:any) =>   
+
+          <div style={{background: 'white', cursor:'default'}} key={attendee.id} className="d-flex align-items-center ebs-table-content w-100"> 
+          <div className="border-down-grey p-2 d-flex flex-column w-100" >
+            <strong className='text-charcoal-grey fs-12 fw-600' title={`${attendee?.attendee_detail?.first_name} ${attendee?.attendee_detail?.last_name}`}><strong>{attendee?.attendee_detail?.first_name} {attendee?.attendee_detail?.last_name}</strong></strong>
+            <span className='text-dove-grey fs-10' title={attendee?.attendee_detail?.email}>{attendee?.attendee_detail?.email} </span>
+            </div>  
+        </div>
+      
+     )} 
+      </div>
+      {/* <div style={{background: 'white', cursor:'default'}}  className="d-flex align-items-center ebs-table-content w-100"> 
+          <div className="border-down-grey p-2 " >
+            <strong className='text-charcoal-grey fs-12 fw-600' >asasasaasa</strong>
+            <span className='text-dove-grey fs-10' >dfdfhdfgh asasasasaaaaaaaaaaaaaaaa</span>
+            </div>  
+        </div> */}
     </div>
+    
+    }
+
+    </>
+
   )
 }
 
+
+function SingleAttendeeName({setToggleMoreAttendees,toggleMoreAttendees,sort,sortCol}:any){
+  const attendeeNameRef = useRef<any>();
+
+  useEffect(() => {
+    const handleClickOutside = (event:any) => {
+      if (attendeeNameRef.current && !attendeeNameRef.current?.contains(event.target)) {
+        setToggleMoreAttendees(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [toggleMoreAttendees]);
+  return(
+    <span ref={attendeeNameRef} className='bg-dark-grey d-flex justify-content-center align-items-center rounded_2 cursor-pointer ' style={{ width:"14px",height:"14px" }}>
+    <em className={`fw-bolder text-innertext fs-12 line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : 'cursor-pointer'}`} 
+     onClick={()=>setToggleMoreAttendees(!toggleMoreAttendees)}>
+     keyboard_arrow_down</em>
+   </span>
+  )
+}
+
+
+function AttendeeName({sort,sortCol,order}:any){
+  const [toggleMoreAttendees, setToggleMoreAttendees] = useState(false)
+
+  return(
+    <>
+    <SingleAttendeeName setToggleMoreAttendees={setToggleMoreAttendees}
+    toggleMoreAttendees={toggleMoreAttendees}
+    sort={sort}
+    sortCol={sortCol}
+    />
+  <MoreAttendees classes={"position-absolute"} data={order?.order_attendees} 
+  toggle={toggleMoreAttendees}
+  />
+</>
+  )
+}
 
 export default function OrderListing({ params }: { params: { locale:string, event_id: string } }) {
   const t = useTranslations('manage-orders-page');
@@ -531,25 +624,24 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         key !== event_orders.data.length - 1 ? "border-down-grey" : ""
                     }`}>
                         <div key={key} className="d-flex align-items-center ebs-table-content flex-wrap" style={{cursor:'text'}}>
-                          <div className="ebs-table-box ebs-box-1" style={{ width:"80px" }}><p title={order.order_number} className='text-dove-grey fs-12'>{order.order_number}</p></div>
+                          <div className="ebs-table-box ebs-box-1" style={{ width:"80px" }}><Link
+                          href={`/manage/events/${order?.event_id}/orders/${order?.id}/edit`}
+                          title={order.order_number} className='text-dove-grey fs-12'>{order.order_number}</Link></div>
                           <div className="ebs-table-box ebs-box-1" style={{ width:"100px" }}><p className='text-dove-grey fs-12 '>{moment(new Date(order.order_date)).format('DD-MMM-YYYY')}</p></div>
-                          <div className="ebs-table-box ebs-box-2 ebs-attendee-name-list d-flex align-items-center gap-2 word-break">
+                          <div className="ebs-table-box ebs-box-2 ebs-attendee-name-list d-flex align-items-center gap-2 word-break position-relative" >
                             <strong  title={`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}
                             className='fs-12 text-dove-grey fw-600 word-break'
                             >
-                              {`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}
-                 
-name
+                              {`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}               
                             </strong>
                             {order?.order_attendees?.length > 1 && 
-                            <span className='bg-dark-grey d-flex justify-content-center align-items-center rounded_2 cursor-pointer position-relative' style={{ width:"14px",height:"14px" }}>
-                             <em className={`text-innertext fs-12 line-height-1 material-symbols-outlined ${sort === 'desc' && sortCol === 'order_number' ? 'fw-bolder' : 'cursor-pointer'}`} 
-                            // onClick={()=>setToggleMoreAttendees(!toggleMoreAttendees)}
-                            >
-                              keyboard_arrow_down</em>
-                            </span>
-                              }
-
+                             <AttendeeName
+                            sort={sort}
+                            sortCol={sortCol}
+                            classes={"position-absolute "} 
+                            order={order}
+                             />
+                        }
                             {/* {order.order_attendees.length <= 1 ? <p>{`${order?.order_attendee?.first_name} ${order?.order_attendee?.last_name}`}</p> : (
                               <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
                               <div className="d-flex align-items-center">
@@ -644,9 +736,7 @@ name
                       </ul>
                     </div>
                         </div>
-                            {order?.order_attendees?.length > 1 && <MoreAttendees classes={"position-absolute "} data={order.order_attendees} 
-                            // toggle={toggleMoreAttendees}
-                            />}
+                           
                       </div>
                 </>
 
