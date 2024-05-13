@@ -237,7 +237,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
             <div className="bg-light-header pt-20 gap-12 d-flex flex-column p-20" style={{minHeight:'calc(100vh - 272px)'}}>
                         {events.length > 0 && !loading  ? events.map((event,k) => 
                  <Link key={k} href={'/manage/events/'+event.id +'/orders'} className="dropdown-item">
-                <div className='bg-white d-flex align-items-center  p-20 w-100 rounded_4'   style={{ height:"84px" }}>
+                <div className='bg-white d-flex align-items-start  p-20 w-100 rounded_4'   >
                    <figure className={`${event.header_logo ?"":"border"} mb-0  rounded-1 h-100 d-flex align-items-center justify-content-center`} style={{ width:"120px" }}>
                  
                     <Image 
@@ -247,9 +247,12 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                                    />
                    </figure>
                    <div className='d-flex flex-column gap-1 ps-3' style={{ width:" 500px" }}>
-                    <strong className='fw-600 text-dark-black'>
+                    <strong className='fw-600 text-dark-black truncate'
+                    title={event.name}
+                    >
                     {event.name}
-                      {/* Global Summit: Convening leaders for professional advancement */}
+                     
+
                       </strong>
                     <div className='d-flex gap-3 align-items-center'>
                       <div className='d-flex gap-6  align-items-center'>
@@ -258,15 +261,21 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     
                         {moment(event.start_date).format('DD-MM-YYYY')} - {moment(event.end_date).format('DD-MM-YYYY')}</span>
                       </div>
-                      <div className='d-flex gap-6  align-items-center'>
-                      <strong className='fs-12 fw-600 text-dark-black'>{t('event_table.organized_by')}:</strong>
-                      <span className='fs-12 text-dark-black'>{event.organizer_name}</span>
-                      </div>
-                      <div className='d-flex gap-6  align-items-center'>
+                      <div className='d-flex gap-6  align-items-center truncate'>
                       <strong className='fs-12 fw-600 text-dark-black'>{t('event_table.created_by')}:</strong>
-                      <span className='fs-12 text-dark-black'>{event.organizer_name}</span>
+                      <span className='fs-12 text-dark-black truncate ' title={event.organizer_name}>
+                        
+                        {event.organizer_name}
+                      </span>
                       </div>
                     </div>
+                      <div className='d-flex gap-6  align-items-center'>
+                      <strong className='fs-12 fw-600 text-dark-black'>{t('event_table.organized_by')}:</strong>
+                      <span className='fs-12 text-dark-black truncate' title={event.organizer_name}>
+                        {event.organizer_name}
+                    
+                      </span>
+                      </div>
                    </div>
                    <article className='d-flex justify-content-between ms-auto align-items-center'>
                    {/*  */}

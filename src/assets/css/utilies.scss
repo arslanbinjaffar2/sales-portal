@@ -90,6 +90,9 @@
 .h-0{
     height: 0px;
 }
+.max-width-full{
+    max-width: 100%;
+}
 .gap-6{
 gap: 6px;
 }
@@ -133,8 +136,34 @@ gap: 6px;
     margin-right: 16px;
 }
 
+.gap-0{
+    gap: 0px;
+}
+.word-break{
+word-break: break-all;
+}
 
+.white-space-wrap{
+white-space: normal !important;
+}
 
+.over-flow-hidden{
+    overflow: hidden;
+}
+.text-overflow-ellipsis{
+    text-overflow: ellipsis;
+}
+.custom-flex{
+flex: 1 1 auto;
+}
+.custom-flex-16{
+flex: 1 1 16px;
+}
+
+.truncate  {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
 /* WebKit-based browsers */
 ::-webkit-scrollbar {
