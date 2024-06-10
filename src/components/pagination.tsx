@@ -8,33 +8,39 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-    const [pages, setPages] = useState<number[]>([]);
+    const [pages, setPages] = useState<(number | string)[]>([]);
 
     useEffect(() => {
         const generatePages = () => {
             const pageArray: (number | string)[] = [];
             const delta = 2; // Number of pages to show around the current page
-            const range = [];
 
-            for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
-                range.push(i);
+            // Ensure first three pages are shown
+            for (let i = 1; i <= Math.min(3, totalPages); i++) {
+                pageArray.push(i);
             }
 
-            // Adding the first page
-            if (range[0] > 3) {
-                range.unshift('...');
-            }
-            range.unshift(1);
-
-            // Adding the last page
-            if (parseFloat(String(range[range.length - 1])) < totalPages - 1) {
-                range.push('...');
-            }
-            if (totalPages > 1) {
-                range.push(totalPages);
+            // Show ellipsis if there are pages between the first three and the current range
+            if (currentPage > 5) {
+                pageArray.push('...');
             }
 
-            setPages(range as number[]);
+            // Add current range of pages around the current page
+            for (let i = Math.max(4, currentPage - delta); i <= Math.min(currentPage + delta, totalPages - 3); i++) {
+                pageArray.push(i);
+            }
+
+            // Show ellipsis if there are pages between the current range and the last three
+            if (currentPage < totalPages - 4) {
+                pageArray.push('...');
+            }
+
+            // Ensure last three pages are shown
+            for (let i = Math.max(totalPages - 2, 4); i <= totalPages; i++) {
+                pageArray.push(i);
+            }
+
+            setPages(pageArray);
         };
         generatePages();
     }, [currentPage, totalPages]);
