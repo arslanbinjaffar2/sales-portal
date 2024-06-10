@@ -1,6 +1,6 @@
 "use client"; // this is a client component
 import Dropdown from '@/components/DropDown';
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Image from 'next/image';
 import AlertMessage from '@/components/forms/alerts/AlertMessage';
 import Loader from '@/components/forms/Loader';
@@ -30,8 +30,22 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
 
     const [eventsRequestData, setEventsRequestData] = useState<any>(eventsRequestDataStore !== null ? eventsRequestDataStore : {search_text: '', event_action: 'active_future', sort_by: '', order_by: '', page:1, limit:10});
     const [toggoleLimited, settoggoleLimited] = useState(false)
+    const [toggoleLimited2, settoggoleLimited2] = useState(false)
     const [limit, setLimit] = useState(eventsRequestDataStore !== null ? eventsRequestDataStore.limit : 10);
+		const _divElement = useRef<HTMLDivElement>(null)
 
+		useEffect(() => {
+			var _offset = 0;
+			if (_divElement.current) {
+				_offset = window.innerHeight - (_divElement.current?.offsetTop + 300)
+			}
+			if (_offset <= 0 ){
+				_divElement.current?.classList.add('ebs-direction-bottom')
+			} else {
+				_divElement.current?.classList.remove('ebs-direction-bottom')
+			}
+		}, [toggoleLimited2])
+		
     useEffect(() => {
         const promise = dispatch(userEvents(eventsRequestData));
         return () =>{
@@ -104,6 +118,11 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
         e.stopPropagation();
         e.preventDefault();
         settoggoleLimited(!toggoleLimited);
+      }
+    const handleToggle2 = (e:any) => {
+        e.stopPropagation();
+        e.preventDefault();
+        settoggoleLimited2(!toggoleLimited2);
       }
 
       const handleLimitChange = (e:any, value:any) => {
@@ -235,18 +254,34 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
 {/* new design */}
 
             <div className="bg-light-header pt-20 gap-12 d-flex flex-column p-20" style={{minHeight:'calc(100vh - 272px)'}}>
+							 {events?.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                    <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                      <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
+                        {limit} <i className="material-symbols-outlined">expand_more</i>
+                      </button>
+                      <div className={`ebs-dropdown-menu`}>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
+                      </div>
+                    </div>
+                </div>} 
                         {events.length > 0 && !loading  ? events.map((event,k) => 
                  <Link key={k} href={'/manage/events/'+event.id +'/orders'} className="dropdown-item">
-                <div className='bg-white d-flex align-items-start  p-20 w-100 rounded_4'   >
+                <div className='bg-white d-flex align-items-center  p-20 w-100 rounded_4'   >
                    <figure className={`${event.header_logo ?"":"border"} mb-0  rounded-1 h-100 d-flex align-items-center justify-content-center`} style={{ width:"120px" }}>
                  
-                    <Image 
-                               
-                                                src={event.header_logo ? (`${process.env.serverImageHost + '/' + event.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}  
-                                  alt="image" width={120} height={42}                
-                                   />
+                    <Image src={event.header_logo ? (`${process.env.serverImageHost + '/' + event.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}  
+											alt="image" width={120} height={42}                
+												/>
                    </figure>
-                   <div className='d-flex flex-column gap-1 ps-3' style={{ width:" 500px" }}>
+                   <div className='d-flex flex-column gap-1 ps-3' style={{ width:" 550px" }}>
                     <strong className='fw-600 text-dark-black truncate'
                     title={event.name}
                     >
@@ -277,7 +312,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                       </span>
                       </div>
                    </div>
-                   <article className='d-flex justify-content-between ms-auto align-items-center'>
+                   <article style={{minWidth: '550px'}} className='d-flex justify-content-between ms-auto align-items-center pe-2'>
                    {/*  */}
                    <div className='border w-100 d-flex justify-content-between px-3 py-2 rounded_4'>
                     
@@ -319,7 +354,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                           <div style={{minHeight: '335px', backgroundColor: '#fff', borderRadius: '8px'}} className='d-flex align-items-center justify-content-center h-100 w-100'>
                             <div className="text-center">
                               <Image
-                                  src={'/no_record_found.svg'} alt="" width="100" height="100"
+                                  src={require('@/assets/img/no_record_found.svg')} alt="" width="100" height="100"
                               />
                               <p className='pt-3 m-0'>{t('no_data_available')}</p>
                             </div>
@@ -331,11 +366,11 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         totalPages={totalPages}
                         onPageChange={handlePageChange}
                     />
-                    <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                      <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
+                    <div ref={_divElement} onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                      <button onClick={handleToggle2} className={`ebs-btn-dropdown btn-select ${toggoleLimited2 ? "ebs-active" : ''}`}>
                         {limit} <i className="material-symbols-outlined">expand_more</i>
                       </button>
-                      <div className={`ebs-dropdown-menu`}>
+                      <div  className={`ebs-dropdown-menu`}>
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>

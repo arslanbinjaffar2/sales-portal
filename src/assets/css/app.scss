@@ -420,7 +420,7 @@
       margin: 0;
       padding: 10px 30px 11px 12px;
       min-height: 44px;
-      border-radius: 2px;
+      border-radius: 4px;
     }
     .css-2b097c-container,
     .css-b62m3t-container {
@@ -581,7 +581,7 @@
       border: 1px solid $borderlight;
       padding: 10px 20px 10px 40px;
       background: url(../img/ico-search.png) no-repeat 15px center;
-      border-radius: 2px;
+      border-radius: 4px;
       &:focus {
         border-color: $darkcolor;
       }
@@ -1011,7 +1011,7 @@
   color: $gray;
   padding: 10px 20px 10px 40px;
   background: url(../img/ico-search.png) no-repeat 15px center;
-  border-radius: 2px;
+  border-radius: 4px;
   &:focus {
     border-color: $darkcolor;
   }
@@ -1047,6 +1047,7 @@
       pointer-events: none;
     }
   }
+
   .ebs-btn-dropdown.ebs-active {
     + .ebs-dropdown-menu  {
       visibility: visible;
@@ -1092,7 +1093,13 @@
         color: $white;
       }
     }
-  }
+    }
+      &.ebs-direction-bottom {
+        .ebs-dropdown-menu {
+          top: auto;
+          bottom: 100%;
+        }
+      }
 }
 .ebs-panel-list {
   list-style: none;

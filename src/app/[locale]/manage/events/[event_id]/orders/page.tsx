@@ -171,11 +171,25 @@ export default function OrderListing({ params }: { params: { locale:string, even
   const [searchText, setSearchText] = useState('');
   const [page, setPage] = useState(1);
   const [toggoleLimited, settoggoleLimited] = useState(false)
+  const [toggoleLimited2, settoggoleLimited2] = useState(false)
   const [toggle, setToggle] = useState(false)
   const [showPaymentRecievedPopup, setshowPaymentRecievedPopup] = useState(false)
   const [paymentRevcievedOrderId, setPaymentRevcievedOrderId] = useState<null| number>(null)
   const [paymentRevcievedStatus, setPaymentRevcievedStatus] = useState(false)
   const [processingPaymentchange, setProcessingPaymentChange] = useState(false);
+  const _divElement = useRef<HTMLDivElement>(null)
+
+		useEffect(() => {
+			var _offset = 0;
+			if (_divElement.current) {
+				_offset = window.innerHeight - (_divElement.current?.offsetTop + 300)
+			}
+			if (_offset <= 0 ){
+				_divElement.current?.classList.add('ebs-direction-bottom')
+			} else {
+				_divElement.current?.classList.remove('ebs-direction-bottom')
+			}
+		}, [toggoleLimited2])
 
   useEffect(()=>{
     let promise:any = '';
@@ -238,6 +252,11 @@ export default function OrderListing({ params }: { params: { locale:string, even
     e.stopPropagation();
     e.preventDefault();
     settoggoleLimited(!toggoleLimited);
+  }
+  const handleToggle2 = (e:any) => {
+    e.stopPropagation();
+    e.preventDefault();
+    settoggoleLimited2(!toggoleLimited2);
   }
 
   const storeEventRequestData = (ordersRequestDataStored:any) => {
@@ -382,7 +401,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
               <div className="ebs-order-header">
                 <h4>{t('order_list')}</h4>
                 <div className="row">
-                  <div className="col-12 d-flex">
+                  <div className="col-12 d-flex align-items-center">
                     <input type="text" className="ebs-search-area" placeholder={t('search')} onKeyUp={(e) => { e.key === 'Enter' ? handleSearchTextFilter(e): null}} value={searchText} onChange={(e)=>{setSearchText(e.target.value)}} />
                     <label style={{ width: "210px" }} className="label-select-alt">
                       <Dropdown
@@ -394,7 +413,7 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         listitems={orderFilters}
                       />
                     </label>
-                    {form_stats && form_stats?.length > 0 && <label style={{ width: "210px" }} className="label-select-alt">
+                    {form_stats && form_stats?.length > 0 && <label style={{ width: "210px" }} className="label-select-alt me-auto">
                       <Dropdown
                         label="Registration forms"
                         selected={regFormId} 
@@ -403,6 +422,26 @@ export default function OrderListing({ params }: { params: { locale:string, even
                         listitems={[{id:0,name:"Registration forms"},...form_stats.map((item:any)=>({id:item.id, name:item.attendee_type.attendee_type}))]}
                       />
                     </label>}
+                  </div>
+                  <div className="col-12 d-flex align-items-center justify-content-end">
+                    {event_orders !== null && event_orders?.data?.length > 0  && <div className='d-flex justify-content-end align-items-center'>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                  <div  onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                      <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
+                        {limit} <i className="material-symbols-outlined">expand_more</i>
+                      </button>
+                      <div className={`ebs-dropdown-menu`}>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 10);  }}>10</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 20);  }}>20</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 100); }}>100</button>
+                        <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
+                      </div>
+                    </div>
+                  </div>}
                   </div>
                 </div>
               </div>
@@ -762,8 +801,8 @@ export default function OrderListing({ params }: { params: { locale:string, even
                   totalPages={totalPages}
                   onPageChange={handlePageChange}
               />
-            <div onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
-                <button onClick={handleToggle} className={`ebs-btn-dropdown btn-select ${toggoleLimited ? "ebs-active" : ''}`}>
+            <div ref={_divElement} onClick={(e) => e.stopPropagation()} className="ebs-dropdown-area">
+                <button onClick={handleToggle2} className={`ebs-btn-dropdown btn-select ${toggoleLimited2 ? "ebs-active" : ''}`}>
                   {limit} <i className="material-symbols-outlined">expand_more</i>
                 </button>
                 <div className={`ebs-dropdown-menu`}>
