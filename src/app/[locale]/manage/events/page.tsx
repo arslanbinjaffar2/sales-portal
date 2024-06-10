@@ -13,6 +13,7 @@ import Link from 'next/link';
 
 import {getSelectedLabel} from '@/helpers'; 
 import { useTranslations } from 'next-intl';
+import moment from 'moment';
 
 
 
@@ -156,7 +157,9 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     </div>
                 </div>
             </div>
-            <div className="main-data-table" style={{minHeight:'calc(100vh - 272px)'}}>
+       
+{/* old design */}
+            <div className="main-data-table d-none" style={{minHeight:'calc(100vh - 272px)'}}>
                  <div className="ebs-data-table">
                     <div className="d-flex align-items-center ebs-table-header">
                         <div className="ebs-table-box ebs-box-3"><strong>{t('event_table.event_logo')}</strong></div>
@@ -181,6 +184,7 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                                             >
                                         <div className="ebs-table-box ebs-box-3">
                                             <Image
+
                                                 src={item.header_logo ? (`${process.env.serverImageHost + '/' + item.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}
                                                 alt="" width={100} height={34}/>
                                         </div>
@@ -226,7 +230,102 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                     </>
                 </div>
                 {/* Render the pagination component */}
-                {events?.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
+               
+            </div>    
+{/* new design */}
+
+            <div className="bg-light-header pt-20 gap-12 d-flex flex-column p-20" style={{minHeight:'calc(100vh - 272px)'}}>
+                        {events.length > 0 && !loading  ? events.map((event,k) => 
+                 <Link key={k} href={'/manage/events/'+event.id +'/orders'} className="dropdown-item">
+                <div className='bg-white d-flex align-items-start  p-20 w-100 rounded_4'   >
+                   <figure className={`${event.header_logo ?"":"border"} mb-0  rounded-1 h-100 d-flex align-items-center justify-content-center`} style={{ width:"120px" }}>
+                 
+                    <Image 
+                               
+                                                src={event.header_logo ? (`${process.env.serverImageHost + '/' + event.header_logo}`) : require('@/assets/img/logo-placeholder.svg')}  
+                                  alt="image" width={120} height={42}                
+                                   />
+                   </figure>
+                   <div className='d-flex flex-column gap-1 ps-3' style={{ width:" 500px" }}>
+                    <strong className='fw-600 text-dark-black truncate'
+                    title={event.name}
+                    >
+                    {event.name}
+                     
+
+                      </strong>
+                    <div className='d-flex gap-3 align-items-center'>
+                      <div className='d-flex gap-6  align-items-center'>
+                      <strong className='fw-600 fs-12 text-dark-black'>{t('event_table.event_name')}:</strong>
+                      <span className='fs-12 text-dark-black'>
+                    
+                        {moment(event.start_date).format('DD-MM-YYYY')} - {moment(event.end_date).format('DD-MM-YYYY')}</span>
+                      </div>
+                      <div className='d-flex gap-6  align-items-center truncate'>
+                      <strong className='fs-12 fw-600 text-dark-black'>{t('event_table.created_by')}:</strong>
+                      <span className='fs-12 text-dark-black truncate ' title={event.organizer_name}>
+                        
+                        {event.organizer_name}
+                      </span>
+                      </div>
+                    </div>
+                      <div className='d-flex gap-6  align-items-center'>
+                      <strong className='fs-12 fw-600 text-dark-black'>{t('event_table.organized_by')}:</strong>
+                      <span className='fs-12 text-dark-black truncate' title={event.organizer_name}>
+                        {event.organizer_name}
+                    
+                      </span>
+                      </div>
+                   </div>
+                   <article className='d-flex justify-content-between ms-auto align-items-center'>
+                   {/*  */}
+                   <div className='border w-100 d-flex justify-content-between px-3 py-2 rounded_4'>
+                    
+                   <div className='d-flex gap-6  align-items-center'>
+                    <strong className='fw-600 fs-12 text-dark-black'>{t('event_table.total_tickets')}:</strong>
+                    <span className='fs-12 text-dark-black'>120</span>
+                   </div>
+                   <div className=' border-end border mx-10' style={{ height:"24px",width:"0" }}></div>
+                   <div className='d-flex gap-6  align-items-center'>
+                    <strong className='fw-600 fs-12 text-dark-black'>Left:</strong>
+                    <span className='fs-12 text-dark-black'>{event.event_stats.tickets_sold}</span>
+                   </div>
+                   <div className=' border-end border mx-10' style={{ height:"24px",width:"0" }}></div>
+                   <div className='d-flex gap-6 align-items-center'>
+                    <strong className='fw-600 fs-12 #text-dark-black'>{t('event_table.my_sold_tickets')}:</strong>
+                    <span className='fs-12 text-dark-black'>{event.sale_agent_stats.tickets_sold}</span>
+                   </div>
+                   <div className=' border-end border mx-10' style={{ height:"24px",width:"0" }}></div>
+                   <div className='d-flex gap-6  align-items-center'>
+                    <strong className='fw-600 fs-12 text-dark-black'>{t('event_table.my_revenue')}:</strong>
+                    <span className='fs-12 text-dark-black'>{event.sale_agent_stats.revenue} {" "} {(event.currency) ? event.currency : 'DKK'}</span>
+                   </div>
+                   </div>
+               {/*  */}
+               <span className='ms-4 text-border-hover'>
+               <Image src={"/left_arrow.svg"} alt='arrow icon' width={9} height={16}/>
+               </span>
+
+                   </article>
+
+                  </div>
+                            </Link>
+                        ) : 
+                          loading ? 
+                          <div>
+                            <Loader className={''} fixed={''}/> 
+                          </div>
+                          : 
+                          <div style={{minHeight: '335px', backgroundColor: '#fff', borderRadius: '8px'}} className='d-flex align-items-center justify-content-center h-100 w-100'>
+                            <div className="text-center">
+                              <Image
+                                  src={'/no_record_found.svg'} alt="" width="100" height="100"
+                              />
+                              <p className='pt-3 m-0'>{t('no_data_available')}</p>
+                            </div>
+                          </div>
+                        }
+                        {events?.length > 0 && <div className='d-flex justify-content-end align-items-center pt-3'>
                     <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -243,8 +342,8 @@ export default function Dashboard({params:{locale}}:{params:{locale:string}}) {
                         <button className="dropdown-item" onClick={(e)=> { handleLimitChange(e, 500);  }}>500</button>
                       </div>
                     </div>
-                </div>}
-            </div>    
+                </div>} 
+                    </div>
         </>
     );
 }

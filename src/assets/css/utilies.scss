@@ -1,0 +1,242 @@
+.bg-dark-pink{
+    background-color: $color-primary !important;
+}
+.text-dark-black{
+    color: $darktext;
+}
+.bg-dark-grey{
+    background: $border;
+}
+.bg-light-header{
+    background: $lightheader;
+}
+.text-dove-grey{
+    color: $text;
+}
+.text-charcoal-grey{
+    color: $charcoalgrey;
+}
+.text-innertext{
+    color: $innertext;
+}
+.text-borderhover{
+    color: $borderhover;
+}
+.text-border-hover{
+    color: $borderhover;
+}
+.fw-600{
+    font-weight: 600;
+}
+.fs-48{
+    font-size: 48px;
+}
+.fs-18{
+    font-size: 18px;
+}
+.fs-12{
+    font-size: 12px;
+}
+.fs-10{
+    font-size: 10px;
+}
+.mx-10{
+    margin:0 10px;
+}
+.ms-6{
+    margin-left: 6px;
+}
+.mb-10{
+    margin-bottom: 10px;
+}
+.mt-20{
+    margin-top: 20px;
+}
+.pt-20{
+    padding-top: 20px;
+}
+// padding
+.p-20{
+    padding: 20px;
+}
+// line height
+.line-height-0{
+    line-height: 0;
+}
+.line-height-1{
+    line-height: 0.5;
+}
+.rounded_4{
+    border-radius: 4px;
+}
+.rounded_2{
+    border-radius: 2px;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.border-down-grey{
+    border-bottom: 1px solid $border;
+}
+.box-shadow-white{
+    box-shadow: 0px 0px 7px #0000001F;
+}
+.order_status_pending{
+ color: $darkskyblue;
+}
+.order_status_received{
+    
+}
+.h-0{
+    height: 0px;
+}
+.max-width-full{
+    max-width: 100%;
+}
+.gap-6{
+gap: 6px;
+}
+.gap-45{
+    gap: 45px;
+    }
+.gap-12{
+    gap: 12px;
+    }
+
+
+.grid{
+    display: grid;
+    max-width: 1100px;
+    width: 100%;
+}
+.grid-cols{
+    grid-template-columns: repeat(10,70px);
+    grid-template-rows: 1fr;
+}
+
+.col-span-2{
+    grid-column: 1/ 2;
+}
+.col-span-1{
+    grid-column: 1/1;
+}
+.col-span-3{
+    column-span: 3;
+}
+
+.word-break{
+    word-break: break-all;
+}
+
+.white-space-wrap{
+    white-space: normal !important;
+}
+
+.mr-16{
+    margin-right: 16px;
+}
+
+.gap-0{
+    gap: 0px;
+}
+.word-break{
+word-break: break-all;
+}
+
+.white-space-wrap{
+white-space: normal !important;
+}
+
+.over-flow-hidden{
+    overflow: hidden;
+}
+.text-overflow-ellipsis{
+    text-overflow: ellipsis;
+}
+.custom-flex{
+flex: 1 1 auto;
+}
+.custom-flex-16{
+flex: 1 1 16px;
+}
+
+.truncate  {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+/* WebKit-based browsers */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #E8E8E8; /* Change this to your desired background color */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #E8E8E8; /* Change this to your desired handle color */
+    border-radius: 2px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #CCCCCC; /* Change this to your desired handle color on hover */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
